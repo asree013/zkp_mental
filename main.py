@@ -1,7 +1,7 @@
-# pyrefly: ignore [missing-import]
 from run_zkp import get_student
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -15,6 +15,10 @@ async def lifespan(app: FastAPI):
     print("Serverกำลังจะปิดตัวลง...")
 
 app = FastAPI(lifespan=lifespan)
+
+@app.get('/')
+def root():
+    return RedirectResponse(url='/docs')
 
 @app.get('/get-zpk')
 def get_zpk(count_student: int):

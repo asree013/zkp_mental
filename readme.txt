@@ -8,13 +8,13 @@
 
 - **สำหรับ macOS / Linux:**
   รันคำสั่งต่อไปนี้ใน Terminal เพื่อติดตั้ง `noirup` และ `nargo`:
-  ```bash
+  
   curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
   # จากนั้นปิดหน้าจอ Terminal แล้วเปิดใหม่ หรือรันคำสั่ง:
   source ~/.bashrc # หรือ ~/.zshrc แล้วแต่ shell ที่ใช้
   # ติดตั้งเวอร์ชันล่าสุดด้วยการรัน:
   noirup
-  ```
+ 
   *(สำหรับ Windows แนะนำให้อ่านคู่มือเพิ่มเติมที่ https://noir-lang.org/docs/getting_started/installation/)*
 
 ---
@@ -22,19 +22,15 @@
 ## How to Run Project
 
 ### 1. สร้างและเรียกใช้ Virtual Environment
-```bash
 python3 -m venv venv
 source venv/bin/activate
-```
+
 
 ### 2. ติดตั้ง Python Libraries
-```bash
 pip install -r requirements.txt
-```
+
 
 ### 3. รันเซิร์ฟเวอร์ FastAPI
-```bash
 uvicorn main:app --reload
 # หรือล็อก IP และ Port
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
