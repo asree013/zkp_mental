@@ -1,0 +1,21 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# macOS system files
+.DS_Store
+
+# IDE settings
+.vscode/
+
+# Noir / Nargo Build & Runtime Files
+circuit/target/
+circuit/Prover.toml
