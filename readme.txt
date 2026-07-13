@@ -34,3 +34,8 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 # หรือล็อก IP และ Port
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+##ข้อมูลที่ใช้
+ข้อมูลจากไฟล์ : student_mental_health.csv
+description : เป็นแบบสำรวจสุขภาพจิตของนักเรียน
+ที่มา : https://www.kaggle.com/code/melikedilekci/student-mental-health/input
