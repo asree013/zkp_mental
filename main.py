@@ -1,4 +1,5 @@
-from run_zk import get_student
+# pyrefly: ignore [missing-import]
+from run_zkp import get_student
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
