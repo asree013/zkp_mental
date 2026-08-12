@@ -1,0 +1,33 @@
+{
+  "model_type": "Quantized Logistic Regression Classifier",
+  "scaling_factor": 1000,
+  "feature_names": [
+    "Age",
+    "CGPA_Scaled",
+    "Depression",
+    "Anxiety",
+    "Panic_Attack",
+    "Seek_Treatment"
+  ],
+  "raw_weights": [
+    -0.008099199753529386,
+    0.002272112431855084,
+    2.551787166571011,
+    2.7157083189949383,
+    2.749468536596496,
+    0.08719053238547347
+  ],
+  "raw_bias": -1.920295645103994,
+  "quantized_weights": [
+    -8,
+    2,
+    2552,
+    2716,
+    2749,
+    87
+  ],
+  "quantized_bias": -1920,
+  "quantized_threshold": 0,
+  "accuracy": 1.0,
+  "dataset_samples": 101
+}
