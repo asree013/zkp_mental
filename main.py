@@ -8,14 +8,24 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
+from app.config.database import engine, Base
+from app.models.db_models import MentalHealthRecord  # Import to register ORM models in Base.metadata
 from app.models.ml_model import load_model_weights
 from app.services.zk_service import get_nargo_bin
 from app.controllers.health_controller import router as health_router
 from app.controllers.zkml_controller import router as zkml_router
+from app.controllers.student_controller import router as student_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # สร้างตารางใน MySQL อัตโนมัติหากยังไม่มี
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Database tables verified / created successfully.")
+    except Exception as e:
+        print(f"⚠️ Could not connect to MySQL database during startup: {e}")
+
     model_data = load_model_weights()
     nargo_bin = get_nargo_bin()
     print("=========================================================")
@@ -43,6 +53,7 @@ def root():
 # Register MVC Controller Routers
 app.include_router(health_router)
 app.include_router(zkml_router)
+app.include_router(student_router)
 
 
 if __name__ == "__main__":
