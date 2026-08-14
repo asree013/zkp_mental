@@ -69,9 +69,24 @@ def test_user_custom_column_mapping_body():
     print("✅ User Defined CSVColumnMapping Body Test PASSED!")
 
 
+def test_quantization_benchmark():
+    response = client.get("/test-quantization-impact")
+    assert response.status_code == 200
+    assert "ZK-ML Fixed-Point Quantization Impact Benchmark" in response.text
+    print("✅ GET /test-quantization-impact (Jinja2 HTML) PASSED!")
+
+    api_res = client.get("/api/v1/benchmark/quantization")
+    assert api_res.status_code == 200
+    data = api_res.json()
+    assert "baseline" in data
+    assert "rows" in data
+    print("✅ GET /api/v1/benchmark/quantization (JSON API) PASSED!")
+
+
 if __name__ == "__main__":
     test_health()
     test_model_info()
     test_zkml_inference()
     test_user_custom_column_mapping_body()
-    print("\n🎉 ALL API, DB & USER COLUMN MAPPING BODY TESTS PASSED!")
+    test_quantization_benchmark()
+    print("\n🎉 ALL API, DB, BENCHMARK & JINJA2 TESTS PASSED!")

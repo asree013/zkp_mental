@@ -1,0 +1,12 @@
+Method,Scaling_Factor,Accuracy (%),Precision,Recall,F1-Score,Delta_Acc (%),Mismatch_Samples,MAE_Score_Drift,Status
+Baseline (Float64),-,100.0,1.0,1.0,1.0,0.0,0,0.0,Reference Baseline
+Quantized (S=1),1,100.0,1.0,1.0,1.0,0.0,0,0.220711,Optimal (No Loss)
+Quantized (S=5),5,100.0,1.0,1.0,1.0,0.0,0,0.612998,Optimal (No Loss)
+Quantized (S=10),10,100.0,1.0,1.0,1.0,0.0,0,0.503474,Optimal (No Loss)
+Quantized (S=50),50,100.0,1.0,1.0,1.0,0.0,0,0.337911,Optimal (No Loss)
+Quantized (S=100),100,100.0,1.0,1.0,1.0,0.0,0,0.53843,Optimal (No Loss)
+Quantized (S=500),500,100.0,1.0,1.0,1.0,0.0,0,0.179474,Optimal (No Loss)
+Quantized (S=1000),1000,100.0,1.0,1.0,1.0,0.0,0,0.157002,Optimal (No Loss) ⭐ [Used in ZK Circuit]
+Quantized (S=5000),5000,100.0,1.0,1.0,1.0,0.0,0,0.026335,Optimal (No Loss)
+Quantized (S=10000),10000,100.0,1.0,1.0,1.0,0.0,0,0.009517,Optimal (No Loss)
+Quantized (S=100000),100000,100.0,1.0,1.0,1.0,0.0,0,0.001268,Optimal (No Loss)

@@ -31,17 +31,25 @@ python lib/run_zkp.py 2
 python main.py
 # หรือ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
+### 6. การทดสอบและดูผลการทดลอง Quantization Impact (ป.โท วิจัย)
+- **Web UI Dashboard (Jinja2)**: เข้าเบราว์เซอร์ไปที่ `http://localhost:8000/test-quantization-impact`
+- **JSON REST API**: `http://localhost:8000/api/v1/benchmark/quantization`
+- **CLI Benchmark Script**: `python lib/benchmark_quantization.py`
+*(ระบบใช้ Hybrid Data Provider: ดึงข้อมูลจาก MySQL DB เป็นอันดับแรก พร้อม Fallback ไป CSV อัตโนมัติ)*
+
 ---
 
 ## Project Structure
-- `app/models/` : Data Schemas & ML Model Training / Quantization
-- `app/services/` : ZK Prover & Nargo Execution Engine
-- `app/controllers/` : API Route Controllers
-- `lib/` : Runnable CLI Scripts (`train_ml_model.py`, `run_zkp.py`)
+- `app/models/` : Data Schemas, DB Models & Hybrid ML Data Loader
+- `app/services/` : ZK Prover & Benchmark Engine
+- `app/controllers/` : API Route Controllers & Jinja2 Template View
+- `app/templates/` : Jinja2 HTML Templates (Quantization Impact UI)
+- `lib/` : Runnable CLI Scripts (`train_ml_model.py`, `run_zkp.py`, `benchmark_quantization.py`)
 - `circuit/` : Noir ZK DSL Circuit (`src/main.nr`)
 - `main.py` : FastAPI Server Entry point
 
 ## Dataset Info
 - **File**: `student_mental_health.csv`
+- **Database Table**: `mental_health_records` (MySQL)
 - **Description**: แบบสำรวจสภาวะสุขภาพจิตของนักเรียน (Student Mental Health Survey Dataset)
 - **Source**: Kaggle Dataset

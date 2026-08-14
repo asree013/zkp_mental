@@ -15,6 +15,7 @@ from app.services.zk_service import get_nargo_bin
 from app.controllers.health_controller import router as health_router
 from app.controllers.zkml_controller import router as zkml_router
 from app.controllers.student_controller import router as student_router
+from app.controllers.benchmark_controller import router as benchmark_router
 
 
 @asynccontextmanager
@@ -54,6 +55,7 @@ def root():
 app.include_router(health_router)
 app.include_router(zkml_router)
 app.include_router(student_router)
+app.include_router(benchmark_router)
 
 
 if __name__ == "__main__":

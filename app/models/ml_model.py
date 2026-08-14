@@ -32,17 +32,15 @@ def parse_cgpa(cgpa_val: str) -> int:
     return 325
 
 
-def preprocess_dataset(csv_path: str = 'student_mental_health.csv') -> pd.DataFrame:
+def preprocess_raw_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """
-    โหลดและทำความสะอาดข้อมูลสุขภาพจิตนักเรียนจากไฟล์ CSV
+    ทำความสะอาดและแปลงคุณลักษณะ (Features) จาก Raw DataFrame
     """
-    if not os.path.exists(csv_path):
-        raise FileNotFoundError(f"ไม่พบไฟล์ข้อมูลแบบสำรวจ: {csv_path}")
-
-    df = pd.read_csv(csv_path)
+    df = df.copy()
 
     # 1. แปลงอายุเป็นตัวเลขจำนวนเต็ม (ใช้ 20 เป็นค่าเริ่มต้นหากมี null)
-    df['Age'] = pd.to_numeric(df['Age'], errors='coerce').fillna(20).astype(int)
+    age_numeric = pd.to_numeric(df['Age'], errors='coerce')
+    df['Age'] = pd.Series(age_numeric).fillna(20).astype(int)
 
     # 2. แปลง CGPA เป็น Quantized Scale
     df['CGPA_Scaled'] = df['What is your CGPA?'].apply(parse_cgpa)
@@ -62,6 +60,56 @@ def preprocess_dataset(csv_path: str = 'student_mental_health.csv') -> pd.DataFr
     ).astype(int)
 
     return df
+
+
+def preprocess_dataset(csv_path: str = 'student_mental_health.csv') -> pd.DataFrame:
+    """
+    โหลดและทำความสะอาดข้อมูลสุขภาพจิตนักเรียนจากไฟล์ CSV
+    """
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(f"ไม่พบไฟล์ข้อมูลแบบสำรวจ: {csv_path}")
+
+    df = pd.read_csv(csv_path)
+    return preprocess_raw_dataframe(df)
+
+
+def load_dataset_hybrid(csv_path: str = 'student_mental_health.csv') -> tuple[pd.DataFrame, str, str]:
+    """
+    Hybrid Data Provider:
+    1. ลองดึงข้อมูลจาก MySQL Database (mental_health_records) เป็นอันดับแรก
+    2. หาก DB ว่าง หรือไม่ได้เชื่อมต่อ จะ Fallback ไปอ่านจากไฟล์ CSV อัตโนมัติ
+    ส่งคืน: (DataFrame, data_source_name, data_source_detail)
+    """
+    try:
+        from app.config.database import SessionLocal
+        from app.models.db_models import MentalHealthRecord
+
+        db = SessionLocal()
+        try:
+            records = db.query(MentalHealthRecord).all()
+            if records and len(records) >= 5:
+                # แปลง ORM Object เป็น List of Dicts
+                data_list = []
+                for r in records:
+                    data_list.append({
+                        'Age': r.age if r.age else 20,
+                        'What is your CGPA?': r.cgpa if r.cgpa else "3.00 - 3.49",
+                        'Do you have Depression?': r.depression if r.depression else "No",
+                        'Do you have Anxiety?': r.anxiety if r.anxiety else "No",
+                        'Do you have Panic attack?': r.panic_attack if r.panic_attack else "No",
+                        'Did you seek any specialist for a treatment?': r.specialist_treatment if r.specialist_treatment else "No"
+                    })
+                raw_df = pd.DataFrame(data_list)
+                processed_df = preprocess_raw_dataframe(raw_df)
+                return processed_df, "MySQL Database", f"ตาราง mental_health_records (จำนวน {len(records)} เรคคอร์ด)"
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"ℹ️ Hybrid Data Loader: สลับไปใช้ CSV Fallback เนื่องจาก: {e}")
+
+    # Fallback to CSV
+    processed_df = preprocess_dataset(csv_path)
+    return processed_df, "CSV Dataset (Fallback)", f"ไฟล์ {csv_path} (จำนวน {len(processed_df)} เรคคอร์ด)"
 
 
 def train_and_quantize(csv_path: str = 'student_mental_health.csv', scaling_factor: int = 1000) -> dict:
@@ -85,7 +133,7 @@ def train_and_quantize(csv_path: str = 'student_mental_health.csv', scaling_fact
 
     # แปลงค่าน้ำหนักเป็น Integer Quantized Value (คูณ scaling_factor)
     quantized_weights = [int(round(w * scaling_factor)) for w in raw_weights]
-    quantized_bias = int(round(raw_bias * scaling_factor))
+    quantized_bias = round(raw_bias * scaling_factor)
     quantized_threshold = 0  # Linear Decision Boundary ที่ 0
 
     model_metadata = {
