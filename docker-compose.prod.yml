@@ -47,9 +47,8 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-12345678}
       - MYSQL_DATABASE=${DB_NAME:-default-db}
-    # ปิด port 3306 สู่โลกภายนอกเพื่อความปลอดภัย (เปิดเฉพาะถ้าต้องการรีโมทต่อ DBeaver/Navicat)
-    # ports:
-    #   - "127.0.0.1:3306:3306"
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:

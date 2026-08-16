@@ -38,15 +38,35 @@ async def students_ui_page(request: Request, db: Session = Depends(get_db)):
     """
     เรนเดอร์หน้าเว็บ UI สำหรับจัดการข้อมูลสุขภาพจิตนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลด CSV และดูตารางข้อมูล
     """
-    records = get_mental_health_records(db, skip=0, limit=200)
+    records = get_mental_health_records(db, skip=0, limit=1000)
     stats = get_student_statistics(db)
     db_status = check_db_connection()
+
+    records_json = [
+        {
+            "id": r.id,
+            "time_date": r.time_date,
+            "gender": r.gender,
+            "age": r.age,
+            "education_level": r.education_level or "UNK",
+            "course": r.course,
+            "year_of_study": r.year_of_study,
+            "cgpa": r.cgpa,
+            "marital_status": r.marital_status,
+            "depression": r.depression,
+            "anxiety": r.anxiety,
+            "panic_attack": r.panic_attack,
+            "specialist_treatment": r.specialist_treatment
+        }
+        for r in records
+    ]
 
     return templates.TemplateResponse(
         request=request,
         name="students.html",
         context={
             "records": records,
+            "records_json": records_json,
             "stats": stats,
             "db_status": db_status
         }

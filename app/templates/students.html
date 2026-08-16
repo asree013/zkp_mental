@@ -301,106 +301,117 @@
 
         </div>
 
-        <!-- Student Data Table Section -->
+        <!-- Student Data Table Section with Advanced Search & Pagination -->
         <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 shadow-2xl">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 mb-5 border-b border-orange-500/15">
-                <div class="flex items-center gap-2.5 text-base font-bold text-white">
-                    <span class="text-xl">📋</span> รายการข้อมูลสุขภาพจิตนักเรียนในฐานข้อมูล (Mental Health Records)
+                <div>
+                    <div class="flex items-center gap-2.5 text-base font-bold text-white">
+                        <span class="text-xl">📋</span> รายการข้อมูลสุขภาพจิตนักเรียนในฐานข้อมูล (Mental Health Records)
+                    </div>
+                    <p class="text-xs text-stone-300 mt-0.5">
+                        ระบบค้นหาแบบละเอียด, คัดกรองระดับการศึกษา/ภาวะเสี่ยง พร้อมระบบแบ่งหน้า (Pagination)
+                    </p>
                 </div>
-                <div class="text-xs text-stone-300">
-                    แสดงผลล่าสุด 200 รายการ
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-stone-400">แสดงหน้าละ:</span>
+                    <select id="pageSizeSelect" onchange="changePageSize(this.value)" class="bg-[#1c1614] border border-orange-500/30 text-amber-300 text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:border-orange-500">
+                        <option value="10" selected>10 รายการ</option>
+                        <option value="25">25 รายการ</option>
+                        <option value="50">50 รายการ</option>
+                        <option value="100">100 รายการ</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- Toolbar Search -->
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                <input type="text" id="tableSearch" class="bg-black/50 border border-orange-500/20 rounded-xl px-4 py-2 text-xs text-white placeholder-stone-400 min-w-[280px] focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" placeholder="🔍 ค้นหาตามสาขาวิชา, อายุ, หรือ ID..." onkeyup="filterTable()">
-                <div class="text-xs text-stone-300">
-                    จำนวนทั้งหมดในตาราง: <strong id="table-row-count" class="text-amber-300">{{ records | length }}</strong> แถว
+            <!-- Toolbar Search & Multi-Filters -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 mb-5">
+                
+                <!-- Search Box (Col 6) -->
+                <div class="md:col-span-6 relative">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400 text-sm">
+                        🔍
+                    </div>
+                    <input type="text" id="tableSearch" class="w-full bg-black/50 border border-orange-500/20 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder-stone-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" placeholder="ค้นหาตาม ID, อายุ, ระดับการศึกษา, สาขาวิชา, CGPA..." oninput="handleSearchChange()">
+                    <button type="button" id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-white text-sm cursor-pointer">
+                        ✕
+                    </button>
+                </div>
+
+                <!-- Education Level Filter (Col 3) -->
+                <div class="md:col-span-3">
+                    <select id="eduFilter" onchange="handleFilterChange()" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3 py-2.5 text-xs text-stone-200 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200">
+                        <option value="ALL">🎓 ทุกระดับการศึกษา (All Levels)</option>
+                        <option value="PP">PP - การศึกษาก่อนประถม (Pre-primary)</option>
+                        <option value="PE">PE - ประถมศึกษา (Primary)</option>
+                        <option value="LSE">LSE - มัธยมศึกษาตอนต้น (Lower Secondary)</option>
+                        <option value="USE_VS">USE_VS - ม.ปลาย / อาชีวะ (Upper Sec/Voc)</option>
+                        <option value="BBDL">BBDL - ต่ำกว่า ป.ตรี / ปวส. (Below Bachelor)</option>
+                        <option value="BD">BD - ปริญญาตรี (Bachelor's degree)</option>
+                        <option value="MD">MD - ปริญญาโท (Master's Degree)</option>
+                        <option value="PHD">PHD - ปริญญาเอก (Doctoral Degree)</option>
+                        <option value="UNK">UNK - ไม่ระบุ / ไม่ทราบ (Unknown)</option>
+                    </select>
+                </div>
+
+                <!-- Risk Status Filter (Col 3) -->
+                <div class="md:col-span-3">
+                    <select id="riskFilter" onchange="handleFilterChange()" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3 py-2.5 text-xs text-stone-200 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200">
+                        <option value="ALL">🩺 ทุกสถานะความเสี่ยง (All Risk)</option>
+                        <option value="HIGH">⚠️ มีภาวะเสี่ยง (High Risk Cases)</option>
+                        <option value="LOW">✅ ปกติ (Low Risk Cases)</option>
+                        <option value="TREAT">🏥 เคยพบแพทย์ (Treatment)</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Table Info Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3 text-xs text-stone-300">
+                <div>
+                    กำลังแสดง <strong id="showing-range" class="text-amber-300">0 - 0</strong> จากทั้งหมด <strong id="filtered-total" class="text-amber-300">0</strong> รายการ
+                    <span id="filter-tag" class="hidden ml-2 px-2 py-0.5 rounded text-[11px] bg-orange-500/15 border border-orange-500/30 text-amber-300">
+                        (กรองจากทั้งหมด {{ records | length }} รายการ)
+                    </span>
+                </div>
+                <div class="text-stone-400">
+                    หน้า <strong id="current-page-display" class="text-amber-300">1</strong> / <span id="total-pages-display">1</span>
                 </div>
             </div>
 
-            <div class="overflow-x-auto rounded-xl max-h-[540px]">
+            <!-- Responsive Table Container -->
+            <div class="overflow-x-auto rounded-xl border border-orange-500/15">
                 <table id="studentsTable" class="w-full text-left text-xs border-collapse">
                     <thead>
-                        <tr class="bg-white/5 text-orange-200/80 uppercase tracking-wider font-semibold sticky top-0 backdrop-blur-md z-10 border-b border-orange-500/20">
-                            <th class="py-3 px-4">ID</th>
-                            <th class="py-3 px-4">Age / Gender</th>
-                            <th class="py-3 px-4">Education Level</th>
-                            <th class="py-3 px-4">Course & Year</th>
-                            <th class="py-3 px-4">CGPA</th>
-                            <th class="py-3 px-4">Depression</th>
-                            <th class="py-3 px-4">Anxiety</th>
-                            <th class="py-3 px-4">Panic Attack</th>
-                            <th class="py-3 px-4">Treatment</th>
-                            <th class="py-3 px-4">Actions</th>
+                        <tr class="bg-white/5 text-orange-200/90 uppercase tracking-wider font-semibold backdrop-blur-md border-b border-orange-500/20">
+                            <th class="py-3 px-3 text-center w-14">ID</th>
+                            <th class="py-3 px-3">Age / Gender</th>
+                            <th class="py-3 px-3 min-w-[200px]">ระดับการศึกษา (Education Level)</th>
+                            <th class="py-3 px-3">Course & Year</th>
+                            <th class="py-3 px-3 text-center">CGPA</th>
+                            <th class="py-3 px-3 text-center">Depression</th>
+                            <th class="py-3 px-3 text-center">Anxiety</th>
+                            <th class="py-3 px-3 text-center">Panic</th>
+                            <th class="py-3 px-3 text-center">Treatment</th>
+                            <th class="py-3 px-3 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-orange-500/10">
-                        {% for r in records %}
-                        <tr id="row-{{ r.id }}" class="hover:bg-orange-500/[0.04] transition-colors duration-150">
-                            <td class="py-3 px-4">
-                                <span class="font-mono text-xs bg-black/50 text-amber-300 px-2 py-0.5 rounded border border-orange-500/20">#{{ r.id }}</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <strong class="text-white">{{ r.age }}</strong> ปี / {{ r.gender }}
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                                    {{ r.education_level or 'UNK' }}
-                                </span>
-                            </td>
-                            <td class="py-3 px-4">
-                                <div class="font-semibold text-white">{{ r.course }}</div>
-                                <div class="text-[11px] text-stone-400">{{ r.year_of_study }}</div>
-                            </td>
-                            <td class="py-3 px-4">
-                                <span class="font-mono text-xs bg-black/50 text-amber-200 px-2 py-0.5 rounded border border-orange-500/20">{{ r.cgpa }}</span>
-                            </td>
-                            <td class="py-3 px-4">
-                                {% if r.depression and r.depression.lower() == 'yes' %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
-                                {% else %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-3 px-4">
-                                {% if r.anxiety and r.anxiety.lower() == 'yes' %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
-                                {% else %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-3 px-4">
-                                {% if r.panic_attack and r.panic_attack.lower() == 'yes' %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
-                                {% else %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-3 px-4">
-                                {% if r.specialist_treatment and r.specialist_treatment.lower() == 'yes' %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
-                                {% else %}
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-3 px-4">
-                                <button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-500/20 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" onclick="testZKInferenceRow({{ r.age }}, '{{ r.cgpa }}', '{{ r.depression }}', '{{ r.anxiety }}', '{{ r.panic_attack }}', '{{ r.specialist_treatment }}', {{ r.id }})">
-                                    <span>⚡ ZK Prove</span>
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr id="empty-row">
-                            <td colspan="10" class="text-center py-12 text-stone-300">
-                                📭 ยังไม่มีข้อมูลนักเรียนในฐานข้อมูล กรุณาเพิ่มข้อมูลหรือนำเข้าไฟล์ CSV ด้านบน
-                            </td>
-                        </tr>
-                        {% endfor %}
+                        <!-- Populated dynamically by JavaScript -->
                     </tbody>
                 </table>
             </div>
+
+            <!-- Pagination Navigation Controls -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-5 pt-4 border-t border-orange-500/15">
+                <div class="text-xs text-stone-400">
+                    แสดงหน้า <span id="pagination-page-info" class="text-amber-300 font-semibold">1</span>
+                </div>
+
+                <div class="flex items-center gap-1.5 flex-wrap" id="pagination-controls">
+                    <!-- Pagination buttons rendered here -->
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -579,6 +590,30 @@
     <div id="toast" class="fixed bottom-6 right-6 px-5 py-3.5 bg-[#181310] border border-orange-500 rounded-xl text-white text-xs font-semibold shadow-2xl z-50 hidden transition-all duration-300"></div>
 
     <script>
+        // =========================================================================
+        // 0. Education Level Dictionary & Metadata
+        // =========================================================================
+        const EDUCATION_LEVEL_INFO = {
+            "PP": { full: "Pre-primary Education (ก่อนประถมศึกษา)", short: "PP", badge: "bg-purple-500/15 text-purple-300 border-purple-500/30" },
+            "PE": { full: "Primary Education (ประถมศึกษา)", short: "PE", badge: "bg-blue-500/15 text-blue-300 border-blue-500/30" },
+            "LSE": { full: "Lower Secondary Education (มัธยมศึกษาตอนต้น)", short: "LSE", badge: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30" },
+            "USE_VS": { full: "Upper Secondary / Vocational (ม.ปลาย / อาชีวศึกษา)", short: "USE_VS", badge: "bg-indigo-500/15 text-indigo-300 border-indigo-500/30" },
+            "BBDL": { full: "Below Bachelor's Degree (ต่ำกว่าปริญญาตรี / ปวส.)", short: "BBDL", badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30" },
+            "BD": { full: "Bachelor's Degree (ปริญญาตรี)", short: "BD", badge: "bg-amber-500/15 text-amber-300 border-amber-500/30" },
+            "MD": { full: "Master's Degree (ปริญญาโท)", short: "MD", badge: "bg-orange-500/15 text-orange-300 border-orange-500/30" },
+            "PHD": { full: "Doctoral Degree (ปริญญาเอก)", short: "PHD", badge: "bg-rose-500/15 text-rose-300 border-rose-500/30" },
+            "UNK": { full: "Unknown / Not Specified (ไม่ระบุ)", short: "UNK", badge: "bg-stone-500/15 text-stone-300 border-stone-500/30" }
+        };
+
+        function getEducationLevelMeta(code) {
+            const key = (code || "UNK").trim().toUpperCase();
+            return EDUCATION_LEVEL_INFO[key] || {
+                full: code || "Unknown / Not Specified (ไม่ระบุ)",
+                short: key,
+                badge: "bg-stone-500/15 text-stone-300 border-stone-500/30"
+            };
+        }
+
         function showToast(msg, isSuccess = true) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
@@ -589,7 +624,299 @@
             }, 3500);
         }
 
-        // 1. Handle Manual Form Submit
+        // =========================================================================
+        // 1. Data Store & Pagination State
+        // =========================================================================
+        let allRecords = {{ records_json | tojson | safe }} || [];
+        let filteredRecords = [...allRecords];
+        let currentPage = 1;
+        let pageSize = 10;
+
+        function initTableEngine() {
+            applyFiltersAndSearch();
+        }
+
+        function changePageSize(newSize) {
+            pageSize = parseInt(newSize) || 10;
+            currentPage = 1;
+            renderTable();
+        }
+
+        function handleSearchChange() {
+            const query = document.getElementById('tableSearch').value.trim();
+            const clearBtn = document.getElementById('clearSearchBtn');
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+            currentPage = 1;
+            applyFiltersAndSearch();
+        }
+
+        function clearSearch() {
+            document.getElementById('tableSearch').value = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            currentPage = 1;
+            applyFiltersAndSearch();
+        }
+
+        function handleFilterChange() {
+            currentPage = 1;
+            applyFiltersAndSearch();
+        }
+
+        function applyFiltersAndSearch() {
+            const query = (document.getElementById('tableSearch')?.value || '').toLowerCase().trim();
+            const eduFilter = document.getElementById('eduFilter')?.value || 'ALL';
+            const riskFilter = document.getElementById('riskFilter')?.value || 'ALL';
+
+            filteredRecords = allRecords.filter(r => {
+                // 1. Education Level Filter
+                const rEdu = (r.education_level || 'UNK').toUpperCase();
+                if (eduFilter !== 'ALL' && rEdu !== eduFilter) {
+                    return false;
+                }
+
+                // 2. Risk Status Filter
+                const hasDep = r.depression && r.depression.toLowerCase() === 'yes';
+                const hasAnx = r.anxiety && r.anxiety.toLowerCase() === 'yes';
+                const hasPanic = r.panic_attack && r.panic_attack.toLowerCase() === 'yes';
+                const hasRisk = hasDep || hasAnx || hasPanic;
+                const hasTreat = r.specialist_treatment && r.specialist_treatment.toLowerCase() === 'yes';
+
+                if (riskFilter === 'HIGH' && !hasRisk) return false;
+                if (riskFilter === 'LOW' && hasRisk) return false;
+                if (riskFilter === 'TREAT' && !hasTreat) return false;
+
+                // 3. Search Query Match
+                if (query) {
+                    const eduMeta = getEducationLevelMeta(r.education_level);
+                    const searchable = [
+                        `#${r.id}`,
+                        r.id,
+                        r.age,
+                        r.gender,
+                        r.education_level,
+                        eduMeta.full,
+                        eduMeta.short,
+                        r.course,
+                        r.year_of_study,
+                        r.cgpa,
+                        r.marital_status,
+                        r.depression,
+                        r.anxiety,
+                        r.panic_attack,
+                        r.specialist_treatment
+                    ].join(' ').toLowerCase();
+
+                    if (!searchable.includes(query)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            // Filter tag indicator
+            const isFiltered = (query.length > 0) || (eduFilter !== 'ALL') || (riskFilter !== 'ALL');
+            const filterTag = document.getElementById('filter-tag');
+            if (filterTag) {
+                if (isFiltered) {
+                    filterTag.classList.remove('hidden');
+                } else {
+                    filterTag.classList.add('hidden');
+                }
+            }
+
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            const totalCount = filteredRecords.length;
+            const totalPages = Math.ceil(totalCount / pageSize) || 1;
+
+            if (currentPage > totalPages) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, totalCount);
+            const currentSlice = filteredRecords.slice(startIndex, endIndex);
+
+            // Update Counter Text
+            document.getElementById('filtered-total').textContent = totalCount;
+            document.getElementById('showing-range').textContent = totalCount === 0 ? '0 - 0' : `${startIndex + 1} - ${endIndex}`;
+            document.getElementById('current-page-display').textContent = currentPage;
+            document.getElementById('total-pages-display').textContent = totalPages;
+            document.getElementById('pagination-page-info').textContent = `${currentPage} จาก ${totalPages}`;
+
+            if (currentSlice.length === 0) {
+                tbody.innerHTML = `
+                    <tr id="empty-row">
+                        <td colspan="10" class="text-center py-12 text-stone-400">
+                            <div class="text-3xl mb-2">🔍</div>
+                            <div class="font-semibold text-stone-200">ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา</div>
+                            <div class="text-xs text-stone-400 mt-1">ลองล้างคำค้นหาหรือเปลี่ยนตัวกรองระดับการศึกษา</div>
+                        </td>
+                    </tr>
+                `;
+                renderPaginationButtons(totalPages);
+                return;
+            }
+
+            let html = '';
+            currentSlice.forEach(r => {
+                const eduMeta = getEducationLevelMeta(r.education_level);
+                const depBadge = (r.depression && r.depression.toLowerCase() === 'yes')
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>`
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>`;
+                
+                const anxBadge = (r.anxiety && r.anxiety.toLowerCase() === 'yes')
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>`
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>`;
+
+                const panicBadge = (r.panic_attack && r.panic_attack.toLowerCase() === 'yes')
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>`
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>`;
+
+                const treatBadge = (r.specialist_treatment && r.specialist_treatment.toLowerCase() === 'yes')
+                    ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Yes</span>`
+                    : `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>`;
+
+                const safeCourse = (r.course || '-').replace(/"/g, '&quot;');
+                const safeCgpa = (r.cgpa || '-');
+                const safeDep = (r.depression || 'No');
+                const safeAnx = (r.anxiety || 'No');
+                const safePanic = (r.panic_attack || 'No');
+                const safeTreat = (r.specialist_treatment || 'No');
+
+                html += `
+                    <tr id="row-${r.id}" class="hover:bg-orange-500/[0.04] transition-colors duration-150">
+                        <td class="py-3 px-3 text-center">
+                            <span class="font-mono text-xs bg-black/50 text-amber-300 px-2 py-0.5 rounded border border-orange-500/20">#${r.id}</span>
+                        </td>
+                        <td class="py-3 px-3 whitespace-nowrap">
+                            <strong class="text-white">${r.age}</strong> <span class="text-stone-400">ปี</span> / <span class="text-stone-300">${r.gender}</span>
+                        </td>
+                        <td class="py-3 px-3">
+                            <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${eduMeta.badge}">
+                                <span>🎓</span>
+                                <span>${eduMeta.full}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 px-3">
+                            <div class="font-semibold text-white">${safeCourse}</div>
+                            <div class="text-[11px] text-stone-400 font-mono">${r.year_of_study || '-'}</div>
+                        </td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <span class="font-mono text-xs bg-black/50 text-amber-200 px-2 py-0.5 rounded border border-orange-500/20">${safeCgpa}</span>
+                        </td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">${depBadge}</td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">${anxBadge}</td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">${panicBadge}</td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">${treatBadge}</td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/20 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" onclick="testZKInferenceRow(${r.age}, '${safeCgpa}', '${safeDep}', '${safeAnx}', '${safePanic}', '${safeTreat}', ${r.id})">
+                                <span>⚡ ZK Prove</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+            renderPaginationButtons(totalPages);
+        }
+
+        function renderPaginationButtons(totalPages) {
+            const container = document.getElementById('pagination-controls');
+            if (!container) return;
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let buttons = '';
+
+            // First & Prev Buttons
+            const isFirstDisabled = currentPage === 1;
+            buttons += `
+                <button onclick="goToPage(1)" ${isFirstDisabled ? 'disabled' : ''} class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
+                    «
+                </button>
+                <button onclick="goToPage(${currentPage - 1})" ${isFirstDisabled ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
+                    ‹ ก่อนหน้า
+                </button>
+            `;
+
+            // Window of page numbers (e.g. up to 5 surrounding pages)
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            if (startPage > 1) {
+                buttons += `<button onclick="goToPage(1)" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20">1</button>`;
+                if (startPage > 2) {
+                    buttons += `<span class="px-1.5 py-1 text-stone-500 text-xs">...</span>`;
+                }
+            }
+
+            for (let p = startPage; p <= endPage; p++) {
+                if (p === currentPage) {
+                    buttons += `
+                        <button class="px-3.5 py-1.5 rounded-lg text-xs font-bold text-white bg-gradient-to-r from-[#EA3815] to-[#FF6B00] shadow-md shadow-orange-500/30 border border-orange-400">
+                            ${p}
+                        </button>
+                    `;
+                } else {
+                    buttons += `
+                        <button onclick="goToPage(${p})" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 transition-all duration-150">
+                            ${p}
+                        </button>
+                    `;
+                }
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    buttons += `<span class="px-1.5 py-1 text-stone-500 text-xs">...</span>`;
+                }
+                buttons += `<button onclick="goToPage(${totalPages})" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20">${totalPages}</button>`;
+            }
+
+            // Next & Last Buttons
+            const isLastDisabled = currentPage === totalPages;
+            buttons += `
+                <button onclick="goToPage(${currentPage + 1})" ${isLastDisabled ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
+                    ถัดไป ›
+                </button>
+                <button onclick="goToPage(${totalPages})" ${isLastDisabled ? 'disabled' : ''} class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
+                    »
+                </button>
+            `;
+
+            container.innerHTML = buttons;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+            // Smooth scroll to table top
+            document.getElementById('studentsTable')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Initialize table on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            initTableEngine();
+        });
+
+        // =========================================================================
+        // 2. Handle Manual Form Submit
+        // =========================================================================
         async function handleManualSubmit(event) {
             event.preventDefault();
             const btn = document.getElementById('btn-save-student');
@@ -632,7 +959,9 @@
             }
         }
 
-        // 2. Drag & Drop File Handling
+        // =========================================================================
+        // 3. Drag & Drop File Handling
+        // =========================================================================
         let selectedFile = null;
         function handleFileSelected(event) {
             const file = event.target.files[0];
@@ -662,7 +991,9 @@
             }
         });
 
-        // 3. Modal Control
+        // =========================================================================
+        // 4. Modal Control
+        // =========================================================================
         function openMappingModal() {
             if (!selectedFile) {
                 showToast('⚠️ กรุณาเลือกไฟล์ CSV ก่อน', false);
@@ -696,7 +1027,9 @@
             showToast('🔄 รีเซ็ตชื่อ Column Mapping เป็นค่าเริ่มต้นแล้ว');
         }
 
-        // 4. Submit Uploaded CSV With Form Mapping
+        // =========================================================================
+        // 5. Submit Uploaded CSV With Form Mapping
+        // =========================================================================
         async function submitUploadedCSVWithMapping(event) {
             event.preventDefault();
             if (!selectedFile) {
@@ -744,7 +1077,9 @@
             }
         }
 
-        // 5. Quick Import Server CSV
+        // =========================================================================
+        // 6. Quick Import Server CSV
+        // =========================================================================
         async function importServerCSV() {
             if (!confirm('ต้องการนำเข้าข้อมูลจากไฟล์ student_mental_health.csv เริ่มต้นใช่หรือไม่?')) return;
             try {
@@ -761,58 +1096,9 @@
             }
         }
 
-        // 6. Delete Single Record
-        async function deleteRecord(id) {
-            if (!confirm(`ยืนยันการลบข้อมูลนักเรียน ID #${id}?`)) return;
-            try {
-                const res = await fetch(`/api/v1/students/records/${id}`, { method: 'DELETE' });
-                if (res.ok) {
-                    showToast(`✅ ลบข้อมูล ID #${id} สำเร็จ!`);
-                    const row = document.getElementById(`row-${id}`);
-                    if (row) row.remove();
-                } else {
-                    showToast('❌ ไม่สามารถลบข้อมูลได้', false);
-                }
-            } catch (err) {
-                showToast('❌ เกิดข้อผิดพลาด: ' + err.message, false);
-            }
-        }
-
-        // 7. Clear All Data
-        async function clearAllData() {
-            if (!confirm('⚠️ คำเตือน: คุณต้องการล้างข้อมูลนักเรียนทั้งหมดในฐานข้อมูลใช่หรือไม่?')) return;
-            try {
-                const res = await fetch('/api/v1/students/records', { method: 'DELETE' });
-                const data = await res.json();
-                if (res.ok) {
-                    showToast('🧹 ' + data.message);
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showToast('❌ ไม่สามารถล้างข้อมูลได้', false);
-                }
-            } catch (err) {
-                showToast('❌ เกิดข้อผิดพลาด: ' + err.message, false);
-            }
-        }
-
-        // 8. Live Filter Table
-        function filterTable() {
-            const query = document.getElementById('tableSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-            let visibleCount = 0;
-            rows.forEach(r => {
-                const text = r.textContent.toLowerCase();
-                if (text.includes(query)) {
-                    r.style.display = '';
-                    visibleCount++;
-                } else {
-                    r.style.display = 'none';
-                }
-            });
-            document.getElementById('table-row-count').textContent = visibleCount;
-        }
-
-        // 9. Test ZK Inference Row
+        // =========================================================================
+        // 7. Test ZK Inference Row
+        // =========================================================================
         async function testZKInferenceRow(age, cgpa, dep, anx, panic, treat, id) {
             const payload = {
                 age: age,
