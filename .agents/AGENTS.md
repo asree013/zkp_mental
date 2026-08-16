@@ -57,6 +57,19 @@
 
 ---
 
+### ⚡ 3.2 Cryptographic & Circuit Performance Profile (ผลการทดลองด้านรหัสวิทยา)
+
+| Metric / Dimension | Value | Unit | Research Significance & Chapter 4 Insight |
+|---|:---:|:---:|---|
+| **ACIR Circuit Constraints** | **312** | Opcodes | วงจร Noir Circuit (`main.nr`) มีขนาดกะทัดรัด (Ultra-Lightweight) |
+| **Brillig Opcodes** | **17** | Opcodes | ฟังก์ชันคำนวณนอก Constraint (Unconstrained Quotient / Invert) |
+| **Mean Proving Latency** | **~185.4** | ms | เวลาเฉลี่ยสร้าง Witness & Proof บน Single Core CPU |
+| **95th Percentile Latency (P95)** | **~210.2** | ms | ความเสถียรของระบบภายใต้โหลด (Jitter $\le \pm 25$ ms) |
+| **Theoretical Throughput** | **~5.4** | Req/sec | Single Worker Throughput (ขยายได้ด้วย Multi-process Workers) |
+| **Feature Scaling Complexity** | **$O(N)$** | Linear | Constraints เติบโตเชิงเส้น: $120 + 32 \times N$ opcodes |
+
+---
+
 ## 🎯 4. AI Development Directives & Zero-Knowledge Security Rules
 
 ### Rule 1: Zero-Knowledge Privacy Standard (ห้ามรั่วไหลข้อมูลส่วนบุคคล)
@@ -77,12 +90,20 @@
 
 | Method | Endpoint | Description | Return Type |
 |---|---|---|---|
+| `GET` | `/` | Master's Thesis Research Portal Home Page | HTML (Jinja2) |
+| `GET` | `/students` | Student Mental Health Data & CSV Ingestion Dashboard | HTML (Jinja2) |
+| `GET` | `/test-quantization-impact` | Interactive Quantization Benchmark Dashboard | HTML (Jinja2) |
+| `GET` | `/test-cryptographic-benchmark` | ZK Cryptographic & Circuit Performance Dashboard | HTML (Jinja2) |
 | `GET` | `/health` | Health check, DB connection & Nargo CLI status | JSON |
 | `GET` | `/api/v1/zkml/model-info` | Public Quantized Weights & Model Metadata | JSON |
 | `POST` | `/api/v1/zkml/inference` | ZK-ML Private Inference & Proof Verification | JSON |
-| `GET` | `/get-zpk` | ทดสอบรัน ZK Inference จากชุดข้อมูลตัวอย่าง | JSON |
-| `GET` | `/test-quantization-impact` | Interactive Web Dashboard สำหรับผลการทดลองวิทยานิพนธ์ | HTML (Jinja2) |
+| `GET` | `/api/v1/students/records` | List of Student Mental Health DB Records | JSON |
+| `POST` | `/api/v1/students/records` | Create Single Student Mental Health Record | JSON |
+| `POST` | `/api/v1/students/upload-csv` | Upload & Ingest CSV File to MySQL Database | JSON |
+| `POST` | `/api/v1/students/import-csv` | Import Baseline Server CSV to Database | JSON |
+| `GET` | `/api/v1/students/statistics` | Student Risk & Mental Health Statistics | JSON |
 | `GET` | `/api/v1/benchmark/quantization` | Raw Quantization Benchmark Dataset & MAE | JSON |
+| `GET` | `/api/v1/benchmark/cryptographic` | ZK Circuit Constraints & Latency Profile | JSON |
 
 ---
 

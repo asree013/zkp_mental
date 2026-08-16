@@ -1,10 +1,12 @@
 """
-Benchmark Service: Quantization Impact Calculation & Data Provider
-===================================================================
-คำนวณและสร้างรายงานการวิเคราะห์ผลกระทบของ Quantization สำหรับ Jinja2 Web UI & REST API
+Benchmark Service: Quantization Impact Calculation & Database Snapshot Provider
+================================================================================
+คำนวณ บันทึก และดึงผลการวิเคราะห์ Quantization จาก MySQL Database
 """
 
+import json
 import os
+from datetime import datetime
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
@@ -12,13 +14,82 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from sklearn.model_selection import train_test_split
 
 from app.models.ml_model import load_dataset_hybrid
+from app.config.database import SessionLocal
+from app.models.db_models import ExperimentBenchmarkLog
 
 
-def get_quantization_benchmark_data(csv_path: str = 'student_mental_health.csv') -> dict:
+def save_quantization_benchmark_to_db(data: dict, note: str = "Quantization Impact Benchmark Run") -> int:
+    """
+    บันทึกผลการทดลอง Quantization ลงตาราง experiment_benchmark_logs ใน MySQL
+    """
+    try:
+        db = SessionLocal()
+        try:
+            baseline = data.get("baseline", {})
+            log_entry = ExperimentBenchmarkLog(
+                benchmark_type="quantization",
+                dataset_source=baseline.get("data_source_name", "Hybrid"),
+                total_samples=baseline.get("total_samples", 0),
+                model_accuracy=f"{baseline.get('accuracy_pct', 100.0)}%",
+                optimal_scaling_factor=1000,
+                acir_opcodes=312,
+                mean_latency_ms=None,
+                p95_latency_ms=None,
+                details_json=json.dumps(data, ensure_ascii=False),
+                created_at=datetime.utcnow(),
+                execution_note=note
+            )
+            db.add(log_entry)
+            db.commit()
+            db.refresh(log_entry)
+            return log_entry.id
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"⚠️ Could not save benchmark to DB: {e}")
+        return 0
+
+
+def get_latest_quantization_from_db() -> dict:
+    """
+    ดึง Snapshot ผลการทดลองล่าสุดจาก MySQL Database
+    """
+    try:
+        db = SessionLocal()
+        try:
+            latest = db.query(ExperimentBenchmarkLog)\
+                .filter(ExperimentBenchmarkLog.benchmark_type == "quantization")\
+                .order_by(ExperimentBenchmarkLog.id.desc())\
+                .first()
+            if latest and latest.details_json:
+                data = json.loads(latest.details_json)
+                data["snapshot_info"] = {
+                    "is_cached": True,
+                    "snapshot_id": latest.id,
+                    "created_at": latest.created_at.strftime("%Y-%m-%d %H:%M:%S UTC") if latest.created_at else None,
+                    "dataset_source": latest.dataset_source,
+                    "note": latest.execution_note
+                }
+                return data
+        finally:
+            db.close()
+    except Exception as e:
+        print(f"ℹ️ Could not load cached benchmark from DB: {e}")
+    return None
+
+
+def get_quantization_benchmark_data(csv_path: str = 'student_mental_health.csv', force_refresh: bool = False) -> dict:
     """
     ประมวลผลการเปรียบเทียบ Quantization Scaling Factors vs Baseline Float64
-    โดยดึงข้อมูลจาก Database (MySQL) เป็นหลัก พร้อม Fallback เป็น CSV
+    - หาก force_refresh=False จะพยายามดึง Snapshot จาก DB มาแสดงผลทันที
+    - หาก force_refresh=True หรือไม่มีใน DB จะคำนวณสดและบันทึกลง DB ให้อัตโนมัติ
     """
+    if not force_refresh:
+        cached_data = get_latest_quantization_from_db()
+        if cached_data:
+            return cached_data
+
+    # คำนวณสดใหม่
     df, data_source_name, data_source_detail = load_dataset_hybrid(csv_path)
     feature_cols = ['Age', 'CGPA_Scaled', 'Depression', 'Anxiety', 'Panic_Attack', 'Seek_Treatment']
     X = df[feature_cols].values
@@ -124,12 +195,26 @@ def get_quantization_benchmark_data(csv_path: str = 'student_mental_health.csv')
         chart_accuracy.append(round(acc * 100, 2))
         chart_mae.append(round(mae_drift, 6))
 
-    return {
+    result_payload = {
         "baseline": baseline_info,
         "rows": rows,
         "chart_data": {
             "labels": chart_labels,
             "accuracy": chart_accuracy,
             "mae": chart_mae
+        },
+        "snapshot_info": {
+            "is_cached": False,
+            "snapshot_id": None,
+            "created_at": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
+            "dataset_source": data_source_name,
+            "note": "Live Computed & Saved to MySQL"
         }
     }
+
+    # บันทึกผลการทดลองลง DB
+    new_id = save_quantization_benchmark_to_db(result_payload)
+    if new_id:
+        result_payload["snapshot_info"]["snapshot_id"] = new_id
+
+    return result_payload

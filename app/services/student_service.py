@@ -89,9 +89,69 @@ def create_mental_health_record(db: Session, record: MentalHealthCreate) -> Ment
 
 def get_mental_health_records(db: Session, skip: int = 0, limit: int = 100) -> List[MentalHealthRecord]:
     """
-    ดึงรายการข้อมูลสุขภาพจิตนักเรียนจาก MySQL Database
+    ดึงรายการข้อมูลสุขภาพจิตนักเรียนจาก MySQL Database (เรียงลำดับ ID ล่าสุดก่อน)
     """
-    return db.query(MentalHealthRecord).offset(skip).limit(limit).all()
+    return db.query(MentalHealthRecord).order_by(MentalHealthRecord.id.desc()).offset(skip).limit(limit).all()
+
+
+def get_student_statistics(db: Session) -> dict:
+    """
+    คำนวณสถิติภาพรวมข้อมูลสุขภาพจิตนักเรียนในฐานข้อมูล
+    """
+    total = db.query(MentalHealthRecord).count()
+    if total == 0:
+        return {
+            "total_count": 0,
+            "depression_count": 0,
+            "anxiety_count": 0,
+            "panic_count": 0,
+            "treatment_count": 0,
+            "high_risk_count": 0,
+            "low_risk_count": 0
+        }
+
+    dep_count = db.query(MentalHealthRecord).filter(MentalHealthRecord.depression.ilike("yes")).count()
+    anx_count = db.query(MentalHealthRecord).filter(MentalHealthRecord.anxiety.ilike("yes")).count()
+    panic_count = db.query(MentalHealthRecord).filter(MentalHealthRecord.panic_attack.ilike("yes")).count()
+    treat_count = db.query(MentalHealthRecord).filter(MentalHealthRecord.specialist_treatment.ilike("yes")).count()
+
+    # High risk cases (any condition is Yes)
+    high_risk_count = db.query(MentalHealthRecord).filter(
+        (MentalHealthRecord.depression.ilike("yes")) |
+        (MentalHealthRecord.anxiety.ilike("yes")) |
+        (MentalHealthRecord.panic_attack.ilike("yes"))
+    ).count()
+
+    return {
+        "total_count": total,
+        "depression_count": dep_count,
+        "anxiety_count": anx_count,
+        "panic_count": panic_count,
+        "treatment_count": treat_count,
+        "high_risk_count": high_risk_count,
+        "low_risk_count": max(0, total - high_risk_count)
+    }
+
+
+def delete_mental_health_record(db: Session, record_id: int) -> bool:
+    """
+    ลบรายการข้อมูลนักเรียนตาม ID
+    """
+    rec = db.query(MentalHealthRecord).filter(MentalHealthRecord.id == record_id).first()
+    if rec:
+        db.delete(rec)
+        db.commit()
+        return True
+    return False
+
+
+def clear_all_mental_health_records(db: Session) -> int:
+    """
+    ล้างข้อมูลทั้งหมดในตาราง mental_health_records
+    """
+    count = db.query(MentalHealthRecord).delete()
+    db.commit()
+    return count
 
 
 def process_df_to_db(

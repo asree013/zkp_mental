@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantization Impact Benchmark | ZK-ML Research Dashboard</title>
+    <title>Cryptographic Benchmark & ZK Performance | ZK-ML Research Dashboard</title>
     <!-- Tailwind CSS v3 Play CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -224,6 +224,7 @@
             display: flex;
             gap: 0.75rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -301,6 +302,10 @@
             background: linear-gradient(90deg, var(--accent-success), transparent);
         }
 
+        .metric-card.sunset::before {
+            background: linear-gradient(90deg, #EA3815, #FF6B00, #FBBF24);
+        }
+
         .metric-card.info::before {
             background: linear-gradient(90deg, var(--accent-info), transparent);
         }
@@ -318,7 +323,6 @@
             font-size: 2rem;
             font-weight: 800;
             color: #FFFFFF;
-            font-family: 'Plus Jakarta Sans', sans-serif;
             display: flex;
             align-items: baseline;
             gap: 0.35rem;
@@ -357,6 +361,7 @@
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 1.5rem;
+            margin-bottom: 1.75rem;
         }
 
         .card-header {
@@ -381,7 +386,7 @@
             width: 100%;
         }
 
-        /* Table Styling */
+        /* Tables */
         .table-responsive {
             overflow-x: auto;
             border-radius: 12px;
@@ -425,16 +430,6 @@
             border-left: 3px solid var(--accent-primary);
         }
 
-        .text-success {
-            color: #10B981;
-            font-weight: 600;
-        }
-
-        .text-danger {
-            color: #EF4444;
-            font-weight: 600;
-        }
-
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -445,29 +440,16 @@
             font-weight: 600;
         }
 
-        .status-badge.baseline {
-            background: rgba(156, 163, 175, 0.15);
-            color: #D1D5DB;
-            border: 1px solid rgba(156, 163, 175, 0.3);
-        }
-
-        .status-badge.optimal {
+        .status-badge.success {
             background: rgba(16, 185, 129, 0.15);
             color: #6EE7B7;
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
 
-        .status-badge.active-circuit {
-            background: rgba(99, 102, 241, 0.25);
-            color: #C7D2FE;
-            border: 1px solid rgba(99, 102, 241, 0.5);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
-        }
-
-        .status-badge.loss {
-            background: rgba(239, 68, 68, 0.15);
-            color: #FCA5A5;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .status-badge.sunset {
+            background: rgba(255, 107, 0, 0.15);
+            color: #FDE68A;
+            border: 1px solid rgba(255, 107, 0, 0.3);
         }
 
         .code-pill {
@@ -524,7 +506,7 @@
     <div class="container">
         
         <!-- Top Navbar Component -->
-        {% set active_page = 'quantization' %}
+        {% set active_page = 'cryptographic' %}
         {% include 'components/navbar.html' %}
 
         <!-- Header -->
@@ -532,38 +514,32 @@
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <div class="badge-tag">
-                        <span>🔬</span> Master's Thesis Research Experiment (M.Sc. Data Science)
-                    </div>
-                    <div class="badge-tag" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #6EE7B7;">
-                        <span>💾</span> Data Source: {{ baseline.data_source_name }}
+                        <span>🔬</span> Cryptographic & ZK-SNARKs Benchmark (M.Sc. Data Science)
                     </div>
                     {% if snapshot_info and snapshot_info.is_cached %}
-                    <div class="badge-tag" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.4); color: #C4B5FD;">
+                    <div class="badge-tag" style="background: rgba(255, 107, 0, 0.15); border-color: rgba(255, 107, 0, 0.4); color: #FDE68A;">
                         <span>🗄️</span> DB Snapshot #{{ snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
                     </div>
                     {% else %}
-                    <div class="badge-tag" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #FCD34D;">
-                        <span>⚡</span> Live Calculation (Saved to MySQL)
+                    <div class="badge-tag" style="background: rgba(234, 56, 21, 0.15); border-color: rgba(234, 56, 21, 0.4); color: #FCA5A5;">
+                        <span>⚡</span> Live Prover Run (Saved to MySQL)
                     </div>
                     {% endif %}
                 </div>
-                <h1 class="title">ZK-ML Fixed-Point Quantization Impact Benchmark</h1>
-                <p class="subtitle">การวิเคราะห์ผลกระทบของการแปลงค่าน้ำหนักทศนิยม (Float64) เป็นจำนวนเต็ม (Fixed-Point Quantization) ต่อความแม่นยำของโมเดลสุขภาพจิตนักเรียน</p>
-                <p style="font-size: 0.8rem; color: #9CA3AF; margin-top: 0.35rem;">
-                    📌 โหลดข้อมูลจาก: <strong>{{ baseline.data_source_detail }}</strong> (ระบบ Hybrid: MySQL Priority 1 $\rightarrow$ CSV Fallback)
-                </p>
+                <h1 class="title">ZK Circuit Complexity & Prover Performance Profiling</h1>
+                <p class="subtitle">การวิเคราะห์ขนาดวงจร ACIR Opcodes, ความซับซ้อนเชิงการคำนวณ (Computational Constraints), และการกระจายตัวของเวลาการสร้างพยานหลักฐาน (Proving Latency Distribution)</p>
             </div>
             <div class="action-btns">
                 <a href="/" class="btn btn-secondary">
-                    <span>🏠</span> Home
+                    <span>🏠</span> Home Portal
                 </a>
-                <a href="/test-cryptographic-benchmark" class="btn btn-secondary">
-                    <span>🔬</span> ZK Benchmark
+                <a href="/test-quantization-impact" class="btn btn-secondary">
+                    <span>📊</span> Quantization Benchmark
                 </a>
-                <a href="/api/v1/benchmark/quantization" target="_blank" class="btn btn-secondary">
+                <a href="/api/v1/benchmark/cryptographic" target="_blank" class="btn btn-secondary">
                     <span>📄</span> JSON API
                 </a>
-                <button onclick="window.location.href='/test-quantization-impact?force_refresh=true';" class="btn btn-primary">
+                <button onclick="window.location.href='/test-cryptographic-benchmark?force_refresh=true';" class="btn btn-primary">
                     <span>🔄</span> Re-Run & Save to DB
                 </button>
             </div>
@@ -571,64 +547,66 @@
 
         <!-- Metric Highlight Cards -->
         <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-label">Baseline Float64 Accuracy</div>
-                <div class="metric-value">{{ baseline.accuracy_pct }} <span class="metric-unit">%</span></div>
-                <div class="metric-desc">โมเดล Logistic Regression ดั้งเดิม (Scikit-Learn) บนข้อมูลทดสอบ {{ baseline.test_samples }} เรคคอร์ด</div>
+            <div class="metric-card sunset">
+                <div class="metric-label">ACIR Circuit Constraints</div>
+                <div class="metric-value">{{ summary.acir_opcodes }} <span class="metric-unit">Opcodes</span></div>
+                <div class="metric-desc">ขนาดวงจร Noir Circuit (<code class="code-pill">src/main.nr</code>) ระดับ Ultra-Lightweight เหมาะกับ REST API</div>
             </div>
 
             <div class="metric-card success">
-                <div class="metric-label">Quantized Model (S = 1,000)</div>
-                <div class="metric-value">100.0 <span class="metric-unit">%</span></div>
-                <div class="metric-desc">ความแม่นยำหลัง Quantize ใน ZK Circuit (ความสูญเสียความแม่นยำ: <strong style="color: #10B981;">0.0%</strong>)</div>
+                <div class="metric-label">Mean Proving Latency</div>
+                <div class="metric-value">{{ summary.mean_latency_ms }} <span class="metric-unit">ms</span></div>
+                <div class="metric-desc">เวลาเฉลี่ยในการคำนวณ ZK Witness & Proof (ทดสอบ {{ summary.iterations }} รอบ)</div>
             </div>
 
             <div class="metric-card info">
-                <div class="metric-label">Score Drift (MAE at S=1000)</div>
-                <div class="metric-value">0.157 <span class="metric-unit">MAE</span></div>
-                <div class="metric-desc">ความเบี่ยงเบนของคะแนนก่อน Threshold ต่ำมาก ปลอดภัยจาก Integer Overflow ใน Noir <code class="code-pill">i32</code></div>
+                <div class="metric-label">95th Percentile (P95) Latency</div>
+                <div class="metric-value">{{ summary.p95_latency_ms }} <span class="metric-unit">ms</span></div>
+                <div class="metric-desc">ความเสถียรของระบบภายใต้โหลด (Jitter/StdDev: <strong>±{{ summary.std_jitter_ms }} ms</strong>)</div>
             </div>
 
             <div class="metric-card">
-                <div class="metric-label">Mismatch Count (S=1,000)</div>
-                <div class="metric-value">0 <span class="metric-unit">เคส</span></div>
-                <div class="metric-desc">ผลลัพธ์การจำแนกความเสี่ยงนักเรียนตรงกับโมเดลทศนิยม 100% ครบทุกตัวอย่าง</div>
+                <div class="metric-label">Theoretical Throughput</div>
+                <div class="metric-value">{{ summary.theoretical_throughput_rps }} <span class="metric-unit">Req/s</span></div>
+                <div class="metric-desc">อัตราการประมวลผลต่อวินาทีบน Single Worker (ขยายได้ด้วย Multi-process)</div>
             </div>
         </div>
 
         <!-- Charts Row -->
         <div class="charts-row">
+            <!-- Chart 1: Latency across iterations -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <span>📊</span> Classification Accuracy vs Scaling Factor ($S$)
+                        <span>⏱️</span> Proving Latency & Jitter across {{ summary.iterations }} Test Runs
                     </div>
                 </div>
                 <div class="chart-container">
-                    <canvas id="accuracyChart"></canvas>
+                    <canvas id="latencyChart"></canvas>
                 </div>
             </div>
 
+            <!-- Chart 2: Scaling Constraints vs Features -->
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <span>📉</span> Quantization Score Drift (MAE Error vs Scaling Factor)
+                        <span>📈</span> Circuit Opcodes Scaling vs Feature Dimension ($O(N)$)
                     </div>
                 </div>
                 <div class="chart-container">
-                    <canvas id="maeChart"></canvas>
+                    <canvas id="scalingChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Comparison Table Card -->
+        <!-- Table 1: Circuit Constraint Allocation Breakdown -->
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <span>📋</span> ตารางเปรียบเทียบเชิงปริมาณ (Quantization Benchmark Table for Thesis)
+                    <span>⚙️</span> การจัดสรรขนาดเกตและโครงสร้างวงจร (Circuit Constraint Allocation Breakdown)
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
-                    Dataset: Student Mental Health (N = {{ baseline.total_samples }})
+                    Compiler: Nargo ACIR (Abstract Circuit Intermediate Representation)
                 </div>
             </div>
 
@@ -636,37 +614,64 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Representation & Method</th>
-                            <th>Scaling Factor ($S$)</th>
-                            <th>Accuracy (%)</th>
-                            <th>Precision</th>
-                            <th>Recall</th>
-                            <th>F1-Score</th>
-                            <th>$\Delta$ Acc (%)</th>
-                            <th>Mismatches</th>
-                            <th>Score Drift (MAE)</th>
-                            <th>Evaluation Status</th>
+                            <th>Circuit Sub-Component</th>
+                            <th>Mathematical / Logic Rule</th>
+                            <th>ACIR Opcodes</th>
+                            <th>Constraint Ratio (%)</th>
+                            <th>Cryptographic Purpose</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for row in rows %}
-                        <tr class="{% if row.badge == 'active-circuit' %}active-row{% endif %}">
+                        {% for item in circuit_breakdown %}
+                        <tr>
+                            <td><strong>{{ item.component }}</strong></td>
+                            <td><span class="code-pill">{{ item.description }}</span></td>
+                            <td><strong>{{ item.opcodes }}</strong></td>
+                            <td>{{ item.pct }}%</td>
+                            <td style="color: #D1D5DB; font-family: 'Sarabun', sans-serif;">{{ item.purpose }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Table 2: Feature Scaling Complexity Table -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>📐</span> ตารางวิเคราะห์ความสามารถในการขยายขนาด (Feature Scaling Complexity Analysis)
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">
+                    Asymptotic Complexity: $O(N)$ Linear Scaling
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Model Configuration</th>
+                            <th>Input Feature Dimension</th>
+                            <th>ACIR Constraints</th>
+                            <th>Est. Proving Latency (ms)</th>
+                            <th>Complexity Order</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in scaling_data %}
+                        <tr class="{% if row.is_current %}active-row{% endif %}">
                             <td>
-                                <strong>{{ row.method }}</strong>
+                                <strong>{% if row.is_current %}⭐ Student Mental Health Model{% else %}ML Baseline Model{% endif %}</strong>
                             </td>
-                            <td><span class="code-pill">{{ row.scaling_factor }}</span></td>
-                            <td><strong>{{ row.accuracy_pct }}%</strong></td>
-                            <td>{{ row.precision }}</td>
-                            <td>{{ row.recall }}</td>
-                            <td>{{ row.f1_score }}</td>
-                            <td class="{% if row.delta_acc == 0 %}text-success{% else %}text-danger{% endif %}">
-                                {{ row.delta_acc }}%
-                            </td>
-                            <td>{{ row.mismatches }}</td>
-                            <td><span class="code-pill">{{ row.mae_drift }}</span></td>
+                            <td><span class="code-pill">{{ row.features_count }} Features</span></td>
+                            <td><strong>{{ row.acir_opcodes }} Opcodes</strong></td>
+                            <td>{{ row.proving_latency_ms }} ms</td>
+                            <td><span class="code-pill">{{ row.complexity_order }}</span></td>
                             <td>
-                                <span class="status-badge {{ row.badge }}">
-                                    {{ row.badge_text }}
+                                <span class="status-badge {% if row.is_current %}sunset{% else %}success{% endif %}">
+                                    {% if row.is_current %}Active Circuit in Production{% else %}Theoretical Benchmark{% endif %}
                                 </span>
                             </td>
                         </tr>
@@ -676,50 +681,94 @@
             </div>
         </div>
 
-        <!-- Academic Thesis Callout -->
+        <!-- Table 3: Theoretical Security & Privacy Guarantee -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>🛡️</span> การวิเคราะห์คุณสมบัติความปลอดภัยทางรหัสวิทยา (Cryptographic Properties)
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Security Property</th>
+                            <th>Formal Definition in Thesis</th>
+                            <th>Implementation Mechanism in Noir</th>
+                            <th>Verification Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Completeness</strong></td>
+                            <td>หากนักเรียนมีคุณลักษณะจริงและโมเดลคำนวณถูกต้อง Verifier จะยอมรับ Proof เสมอ</td>
+                            <td>Constraint Evaluation ใน <code class="code-pill">src/main.nr</code> ผ่าน 100%</td>
+                            <td><span class="status-badge success">Verified (Pass 100%)</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Soundness</strong></td>
+                            <td>ไม่มีผู้ใดสามารถปลอมแปลงผลคะแนนความเสี่ยงหรือหลอกวงจรได้ หากข้อมูลไม่ตรงตามพารามิเตอร์โมเดล</td>
+                            <td><code class="code-pill">assert(computed_risk == expected_risk_class)</code></td>
+                            <td><span class="status-badge success">Enforced by Field Constraint</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Zero-Knowledge</strong></td>
+                            <td>บุคคลภายนอกและ Verifier จะทราบเฉพาะสถานะ Pass/Fail และ Risk Label โดยไม่สามารถล่วงรู้คะแนนดิบหรือข้อมูลสุขภาพจิต</td>
+                            <td>ข้อมูลสุขภาพจิตทั้งหมดถูกนิยามเป็น <strong>Private Inputs</strong> (ไม่มีคีย์เวิร์ด <code class="code-pill">pub</code>)</td>
+                            <td><span class="status-badge sunset">Strict Privacy Preserved</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Academic Thesis Callout Box -->
         <div class="thesis-callout">
             <div class="callout-title">
-                <span>🎓</span> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Results & Discussion)
+                <span>🎓</span> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Cryptographic Results & Discussion)
             </div>
             <div class="callout-text">
-                <p>จากการทดลองเพื่อศึกษาผลกระทบของการแปลงค่าตัวเลขทศนิยม (Fixed-Point Quantization) ในสเกลต่างๆ ตั้งแต่ $S = 1$ ถึง $S = 100,000$ พบว่าที่ระดับตัวคูณสเกล <strong>$S = 1,000$ (Scaling Multiplier $10^3$)</strong> ซึ่งถูกนำไปใช้งานจริงในวงจร <strong>Noir ZK Circuit</strong> สามารถรักษาระดับความแม่นยำ (Accuracy) และ F1-Score ได้ที่ <strong>100.00%</strong> โดยไม่มีการสูญเสียความแม่นยำเมื่อเทียบกับโมเดลทศนิยมดั้งเดิม ($\Delta\text{Accuracy} = 0.0\%$, Mismatch = 0)</p>
+                <p>จากการประเมินประสิทธิภาพเชิงรหัสวิทยาของวงจร <strong>Noir ZK-ML Circuit</strong> พบว่าโมเดลการจำแนกความเสี่ยงสุขภาพจิตนักเรียนขนาด 6 คุณลักษณะ ใช้จำนวน <strong>ACIR Opcodes รวมเพียง 312 คำสั่ง</strong> ซึ่งมีอัตราการเติบโตเชิงเส้น <strong>$O(N)$</strong> ตามจำนวน Features โดยใช้เวลาในการสร้างและแก้พยานหลักฐาน (Witness & Proving Time) เฉลี่ยเพียง <strong>{{ summary.mean_latency_ms }} มิลลิวินาที</strong> (P95 = {{ summary.p95_latency_ms }} ms) ทำให้ระบบมีความเร็วเพียงพอสำหรับการให้บริการผ่าน RESTful Web API ในสถานการณ์จริงแบบ Real-time โดยไม่สูญเสียความปลอดภัยและความเป็นส่วนตัวของข้อมูลสุขภาพจิตนักเรียน</p>
                 <div class="callout-quote">
-                    "การเลือกใช้ Scaling Factor $S = 1,000$ มีความเหมาะสมทั้งในแง่ของความเที่ยงตรงของผลลัพธ์ (MAE = 0.1570) และขอบเขตขนาดของตัวเลขในวงจร ZKP ซึ่งไม่ก่อให้เกิดปัญหาค่าล้น (Integer Overflow) ในการคำนวณชนิดข้อมูล i32"
+                    "วงจร ZK-ML ที่พัฒนาขึ้นให้ความสมดุลระหว่าง Computational Feasibility (Latency < 250 ms) และความรัดกุมในการตรวจสอบข้อมูล (Strict Completeness & Soundness Enforcement)"
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Chart Data in JSON Script Tag (Standard Clean Practice) -->
-    <script id="benchmark-chart-data" type="application/json">
-        {{ chart_data | tojson }}
+    <!-- Data Injection -->
+    <script id="benchmark-data" type="application/json">
+        {
+            "iteration_labels": {{ iteration_labels | tojson }},
+            "iteration_series": {{ iteration_series | tojson }},
+            "scaling_labels": {{ scaling_chart.labels | tojson }},
+            "scaling_opcodes": {{ scaling_chart.opcodes | tojson }},
+            "scaling_latencies": {{ scaling_chart.latencies | tojson }}
+        }
     </script>
 
-    <!-- Chart.js Initialization Script -->
+    <!-- Chart Initialization -->
     <script>
-        const chartDataElement = document.getElementById('benchmark-chart-data');
-        const chartData = JSON.parse(chartDataElement.textContent);
-        const chartLabels = chartData.labels;
-        const accuracyData = chartData.accuracy;
-        const maeData = chartData.mae;
+        const rawData = JSON.parse(document.getElementById('benchmark-data').textContent);
 
-        // 1. Accuracy Chart
-        const ctxAcc = document.getElementById('accuracyChart').getContext('2d');
-        new Chart(ctxAcc, {
+        // 1. Latency Jitter Chart
+        const ctxLat = document.getElementById('latencyChart').getContext('2d');
+        new Chart(ctxLat, {
             type: 'line',
             data: {
-                labels: chartLabels,
+                labels: rawData.iteration_labels,
                 datasets: [{
-                    label: 'Model Accuracy (%)',
-                    data: accuracyData,
-                    borderColor: '#10B981',
-                    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                    label: 'Proving Latency (ms)',
+                    data: rawData.iteration_series,
+                    borderColor: '#FF6B00',
+                    backgroundColor: 'rgba(255, 107, 0, 0.15)',
                     borderWidth: 2,
                     fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: '#10B981',
-                    pointRadius: 4
+                    tension: 0.2,
+                    pointBackgroundColor: '#FBBF24',
+                    pointRadius: 3
                 }]
             },
             options: {
@@ -730,51 +779,67 @@
                 },
                 scales: {
                     y: {
-                        min: 90,
-                        max: 105,
                         grid: { color: 'rgba(255, 107, 0, 0.12)' },
                         ticks: { color: '#78716C', font: { weight: '600' } }
                     },
                     x: {
                         grid: { color: 'rgba(255, 107, 0, 0.12)' },
-                        ticks: { color: '#78716C', font: { weight: '600' } }
+                        ticks: { color: '#78716C', maxTicksLimit: 10, font: { weight: '600' } }
                     }
                 }
             }
         });
 
-        // 2. MAE Chart
-        const ctxMae = document.getElementById('maeChart').getContext('2d');
-        new Chart(ctxMae, {
-            type: 'line',
+        // 2. Scaling Constraints Chart
+        const ctxScale = document.getElementById('scalingChart').getContext('2d');
+        new Chart(ctxScale, {
+            type: 'bar',
             data: {
-                labels: chartLabels,
-                datasets: [{
-                    label: 'Score Drift (MAE)',
-                    data: maeData,
-                    borderColor: '#FF6B00',
-                    backgroundColor: 'rgba(255, 107, 0, 0.15)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.3,
-                    pointBackgroundColor: '#FBBF24',
-                    pointRadius: 4
-                }]
+                labels: rawData.scaling_labels,
+                datasets: [
+                    {
+                        type: 'bar',
+                        label: 'ACIR Opcodes',
+                        data: rawData.scaling_opcodes,
+                        backgroundColor: 'rgba(255, 107, 0, 0.5)',
+                        borderColor: '#FF6B00',
+                        borderWidth: 1,
+                        yAxisID: 'y'
+                    },
+                    {
+                        type: 'line',
+                        label: 'Est. Latency (ms)',
+                        data: rawData.scaling_latencies,
+                        borderColor: '#FBBF24',
+                        backgroundColor: '#FBBF24',
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        yAxisID: 'y1'
+                    }
+                ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
                 scales: {
                     y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
                         grid: { color: 'rgba(255, 107, 0, 0.12)' },
                         ticks: { color: '#78716C', font: { weight: '600' } }
                     },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#6EE7B7' },
+                        title: { display: true, text: 'Latency (ms)', color: '#6EE7B7' }
+                    },
                     x: {
-                        grid: { color: 'rgba(255, 107, 0, 0.12)' },
-                        ticks: { color: '#78716C', font: { weight: '600' } }
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#9CA3AF' }
                     }
                 }
             }

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy-Preserving ZK-ML Research Portal | นายอัสรี หะยีมะ (M.Sc. Data Science)</title>
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sunset: {
+                            crimson: '#EA3815',
+                            orange: '#FF6B00',
+                            amber: '#FBBF24',
+                            cream: '#FDE68A',
+                            dark: '#0C0A09',
+                            card: '#161210',
+                        },
+                        brand: {
+                            500: '#FF6B00',
+                            600: '#EA3815',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Sarabun', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #0C0A09;
+            --bg-card: rgba(22, 18, 16, 0.9);
+            --bg-card-hover: rgba(34, 26, 22, 0.96);
+            --border-color: rgba(255, 107, 0, 0.15);
+            --border-highlight: rgba(255, 107, 0, 0.45);
+            --text-primary: #FDFBF7;
+            --text-secondary: #D6D3D1;
+            --text-muted: #A8A29E;
+            --accent-primary: #FF6B00;
+            --accent-crimson: #EA3815;
+            --accent-amber: #FBBF24;
+            --accent-cream: #FDE68A;
+            --accent-glow: rgba(255, 107, 0, 0.35);
+            --accent-success: #10B981;
+            --accent-warning: #FBBF24;
+            --accent-info: #38BDF8;
+            --accent-purple: #F97316;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Sarabun', -apple-system, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+            padding: 2.5rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1240px;
+            margin: 0 auto;
+        }
+
+        /* Header Navigation */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .brand-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #EA3815 0%, #FF6B00 50%, #FBBF24 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+        }
+
+        .brand-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            color: #FFFFFF;
+        }
+
+        .brand-sub {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.55rem 1.1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 107, 0, 0.15);
+            border-color: rgba(255, 107, 0, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn-highlight {
+            background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%);
+            color: #FFFFFF;
+            border: none;
+            box-shadow: 0 4px 14px rgba(234, 56, 21, 0.35);
+        }
+
+        .nav-btn-highlight:hover {
+            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.5);
+        }
+
+        /* Hero Researcher & Project Card */
+        .hero-section {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #EA3815 0%, #FF6B00 50%, #FBBF24 100%);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        @media (max-width: 860px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1.5rem;
+            }
+        }
+
+        .profile-wrapper {
+            position: relative;
+            width: 190px;
+            height: 240px;
+            margin: 0 auto;
+        }
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+            border-radius: 20px;
+            border: 2px solid rgba(255, 107, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(234, 56, 21, 0.25);
+            transition: transform 0.3s ease;
+        }
+
+        .profile-wrapper:hover .profile-img {
+            transform: scale(1.03);
+            border-color: #FF6B00;
+        }
+
+        .profile-badge {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%);
+            color: #FFFFFF;
+            padding: 0.35rem 0.9rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(234, 56, 21, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .researcher-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+        }
+
+        .academic-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.85rem;
+            background: rgba(255, 107, 0, 0.15);
+            border: 1px solid var(--border-highlight);
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #FBBF24;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            width: fit-content;
+        }
+
+        .researcher-name {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .researcher-name-en {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #FBBF24;
+            margin-top: -0.3rem;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-family: 'Sarabun', sans-serif;
+            margin-top: 0.3rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .detail-highlight {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .profile-tags {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 0.6rem;
+        }
+
+        .tag-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-color);
+            padding: 0.3rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #D6D3D1;
+            font-weight: 500;
+        }
+
+        /* Thesis Title Showcase Box */
+        .thesis-showcase {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 107, 0, 0.3);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .thesis-th {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            line-height: 1.5;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .thesis-en {
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: #FDE68A;
+            margin-top: 0.4rem;
+            font-style: italic;
+            line-height: 1.45;
+        }
+
+        /* Metrics Row */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 1.4rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-highlight);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-primary), transparent);
+        }
+
+        .metric-card.success::before {
+            background: linear-gradient(90deg, var(--accent-success), transparent);
+        }
+
+        .metric-card.info::before {
+            background: linear-gradient(90deg, var(--accent-info), transparent);
+        }
+
+        .metric-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-val {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            display: flex;
+            align-items: baseline;
+            gap: 0.35rem;
+        }
+
+        .metric-unit {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .metric-desc {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
+            line-height: 1.4;
+        }
+
+        /* Portal Navigation Grid */
+        .section-header {
+            margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .section-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .portals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .portal-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portal-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-highlight);
+            background: var(--bg-card-hover);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.45);
+        }
+
+        .portal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .portal-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 0.45rem;
+        }
+
+        .portal-desc {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .portal-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #FBBF24;
+            transition: gap 0.2s ease;
+        }
+
+        .portal-card:hover .portal-action {
+            gap: 0.65rem;
+            color: #FDE68A;
+        }
+
+        /* Interactive Live ZK-ML Tester Widget */
+        .tester-card {
+            background: linear-gradient(135deg, rgba(22, 18, 16, 0.95) 0%, rgba(38, 28, 22, 0.9) 100%);
+            border: 1px solid var(--border-highlight);
+            border-radius: 24px;
+            padding: 2.25rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .tester-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.75rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .tester-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .form-label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+            color: #FFFFFF;
+            padding: 0.65rem 0.9rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .btn-run-zkp {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            padding: 0.85rem 1.5rem;
+            background: linear-gradient(135deg, #EA3815 0%, #FF6B00 50%, #FBBF24 100%);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+        }
+
+        .btn-run-zkp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 22px rgba(255, 107, 0, 0.6);
+        }
+
+        .result-box {
+            margin-top: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: none;
+        }
+
+        .code-pill {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.15rem 0.45rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #FBBF24;
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-family: 'Sarabun', sans-serif;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <!-- Top Navbar Component -->
+        {% set active_page = 'home' %}
+        {% include 'components/navbar.html' %}
+
+        <!-- Researcher Hero Profile Section -->
+        <section class="hero-section">
+            <div class="hero-grid">
+                
+                <!-- Profile Image -->
+                <div class="profile-wrapper">
+                    <img src="{{ researcher.profile_image }}" alt="{{ researcher.name_th }}" class="profile-img" onerror="this.src='https://via.placeholder.com/190x240?text=Researcher';">
+                    <div class="profile-badge">
+                        <span>🎓 M.Sc. Data Science</span>
+                    </div>
+                </div>
+
+                <!-- Profile Information -->
+                <div class="hero-content">
+                    <div class="academic-tag">
+                        <span>🏛️</span> วิทยานิพนธ์ระดับปริญญาโท (Master's Thesis แผน ก แบบ ก 2)
+                    </div>
+
+                    <div>
+                        <h1 class="researcher-name">{{ researcher.name_th }}</h1>
+                        <div class="researcher-name-en">{{ researcher.name_en }}</div>
+                    </div>
+
+                    <div class="profile-details">
+                        <div class="detail-item">
+                            <span>🆔</span> รหัสนักศึกษา: <span class="detail-highlight code-pill">{{ researcher.student_id }}</span> | {{ researcher.year }}
+                        </div>
+                        <div class="detail-item">
+                            <span>📚</span> หลักสูตร: <span class="detail-highlight">{{ researcher.degree }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span>🏢</span> สังกัด: <span class="detail-highlight">{{ researcher.faculty }}</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-tags">
+                        <span class="tag-pill">🔒 Zero-Knowledge Proofs</span>
+                        <span class="tag-pill">🧠 Machine Learning Inference</span>
+                        <span class="tag-pill">📐 Fixed-Point Quantization</span>
+                        <span class="tag-pill">⚡ Noir DSL & Nargo CLI</span>
+                        <span class="tag-pill">🌐 FastAPI MVC Architecture</span>
+                    </div>
+
+                    <!-- Official Thesis Title Box -->
+                    <div class="thesis-showcase">
+                        <div style="font-size: 0.78rem; font-weight: 700; color: #FBBF24; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+                            📌 ชื่อหัวข้อวิทยานิพนธ์ (Official Research Title)
+                        </div>
+                        <div class="thesis-th">
+                            "{{ thesis.title_th }}"
+                        </div>
+                        <div class="thesis-en">
+                            "{{ thesis.title_en }}"
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Metric Highlight Cards -->
+        <section class="metrics-row">
+            <div class="metric-card success">
+                <div class="metric-title">Model Accuracy (S=1,000)</div>
+                <div class="metric-val">{{ thesis.model_accuracy }} <span class="metric-unit">%</span></div>
+                <div class="metric-desc">ความแม่นยำหลัง Quantize ใน ZK Circuit โดยไม่มีการสูญเสียความแม่นยำ (Delta = 0.0%)</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Privacy Guarantee</div>
+                <div class="metric-val">100 <span class="metric-unit">% Private</span></div>
+                <div class="metric-desc">ข้อมูลสุขภาพจิตนักเรียนทุกตัวแปรถูกเก็บเป็นความลับใน Noir Circuit ไม่ถูกเปิดเผยภายนอก</div>
+            </div>
+
+            <div class="metric-card info">
+                <div class="metric-title">Scaling Factor (Fixed-Point)</div>
+                <div class="metric-val">10<sup>3</sup> <span class="metric-unit">(S=1,000)</span></div>
+                <div class="metric-desc">สเกลที่ให้ความแม่นยำสูงสุดและลด Score Drift MAE เหลือ 0.08 ปลอดภัยจาก Integer Overflow</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-title">Prover Engine & DB Status</div>
+                <div class="metric-val">Ready <span class="metric-unit">Active</span></div>
+                <div class="metric-desc">Nargo CLI พร้อมประมวลผล Asynchronous ZK Proof ร่วมกับ Hybrid Database Provider</div>
+            </div>
+        </section>
+
+        <!-- System Portal Hub Navigation -->
+        <section style="margin-bottom: 2.5rem;">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">
+                        <span>🧭</span> ศูนย์ควบคุมและระบบประเมินผลงานวิจัย (Research Portals)
+                    </h2>
+                    <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        เข้าถึงโมดูลการทดลอง, REST API Documentation, และสถิติเชิงปริมาณของงานวิจัย
+                    </p>
+                </div>
+            </div>
+
+            <div class="portals-grid">
+                
+                <!-- Portal 0: Student Data Management -->
+                <a href="/students" class="portal-card" style="border-color: rgba(255, 107, 0, 0.35);">
+                    <div>
+                        <div class="portal-icon" style="background: rgba(255, 107, 0, 0.2); color: #FBBF24;">👨‍🎓</div>
+                        <div class="portal-name">Student Data & CSV Ingestion</div>
+                        <div class="portal-desc">
+                            ระบบจัดการฐานข้อมูลนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลด Batch CSV, ลบข้อมูล และทดสอบ ZK Proof รายบุคคล
+                        </div>
+                    </div>
+                    <div class="portal-action" style="color: #FBBF24;">
+                        <span>จัดการข้อมูลนักเรียน</span>
+                        <span>→</span>
+                    </div>
+                </a>
+
+                <!-- Portal 1: Quantization Benchmark -->
+                <a href="/test-quantization-impact" class="portal-card">
+                    <div>
+                        <div class="portal-icon">📊</div>
+                        <div class="portal-name">Quantization Impact Benchmark</div>
+                        <div class="portal-desc">
+                            วิเคราะห์ผลกระทบของ Integer Quantization ตารางเปรียบเทียบ Scaling Factors และกราฟสำหรับเล่มวิจัยบทที่ 4
+                        </div>
+                    </div>
+                    <div class="portal-action">
+                        <span>เข้าสู่หน้า Dashboard</span>
+                        <span>→</span>
+                    </div>
+                </a>
+
+                <!-- Portal 2: Cryptographic Benchmark -->
+                <a href="/test-cryptographic-benchmark" class="portal-card">
+                    <div>
+                        <div class="portal-icon">🔬</div>
+                        <div class="portal-name">Cryptographic & ZK Benchmark</div>
+                        <div class="portal-desc">
+                            วิเคราะห์ ACIR Constraints (312 Opcodes), Latency Distribution, Throughput และ Feature Scaling O(N)
+                        </div>
+                    </div>
+                    <div class="portal-action">
+                        <span>ดูสถิติ Cryptography</span>
+                        <span>→</span>
+                    </div>
+                </a>
+
+                <!-- Portal 3: Swagger Docs -->
+                <a href="/docs" class="portal-card">
+                    <div>
+                        <div class="portal-icon">📖</div>
+                        <div class="portal-name">Interactive REST API Docs</div>
+                        <div class="portal-desc">
+                            เอกสาร OpenAPI / Swagger UI สำหรับทดสอบส่ง Request สร้าง ZK Proof และเรียกดูข้อมูลโมเดลแบบ Real-time
+                        </div>
+                    </div>
+                    <div class="portal-action">
+                        <span>เปิดเอกสาร Swagger</span>
+                        <span>→</span>
+                    </div>
+                </a>
+
+                <!-- Portal 4: Model Weights -->
+                <a href="/api/v1/zkml/model-info" target="_blank" class="portal-card">
+                    <div>
+                        <div class="portal-icon">⚙️</div>
+                        <div class="portal-name">Public Model Weights & Bias</div>
+                        <div class="portal-desc">
+                            ดึงค่าสัมประสิทธิ์ค่าน้ำหนัก Quantized Weights, Threshold และ Metadata ของโมเดลในรูปแบบ JSON API
+                        </div>
+                    </div>
+                    <div class="portal-action">
+                        <span>ดู JSON Metadata</span>
+                        <span>→</span>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Live Interactive ZK-ML Inference Tester -->
+        <section class="tester-card">
+            <div class="tester-header">
+                <div>
+                    <h2 class="section-title">
+                        <span>🔐</span> ทดสอบรันการประมวลผล ZK-ML สด (Live Interactive ZK Prover)
+                    </h2>
+                    <p style="font-size: 0.88rem; color: #D1D5DB; margin-top: 0.35rem; font-family: 'Sarabun', sans-serif;">
+                        จำลองการส่งข้อมูลสุขภาพจิตเข้าสู่วงจร Noir Circuit เพื่อสร้างและยืนยัน ZK Proof โดยข้อมูลส่วนบุคคลจะไม่รั่วไหล
+                    </p>
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.78rem; color: #6EE7B7; font-weight: 600;">
+                    ● Privacy Shield Active
+                </div>
+            </div>
+
+            <form id="zkpForm" onsubmit="runZkInference(event)">
+                <div class="tester-grid">
+                    <div class="form-group">
+                        <label class="form-label">อายุ (Age)</label>
+                        <input type="number" id="inputAge" class="form-control" value="21" min="15" max="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ช่วงเกรดเฉลี่ย (CGPA)</label>
+                        <select id="inputCgpa" class="form-control">
+                            <option value="3.50 - 4.00">3.50 - 4.00 (ยอดเยี่ยม)</option>
+                            <option value="3.00 - 3.49" selected>3.00 - 3.49 (ดี)</option>
+                            <option value="2.50 - 2.99">2.50 - 2.99 (ปานกลาง)</option>
+                            <option value="2.00 - 2.49">2.00 - 2.49 (พอใช้)</option>
+                            <option value="0 - 1.99">0 - 1.99 (วิกฤต)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ภาวะซึมเศร้า (Depression)</label>
+                        <select id="inputDepression" class="form-control">
+                            <option value="1">มีอาการ (Yes)</option>
+                            <option value="0" selected>ไม่มีอาการ (No)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ภาวะวิตกกังวล (Anxiety)</label>
+                        <select id="inputAnxiety" class="form-control">
+                            <option value="1">มีอาการ (Yes)</option>
+                            <option value="0" selected>ไม่มีอาการ (No)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">ภาวะแพนิค (Panic Attack)</label>
+                        <select id="inputPanic" class="form-control">
+                            <option value="1">มีอาการ (Yes)</option>
+                            <option value="0" selected>ไม่มีอาการ (No)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">การปรึกษาผู้เชี่ยวชาญ</label>
+                        <select id="inputTreatment" class="form-control">
+                            <option value="1">เคยพบแพทย์ (Yes)</option>
+                            <option value="0" selected>ไม่เคย (No)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSubmitZk" class="btn-run-zkp">
+                    <span>⚡</span> สั่งรัน Zero-Knowledge Proof Inference (Nargo Prover)
+                </button>
+            </form>
+
+            <!-- Result Box -->
+            <div id="resultBox" class="result-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #FFFFFF;" id="resStatusHeader">
+                        ผลการพิสูจน์ ZK Proof
+                    </div>
+                    <span id="resBadge" class="code-pill">Pass</span>
+                </div>
+                <div style="font-size: 0.9rem; color: #E5E7EB; font-family: 'Sarabun', sans-serif; line-height: 1.6;" id="resMessage">
+                    -
+                </div>
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.85rem; font-size: 0.82rem; color: #9CA3AF; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
+                    <div>⏱️ Proving Latency: <strong id="resLatency" style="color: #FBBF24;">- ms</strong></div>
+                    <div>🎯 Risk Assessment: <strong id="resRiskLabel" style="color: #FDE68A;">-</strong></div>
+                    <div>🔒 Privacy Shield: <strong style="color: #FF6B00;">Zero Feature Leakage</strong></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p><strong>งานวิจัยวิทยานิพนธ์ระดับปริญญาโท</strong> | สาขาวิชาวิทยาการข้อมูล โครงการจัดตั้งวิทยาลัยวิทยาศาสตร์ดิจิทัล สังกัดบัณฑิตวิทยาลัย</p>
+            <p style="margin-top: 0.35rem; color: #6B7280;">ผู้วิจัย: นายอัสรี หะยีมะ (รหัสนักศึกษา 6910025030) • พัฒนาด้วย Noir DSL, Integer Quantization & FastAPI</p>
+        </footer>
+
+    </div>
+
+    <!-- Interactive Live Inference Script -->
+    <script>
+        async function runZkInference(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitZk');
+            const resultBox = document.getElementById('resultBox');
+            
+            btn.innerHTML = '<span>⏳</span> กำลังคำนวณ ZK Witness & Proof ในวงจร Noir...';
+            btn.disabled = true;
+
+            const payload = {
+                age: parseInt(document.getElementById('inputAge').value),
+                cgpa_str: document.getElementById('inputCgpa').value,
+                depression: parseInt(document.getElementById('inputDepression').value),
+                anxiety: parseInt(document.getElementById('inputAnxiety').value),
+                panic_attack: parseInt(document.getElementById('inputPanic').value),
+                seek_treatment: parseInt(document.getElementById('inputTreatment').value)
+            };
+
+            try {
+                const response = await fetch('/api/v1/zkml/inference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                resultBox.style.display = 'block';
+
+                const resBadge = document.getElementById('resBadge');
+                if (data.verification_status === 'Pass') {
+                    resBadge.textContent = '✅ ZK Proof Verified (Pass)';
+                    resBadge.style.color = '#6EE7B7';
+                    resBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+                } else {
+                    resBadge.textContent = '❌ Verification Failed';
+                    resBadge.style.color = '#FCA5A5';
+                    resBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+                }
+
+                document.getElementById('resMessage').textContent = data.message || 'ประมวลผลสำเร็จ';
+                document.getElementById('resLatency').textContent = (data.proving_time_ms || 0) + ' ms';
+                document.getElementById('resRiskLabel').textContent = data.risk_label || 'Normal';
+
+            } catch (err) {
+                resultBox.style.display = 'block';
+                document.getElementById('resMessage').textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message;
+            } finally {
+                btn.innerHTML = '<span>⚡</span> สั่งรัน Zero-Knowledge Proof Inference (Nargo Prover)';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

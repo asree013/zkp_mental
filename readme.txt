@@ -31,11 +31,30 @@ python lib/run_zkp.py 2
 python main.py
 # หรือ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
-### 6. การทดสอบและดูผลการทดลอง Quantization Impact (ป.โท วิจัย)
-- **Web UI Dashboard (Jinja2)**: เข้าเบราว์เซอร์ไปที่ `http://localhost:8000/test-quantization-impact`
-- **JSON REST API**: `http://localhost:8000/api/v1/benchmark/quantization`
-- **CLI Benchmark Script**: `python lib/benchmark_quantization.py`
+### 6. การทดสอบและดูผลการทดลองวิจัย ป.โท (Thesis Benchmarks)
+- **Research Portal Homepage**: เข้าเบราว์เซอร์ไปที่ `http://localhost:8000/`
+- **1) Quantization Impact Dashboard (Jinja2)**: `http://localhost:8000/test-quantization-impact`
+- **2) Cryptographic & ZK Benchmark (Jinja2)**: `http://localhost:8000/test-cryptographic-benchmark`
+- **JSON REST API Endpoints**: 
+  - `http://localhost:8000/api/v1/benchmark/quantization`
+  - `http://localhost:8000/api/v1/benchmark/cryptographic`
+- **CLI Benchmark Scripts**: 
+  - `python lib/benchmark_quantization.py`
+  - `python lib/benchmark_zk_performance.py`
 *(ระบบใช้ Hybrid Data Provider: ดึงข้อมูลจาก MySQL DB เป็นอันดับแรก พร้อม Fallback ไป CSV อัตโนมัติ)*
+
+### 7. การ Deploy ด้วย Docker & Docker Compose (Container Deployment)
+```bash
+# รันทั้งระบบ (FastAPI + Noir CLI + MySQL) ด้วยคำสั่งเดียว
+docker compose up -d --build
+
+# ดูสถานะและ Logs
+docker compose ps
+docker compose logs -f api
+
+# ปิดระบบ
+docker compose down
+```
 
 ---
 

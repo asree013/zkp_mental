@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Data & CSV Ingestion | ZK-ML Research Platform</title>
+    
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sunset: {
+                            crimson: '#EA3815',
+                            orange: '#FF6B00',
+                            amber: '#FBBF24',
+                            cream: '#FDE68A',
+                            dark: '#0C0A09',
+                            card: '#161210',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Sarabun', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0C0A09;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="text-stone-100 font-sans min-h-screen py-8 px-4 sm:px-6 lg:px-8 antialiased">
+
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Top Navbar Component -->
+        {% set active_page = 'student' %}
+        {% include 'components/navbar.html' %}
+
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 pb-6 border-b border-orange-500/20">
+            <div>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-500/15 border border-orange-500/30 text-amber-300">
+                        👨‍🎓 Student Mental Health Database
+                    </span>
+                    {% if db_status.status == 'connected' %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300">
+                        🗄️ MySQL: {{ db_status.database }} (Active)
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 border border-rose-500/30 text-rose-300">
+                        ⚠️ Database Disconnected
+                    </span>
+                    {% endif %}
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-amber-100 to-orange-400 bg-clip-text text-transparent">
+                    Student Mental Health Records & Data Ingestion
+                </h1>
+                <p class="text-sm text-stone-300 mt-1 max-w-3xl">
+                    ระบบจัดการฐานข้อมูลนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลดไฟล์ CSV และเชื่อมโยงสู่ Zero-Knowledge Machine Learning Inference
+                </p>
+            </div>
+        </header>
+
+        <!-- Metric Highlight Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            
+            <!-- Metric 1: Total -->
+            <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-orange-500/50 hover:-translate-y-0.5 transition-all duration-200">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#EA3815] to-[#FF6B00]"></div>
+                <div class="text-xs font-bold uppercase tracking-wider text-orange-200/70 mb-1">Total Student Records</div>
+                <div class="text-3xl font-extrabold text-white flex items-baseline gap-1" id="stat-total">
+                    {{ stats.total_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                </div>
+                <div class="text-xs text-stone-300 mt-2">
+                    ข้อมูลนักเรียนทั้งหมดในตาราง <code class="font-mono text-xs bg-black/50 text-amber-300 px-1.5 py-0.5 rounded border border-orange-500/20">mental_health_records</code>
+                </div>
+            </div>
+
+            <!-- Metric 2: High Risk -->
+            <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-rose-500/50 hover:-translate-y-0.5 transition-all duration-200">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#EA3815] to-rose-600"></div>
+                <div class="text-xs font-bold uppercase tracking-wider text-rose-300/80 mb-1">High Risk Cases (มีภาวะเสี่ยง)</div>
+                <div class="text-3xl font-extrabold text-rose-400 flex items-baseline gap-1" id="stat-high">
+                    {{ stats.high_risk_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                </div>
+                <div class="text-xs text-stone-300 mt-2">
+                    นักเรียนที่มีภาวะ Depression / Anxiety หรือ Panic Attack
+                </div>
+            </div>
+
+            <!-- Metric 3: Low Risk -->
+            <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-[#FBBF24]"></div>
+                <div class="text-xs font-bold uppercase tracking-wider text-emerald-300/80 mb-1">Low Risk Cases (ปกติ)</div>
+                <div class="text-3xl font-extrabold text-emerald-400 flex items-baseline gap-1" id="stat-low">
+                    {{ stats.low_risk_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                </div>
+                <div class="text-xs text-stone-300 mt-2">
+                    นักเรียนที่ไม่มีประวัติภาวะเสี่ยงสุขภาพจิตในระบบ
+                </div>
+            </div>
+
+            <!-- Metric 4: Treatment -->
+            <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-amber-500/50 hover:-translate-y-0.5 transition-all duration-200">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF6B00] to-[#FBBF24]"></div>
+                <div class="text-xs font-bold uppercase tracking-wider text-amber-300/80 mb-1">Specialist Treatment</div>
+                <div class="text-3xl font-extrabold text-amber-400 flex items-baseline gap-1" id="stat-treat">
+                    {{ stats.treatment_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                </div>
+                <div class="text-xs text-stone-300 mt-2">
+                    เคยเข้ารับคำปรึกษาจากแพทย์หรือผู้เชี่ยวชาญ
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Dual Action Grid: Manual Form & CSV Ingestion -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+            
+            <!-- 1. Manual Form Entry (Col 7) -->
+            <div class="lg:col-span-7 bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 shadow-2xl">
+                <div class="flex items-center justify-between pb-4 mb-5 border-b border-orange-500/15">
+                    <div class="flex items-center gap-2.5 text-base font-bold text-white">
+                        <span class="text-xl">📝</span> เพิ่มข้อมูลนักเรียนรายคน (Manual Entry)
+                    </div>
+                    <span class="text-xs text-amber-400/80 font-mono">Insert to MySQL</span>
+                </div>
+
+                <form id="addStudentForm" onsubmit="handleManualSubmit(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">อายุ (Age) *</label>
+                            <input type="number" name="age" id="form-age" class="w-full bg-black/50 border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" min="15" max="100" value="21" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">เพศ (Gender) *</label>
+                            <select name="gender" id="form-gender" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="Female">Female (หญิง)</option>
+                                <option value="Male">Male (ชาย)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">สาขาวิชา / คณะ (Course) *</label>
+                            <input type="text" name="course" id="form-course" class="w-full bg-black/50 border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" value="Data Science" required>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">ชั้นปี (Year of Study) *</label>
+                            <select name="year_of_study" id="form-year" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="year 1">Year 1 (ชั้นปีที่ 1)</option>
+                                <option value="year 2">Year 2 (ชั้นปีที่ 2)</option>
+                                <option value="year 3">Year 3 (ชั้นปีที่ 3)</option>
+                                <option value="year 4">Year 4 (ชั้นปีที่ 4)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">เกรดเฉลี่ยสะสม (CGPA) *</label>
+                            <select name="cgpa" id="form-cgpa" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="3.50 - 4.00">3.50 - 4.00</option>
+                                <option value="3.00 - 3.49" selected>3.00 - 3.49</option>
+                                <option value="2.50 - 2.99">2.50 - 2.99</option>
+                                <option value="2.00 - 2.49">2.00 - 2.49</option>
+                                <option value="0 - 1.99">0 - 1.99</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">สถานภาพสมรส (Marital Status)</label>
+                            <select name="marital_status" id="form-marital" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200">
+                                <option value="No" selected>No (โสด)</option>
+                                <option value="Yes">Yes (สมรส)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">ภาวะซึมเศร้า (Depression) *</label>
+                            <select name="depression" id="form-dep" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="No" selected>No (ไม่มี)</option>
+                                <option value="Yes">Yes (มีภาวะซึมเศร้า)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">ภาวะวิตกกังวล (Anxiety) *</label>
+                            <select name="anxiety" id="form-anx" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="No" selected>No (ไม่มี)</option>
+                                <option value="Yes">Yes (มีภาวะวิตกกังวล)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">ภาวะแพนิค (Panic Attack) *</label>
+                            <select name="panic_attack" id="form-panic" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="No" selected>No (ไม่มี)</option>
+                                <option value="Yes">Yes (มีภาวะแพนิค)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">เคยพบผู้เชี่ยวชาญ (Treatment) *</label>
+                            <select name="specialist_treatment" id="form-treat" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" required>
+                                <option value="No" selected>No (ไม่เคย)</option>
+                                <option value="Yes">Yes (เคยพบแพทย์/ผู้เชี่ยวชาญ)</option>
+                            </select>
+                        </div>
+
+                        <div class="sm:col-span-2 mt-2">
+                            <button type="submit" id="btn-save-student" class="w-full inline-flex items-center justify-center gap-2 py-3 px-5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-[#EA3815] via-[#FF6B00] to-[#FBBF24] hover:brightness-110 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                                <span>💾</span> บันทึกข้อมูลนักเรียน (Save to MySQL)
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- 2. CSV File Ingestion (Col 5) -->
+            <div class="lg:col-span-5 bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 shadow-2xl flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between pb-4 mb-5 border-b border-orange-500/15">
+                        <div class="flex items-center gap-2.5 text-base font-bold text-white">
+                            <span class="text-xl">📁</span> นำเข้าไฟล์ข้อมูล (CSV Ingestion)
+                        </div>
+                        <span class="text-xs text-amber-400 font-mono">Batch Import</span>
+                    </div>
+
+                    <!-- Drag & Drop Zone -->
+                    <div id="dropzone" onclick="document.getElementById('csvFileInput').click()" class="border-2 border-dashed border-orange-500/40 hover:border-orange-500 bg-orange-500/5 hover:bg-orange-500/10 rounded-2xl p-8 text-center cursor-pointer transition-all duration-200 mb-4 group">
+                        <div class="text-4xl mb-2 group-hover:scale-110 transition-transform duration-200">📥</div>
+                        <div class="text-sm font-bold text-white">คลิกเพื่อเลือกไฟล์ หรือ ลากไฟล์ CSV มาวางที่นี่</div>
+                        <div class="text-xs text-stone-300 mt-1">รองรับไฟล์ <code class="font-mono text-xs bg-black/50 text-amber-300 px-1 py-0.5 rounded border border-orange-500/20">.csv</code> (เช่น student_mental_health.csv)</div>
+                        <input type="file" id="csvFileInput" accept=".csv" class="hidden" onchange="handleFileSelected(event)">
+                    </div>
+
+                    <div id="file-info-box" class="hidden p-3.5 bg-orange-500/15 border border-orange-500/30 rounded-xl mb-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-orange-200/70 uppercase font-semibold">ไฟล์ที่เลือก:</span>
+                                <div class="text-xs font-bold text-white truncate max-w-[200px]" id="selected-filename"></div>
+                            </div>
+                            <button type="button" onclick="openMappingModal()" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-orange-500/25 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200">
+                                <span>⚙️</span> แก้ไข Mapping
+                            </button>
+                        </div>
+                    </div>
+
+                    <button onclick="openMappingModal()" id="btn-open-modal" class="w-full hidden items-center justify-center gap-2 py-3 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-[#FF6B00] to-[#FBBF24] hover:brightness-110 shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5 transition-all duration-200 mb-3 cursor-pointer">
+                        <span>🚀</span> ตั้งค่า Column Mapping และนำเข้าไฟล์นี้
+                    </button>
+                </div>
+
+                <!-- Quick Actions Divider -->
+                <div class="pt-4 mt-4 border-t border-orange-500/15">
+                    <div class="text-xs font-semibold text-orange-200/80 mb-2">
+                        ⚡ ทางเลือกด่วน (Quick Import)
+                    </div>
+                    <button onclick="importServerCSV()" class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-xs text-white bg-white/5 border border-orange-500/20 hover:bg-orange-500/15 hover:border-orange-500/40 transition-all duration-200 cursor-pointer">
+                        <span>📂</span> นำเข้าจาก Baseline Server CSV (101 ตัวอย่าง)
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Student Data Table Section -->
+        <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 shadow-2xl">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 mb-5 border-b border-orange-500/15">
+                <div class="flex items-center gap-2.5 text-base font-bold text-white">
+                    <span class="text-xl">📋</span> รายการข้อมูลสุขภาพจิตนักเรียนในฐานข้อมูล (Mental Health Records)
+                </div>
+                <div class="text-xs text-stone-300">
+                    แสดงผลล่าสุด 200 รายการ
+                </div>
+            </div>
+
+            <!-- Toolbar Search -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                <input type="text" id="tableSearch" class="bg-black/50 border border-orange-500/20 rounded-xl px-4 py-2 text-xs text-white placeholder-stone-400 min-w-[280px] focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" placeholder="🔍 ค้นหาตามสาขาวิชา, อายุ, หรือ ID..." onkeyup="filterTable()">
+                <div class="text-xs text-stone-300">
+                    จำนวนทั้งหมดในตาราง: <strong id="table-row-count" class="text-amber-300">{{ records | length }}</strong> แถว
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl max-h-[540px]">
+                <table id="studentsTable" class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-white/5 text-orange-200/80 uppercase tracking-wider font-semibold sticky top-0 backdrop-blur-md z-10 border-b border-orange-500/20">
+                            <th class="py-3 px-4">ID</th>
+                            <th class="py-3 px-4">Age / Gender</th>
+                            <th class="py-3 px-4">Course & Year</th>
+                            <th class="py-3 px-4">CGPA</th>
+                            <th class="py-3 px-4">Depression</th>
+                            <th class="py-3 px-4">Anxiety</th>
+                            <th class="py-3 px-4">Panic Attack</th>
+                            <th class="py-3 px-4">Treatment</th>
+                            <th class="py-3 px-4">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-orange-500/10">
+                        {% for r in records %}
+                        <tr id="row-{{ r.id }}" class="hover:bg-orange-500/[0.04] transition-colors duration-150">
+                            <td class="py-3 px-4">
+                                <span class="font-mono text-xs bg-black/50 text-amber-300 px-2 py-0.5 rounded border border-orange-500/20">#{{ r.id }}</span>
+                            </td>
+                            <td class="py-3 px-4">
+                                <strong class="text-white">{{ r.age }}</strong> ปี / {{ r.gender }}
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="font-semibold text-white">{{ r.course }}</div>
+                                <div class="text-[11px] text-stone-400">{{ r.year_of_study }}</div>
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="font-mono text-xs bg-black/50 text-amber-200 px-2 py-0.5 rounded border border-orange-500/20">{{ r.cgpa }}</span>
+                            </td>
+                            <td class="py-3 px-4">
+                                {% if r.depression and r.depression.lower() == 'yes' %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4">
+                                {% if r.anxiety and r.anxiety.lower() == 'yes' %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4">
+                                {% if r.panic_attack and r.panic_attack.lower() == 'yes' %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4">
+                                {% if r.specialist_treatment and r.specialist_treatment.lower() == 'yes' %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">Yes</span>
+                                {% else %}
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4">
+                                <button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-orange-500/20 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" onclick="testZKInferenceRow({{ r.age }}, '{{ r.cgpa }}', '{{ r.depression }}', '{{ r.anxiety }}', '{{ r.panic_attack }}', '{{ r.specialist_treatment }}', {{ r.id }})">
+                                    <span>⚡ ZK Prove</span>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr id="empty-row">
+                            <td colspan="9" class="text-center py-12 text-stone-300">
+                                📭 ยังไม่มีข้อมูลนักเรียนในฐานข้อมูล กรุณาเพิ่มข้อมูลหรือนำเข้าไฟล์ CSV ด้านบน
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- CSV COLUMN MAPPING MODAL (Sunset Theme) -->
+    <!-- ========================================================================= -->
+    <div id="mappingModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4">
+        <div class="bg-[#181310] border border-orange-500/40 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl shadow-orange-950/60">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-4 bg-white/[0.02] border-b border-orange-500/20">
+                <div class="flex items-center gap-2 text-base font-extrabold text-white">
+                    <span>⚙️</span> กำหนดชื่อคอลัมน์ใน CSV (Column Mapping Configuration)
+                </div>
+                <button type="button" class="text-stone-400 hover:text-white text-2xl transition-colors duration-150 cursor-pointer" onclick="closeMappingModal()">&times;</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="mb-5 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
+                    <div class="text-sm font-bold text-white">
+                        📄 ไฟล์: <span id="modal-filename-display" class="text-amber-300 font-mono"></span>
+                    </div>
+                    <div class="text-xs text-stone-300 mt-1">
+                        กรอกหรือตรวจสอบชื่อ Header คอลัมน์ที่อยู่ในไฟล์ CSV ของคุณ เพื่อให้ระบบจับคู่ข้อมูลเข้าสู่ตารางฐานข้อมูลได้อย่างถูกต้อง
+                    </div>
+                </div>
+
+                <form id="mappingForm" onsubmit="submitUploadedCSVWithMapping(event)">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        
+                        <!-- 1. time_date -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>time_date</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Timestamp/Date</div>
+                            <input type="text" id="map_time_date" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Timestamp" required>
+                        </div>
+
+                        <!-- 2. gender -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>gender</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Gender</div>
+                            <input type="text" id="map_gender" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Choose your gender" required>
+                        </div>
+
+                        <!-- 3. age -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>age</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Age</div>
+                            <input type="text" id="map_age" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Age" required>
+                        </div>
+
+                        <!-- 4. course -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>course</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Course</div>
+                            <input type="text" id="map_course" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="What is your course?" required>
+                        </div>
+
+                        <!-- 5. year_of_study -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>year_of_study</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Year of Study</div>
+                            <input type="text" id="map_year_of_study" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Your current year of Study" required>
+                        </div>
+
+                        <!-- 6. cgpa -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>cgpa (CGPA)</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ CGPA</div>
+                            <input type="text" id="map_cgpa" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="What is your CGPA?" required>
+                        </div>
+
+                        <!-- 7. marital_status -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>marital_status</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Marital status</div>
+                            <input type="text" id="map_marital_status" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Marital status" required>
+                        </div>
+
+                        <!-- 8. depression -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>depression</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Depression</div>
+                            <input type="text" id="map_depression" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Do you have Depression?" required>
+                        </div>
+
+                        <!-- 9. anxiety -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>anxiety</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Anxiety</div>
+                            <input type="text" id="map_anxiety" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Do you have Anxiety?" required>
+                        </div>
+
+                        <!-- 10. panic_attack -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>panic_attack</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Panic attack</div>
+                            <input type="text" id="map_panic_attack" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Do you have Panic attack?" required>
+                        </div>
+
+                        <!-- 11. specialist_treatment -->
+                        <div class="sm:col-span-2 bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>specialist_treatment</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Specialist Treatment</div>
+                            <input type="text" id="map_specialist_treatment" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Did you seek any specialist for a treatment?" required>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 bg-white/[0.02] border-t border-orange-500/20">
+                <button type="button" onclick="resetDefaultMapping()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/15 transition-all duration-200 cursor-pointer">
+                    <span>🔄</span> คืนค่าเริ่มต้น (Reset Defaults)
+                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeMappingModal()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-white/10 transition-all duration-200 cursor-pointer">
+                        <span>✕</span> ยกเลิก
+                    </button>
+                    <button type="button" onclick="document.getElementById('mappingForm').requestSubmit()" id="btn-submit-mapping" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-xs text-white bg-gradient-to-r from-[#EA3815] via-[#FF6B00] to-[#FBBF24] hover:brightness-110 shadow-md shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                        <span>🚀</span> ยืนยันและนำเข้าข้อมูลลง MySQL
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 px-5 py-3.5 bg-[#181310] border border-orange-500 rounded-xl text-white text-xs font-semibold shadow-2xl z-50 hidden transition-all duration-300"></div>
+
+    <script>
+        function showToast(msg, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `fixed bottom-6 right-6 px-5 py-3.5 bg-[#181310] border ${isSuccess ? 'border-amber-500 text-amber-200' : 'border-rose-500 text-rose-200'} rounded-xl text-xs font-semibold shadow-2xl z-50 block transition-all duration-300`;
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('block');
+            }, 3500);
+        }
+
+        // 1. Handle Manual Form Submit
+        async function handleManualSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btn-save-student');
+            btn.disabled = true;
+            btn.innerHTML = '⏳ กำลังบันทึกข้อมูล...';
+
+            const payload = {
+                time_date: new Date().toISOString(),
+                gender: document.getElementById('form-gender').value,
+                age: parseInt(document.getElementById('form-age').value),
+                course: document.getElementById('form-course').value,
+                year_of_study: document.getElementById('form-year').value,
+                cgpa: document.getElementById('form-cgpa').value,
+                marital_status: document.getElementById('form-marital').value,
+                depression: document.getElementById('form-dep').value,
+                anxiety: document.getElementById('form-anx').value,
+                panic_attack: document.getElementById('form-panic').value,
+                specialist_treatment: document.getElementById('form-treat').value
+            };
+
+            try {
+                const res = await fetch('/api/v1/students/records', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (res.ok) {
+                    showToast('✅ บันทึกข้อมูลนักเรียนลง MySQL สำเร็จ!');
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    const err = await res.json();
+                    showToast('❌ เกิดข้อผิดพลาด: ' + (err.detail || 'ไม่สามารถบันทึกได้'), false);
+                }
+            } catch (err) {
+                showToast('❌ ข้อผิดพลาดการเชื่อมต่อ: ' + err.message, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>💾</span> บันทึกข้อมูลนักเรียน (Save to MySQL)';
+            }
+        }
+
+        // 2. Drag & Drop File Handling
+        let selectedFile = null;
+        function handleFileSelected(event) {
+            const file = event.target.files[0];
+            if (file) {
+                setFileAndOpenModal(file);
+            }
+        }
+
+        function setFileAndOpenModal(file) {
+            selectedFile = file;
+            document.getElementById('selected-filename').textContent = file.name + ' (' + (file.size / 1024).toFixed(1) + ' KB)';
+            document.getElementById('modal-filename-display').textContent = file.name;
+            document.getElementById('file-info-box').classList.remove('hidden');
+            document.getElementById('btn-open-modal').classList.remove('hidden');
+            document.getElementById('btn-open-modal').classList.add('inline-flex');
+            openMappingModal();
+        }
+
+        const dropzone = document.getElementById('dropzone');
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-orange-500', 'bg-orange-500/15'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-orange-500', 'bg-orange-500/15'));
+        dropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('border-orange-500', 'bg-orange-500/15');
+            if (e.dataTransfer.files.length > 0) {
+                setFileAndOpenModal(e.dataTransfer.files[0]);
+            }
+        });
+
+        // 3. Modal Control
+        function openMappingModal() {
+            if (!selectedFile) {
+                showToast('⚠️ กรุณาเลือกไฟล์ CSV ก่อน', false);
+                document.getElementById('csvFileInput').click();
+                return;
+            }
+            const modal = document.getElementById('mappingModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeMappingModal() {
+            const modal = document.getElementById('mappingModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function resetDefaultMapping() {
+            document.getElementById('map_time_date').value = "Timestamp";
+            document.getElementById('map_gender').value = "Choose your gender";
+            document.getElementById('map_age').value = "Age";
+            document.getElementById('map_course').value = "What is your course?";
+            document.getElementById('map_year_of_study').value = "Your current year of Study";
+            document.getElementById('map_cgpa').value = "What is your CGPA?";
+            document.getElementById('map_marital_status').value = "Marital status";
+            document.getElementById('map_depression').value = "Do you have Depression?";
+            document.getElementById('map_anxiety').value = "Do you have Anxiety?";
+            document.getElementById('map_panic_attack').value = "Do you have Panic attack?";
+            document.getElementById('map_specialist_treatment').value = "Did you seek any specialist for a treatment?";
+            showToast('🔄 รีเซ็ตชื่อ Column Mapping เป็นค่าเริ่มต้นแล้ว');
+        }
+
+        // 4. Submit Uploaded CSV With Form Mapping
+        async function submitUploadedCSVWithMapping(event) {
+            event.preventDefault();
+            if (!selectedFile) {
+                showToast('❌ ไม่พบไฟล์ CSV', false);
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-mapping');
+            btn.disabled = true;
+            btn.innerHTML = '⏳ กำลังนำเข้าข้อมูล...';
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('time_date', document.getElementById('map_time_date').value);
+            formData.append('gender', document.getElementById('map_gender').value);
+            formData.append('age', document.getElementById('map_age').value);
+            formData.append('course', document.getElementById('map_course').value);
+            formData.append('year_of_study', document.getElementById('map_year_of_study').value);
+            formData.append('cgpa', document.getElementById('map_cgpa').value);
+            formData.append('marital_status', document.getElementById('map_marital_status').value);
+            formData.append('depression', document.getElementById('map_depression').value);
+            formData.append('anxiety', document.getElementById('map_anxiety').value);
+            formData.append('panic_attack', document.getElementById('map_panic_attack').value);
+            formData.append('specialist_treatment', document.getElementById('map_specialist_treatment').value);
+
+            try {
+                const res = await fetch('/api/v1/students/upload-csv', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    closeMappingModal();
+                    showToast('🎉 ' + data.message);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast('❌ นำเข้าล้มเหลว: ' + (data.detail || 'Error'), false);
+                }
+            } catch (err) {
+                showToast('❌ เกิดข้อผิดพลาด: ' + err.message, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>🚀</span> ยืนยันและนำเข้าข้อมูลลง MySQL';
+            }
+        }
+
+        // 5. Quick Import Server CSV
+        async function importServerCSV() {
+            if (!confirm('ต้องการนำเข้าข้อมูลจากไฟล์ student_mental_health.csv เริ่มต้นใช่หรือไม่?')) return;
+            try {
+                const res = await fetch('/api/v1/students/import-csv', { method: 'POST' });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast('🎉 ' + data.message);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast('❌ เกิดข้อผิดพลาด: ' + (data.detail || 'Error'), false);
+                }
+            } catch (err) {
+                showToast('❌ เกิดข้อผิดพลาด: ' + err.message, false);
+            }
+        }
+
+        // 6. Delete Single Record
+        async function deleteRecord(id) {
+            if (!confirm(`ยืนยันการลบข้อมูลนักเรียน ID #${id}?`)) return;
+            try {
+                const res = await fetch(`/api/v1/students/records/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    showToast(`✅ ลบข้อมูล ID #${id} สำเร็จ!`);
+                    const row = document.getElementById(`row-${id}`);
+                    if (row) row.remove();
+                } else {
+                    showToast('❌ ไม่สามารถลบข้อมูลได้', false);
+                }
+            } catch (err) {
+                showToast('❌ เกิดข้อผิดพลาด: ' + err.message, false);
+            }
+        }
+
+        // 7. Clear All Data
+        async function clearAllData() {
+            if (!confirm('⚠️ คำเตือน: คุณต้องการล้างข้อมูลนักเรียนทั้งหมดในฐานข้อมูลใช่หรือไม่?')) return;
+            try {
+                const res = await fetch('/api/v1/students/records', { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast('🧹 ' + data.message);
+                    setTimeout(() => window.location.reload(), 1000);
+                } else {
+                    showToast('❌ ไม่สามารถล้างข้อมูลได้', false);
+                }
+            } catch (err) {
+                showToast('❌ เกิดข้อผิดพลาด: ' + err.message, false);
+            }
+        }
+
+        // 8. Live Filter Table
+        function filterTable() {
+            const query = document.getElementById('tableSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#tableBody tr');
+            let visibleCount = 0;
+            rows.forEach(r => {
+                const text = r.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    r.style.display = '';
+                    visibleCount++;
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+            document.getElementById('table-row-count').textContent = visibleCount;
+        }
+
+        // 9. Test ZK Inference Row
+        async function testZKInferenceRow(age, cgpa, dep, anx, panic, treat, id) {
+            const payload = {
+                age: age,
+                cgpa_str: cgpa,
+                depression: (dep && dep.toLowerCase() === 'yes') ? 1 : 0,
+                anxiety: (anx && anx.toLowerCase() === 'yes') ? 1 : 0,
+                panic_attack: (panic && panic.toLowerCase() === 'yes') ? 1 : 0,
+                seek_treatment: (treat && treat.toLowerCase() === 'yes') ? 1 : 0
+            };
+
+            showToast(`⚡ กำลังสร้าง ZK Proof สำหรับนักเรียน ID #${id}...`);
+            try {
+                const res = await fetch('/api/v1/zkml/inference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(`🛡️ ZK-ML Proof Result for Student #${id}:\n\n` +
+                          `• Verification Status: ${data.verification_status}\n` +
+                          `• Risk Classification: ${data.risk_label} (Class ${data.risk_class})\n` +
+                          `• Proving Latency: ${data.proving_time_ms} ms\n` +
+                          `• Message: ${data.message}`);
+                } else {
+                    alert('❌ ZK Prover Error: ' + (data.detail || 'Failed'));
+                }
+            } catch (err) {
+                alert('❌ Error: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+{# 
+===================================================================
+COMPONENT: Top Navigation Bar with Toggle Switch & Full Light Mode Contrast
+Path: app/templates/components/navbar.html
+===================================================================
+#}
+
+<!-- Theme Initialization Script (Runs immediately to prevent FOUC) -->
+<script>
+    (function() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light-mode');
+        } else {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light-mode');
+        }
+    })();
+</script>
+
+<style>
+    /* ===================================================================== */
+    /* Comprehensive Light Mode CSS Overrides (High-Contrast Sunset Palette) */
+    /* ===================================================================== */
+    html.light-mode {
+        color-scheme: light;
+    }
+
+    html.light-mode body {
+        --bg-main: #FFFDF9;
+        --bg-card: #FFFFFF;
+        --bg-card-hover: #FFF7ED;
+        --border-color: rgba(234, 56, 21, 0.2);
+        --border-highlight: rgba(255, 107, 0, 0.6);
+        --text-primary: #1C1917;
+        --text-secondary: #44403C;
+        --text-muted: #78716C;
+        background-color: #FFFDF9 !important;
+        color: #1C1917 !important;
+        background-image: 
+            radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.08) 0%, transparent 45%),
+            radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.07) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.05) 0%, transparent 60%) !important;
+    }
+
+    /* Cards, Modals, Containers */
+    html.light-mode .card,
+    html.light-mode .metric-card,
+    html.light-mode .hero-section,
+    html.light-mode .portal-card,
+    html.light-mode .tester-card,
+    html.light-mode .bg-\[\#161210\]\/90,
+    html.light-mode .bg-\[\#161210\],
+    html.light-mode .bg-\[\#181310\],
+    html.light-mode .bg-\[\#1c1614\] {
+        background-color: #FFFFFF !important;
+        color: #1C1917 !important;
+        border-color: rgba(234, 56, 21, 0.22) !important;
+        box-shadow: 0 10px 30px rgba(234, 56, 21, 0.08) !important;
+    }
+
+    /* Text Color Resets for Light Mode */
+    html.light-mode .text-white,
+    html.light-mode .brand-title,
+    html.light-mode .researcher-name,
+    html.light-mode .title,
+    html.light-mode .section-title,
+    html.light-mode .card-title,
+    html.light-mode .portal-name,
+    html.light-mode .thesis-th,
+    html.light-mode .metric-value,
+    html.light-mode .metric-val,
+    html.light-mode h1,
+    html.light-mode h2,
+    html.light-mode h3,
+    html.light-mode strong,
+    html.light-mode .detail-highlight {
+        color: #1C1917 !important;
+    }
+
+    html.light-mode .bg-clip-text {
+        -webkit-text-fill-color: #1C1917 !important;
+        background: none !important;
+        color: #1C1917 !important;
+    }
+
+    html.light-mode .text-stone-100,
+    html.light-mode .text-stone-200,
+    html.light-mode .text-stone-300,
+    html.light-mode .brand-sub,
+    html.light-mode .subtitle,
+    html.light-mode .portal-desc,
+    html.light-mode .profile-details,
+    html.light-mode .metric-desc,
+    html.light-mode .callout-text,
+    html.light-mode p,
+    html.light-mode label,
+    html.light-mode .form-label {
+        color: #44403C !important;
+    }
+
+    html.light-mode .text-stone-400 {
+        color: #57534E !important;
+    }
+
+    /* Amber / Yellow text replacements in Light Mode (Deep Rust Orange) */
+    html.light-mode .text-amber-200,
+    html.light-mode .text-amber-300,
+    html.light-mode .text-amber-400,
+    html.light-mode .text-orange-200\/70,
+    html.light-mode .text-orange-200\/80 {
+        color: #9A3412 !important;
+    }
+
+    /* Emerald / Green badges and text in Light Mode */
+    html.light-mode .text-emerald-300,
+    html.light-mode .text-emerald-400 {
+        color: #065F46 !important;
+        font-weight: 700 !important;
+    }
+    html.light-mode .bg-emerald-500\/15 {
+        background-color: #D1FAE5 !important;
+        border-color: #34D399 !important;
+    }
+
+    /* Rose / Red badges and text in Light Mode */
+    html.light-mode .text-rose-300,
+    html.light-mode .text-rose-400 {
+        color: #9F1239 !important;
+        font-weight: 700 !important;
+    }
+    html.light-mode .bg-rose-500\/15,
+    html.light-mode .bg-rose-500\/20 {
+        background-color: #FFE4E6 !important;
+        border-color: #FB7185 !important;
+    }
+
+    /* Orange / Sunset containers and buttons in Light Mode */
+    html.light-mode .bg-orange-500\/10,
+    html.light-mode .bg-orange-500\/15,
+    html.light-mode .bg-orange-500\/20,
+    html.light-mode .bg-orange-500\/25 {
+        background-color: #FFEDD5 !important;
+        border-color: #FDBA74 !important;
+    }
+
+    /* Form Controls & Inputs */
+    html.light-mode input,
+    html.light-mode select,
+    html.light-mode textarea,
+    html.light-mode .form-control,
+    html.light-mode .bg-black\/50 {
+        background-color: #FAFAF9 !important;
+        color: #1C1917 !important;
+        border-color: rgba(234, 56, 21, 0.25) !important;
+    }
+
+    html.light-mode input:focus,
+    html.light-mode select:focus,
+    html.light-mode textarea:focus,
+    html.light-mode .form-control:focus {
+        background-color: #FFFFFF !important;
+        border-color: #FF6B00 !important;
+        box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.2) !important;
+    }
+
+    /* Highlights, Tags & Code Pills */
+    html.light-mode .academic-tag {
+        background-color: #FFEDD5 !important;
+        color: #9A3412 !important;
+        border-color: #FDBA74 !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode .thesis-showcase {
+        background-color: #FFF7ED !important;
+        border-color: rgba(255, 107, 0, 0.35) !important;
+    }
+
+    html.light-mode .thesis-th {
+        color: #1C1917 !important;
+    }
+
+    html.light-mode .thesis-en {
+        color: #9A3412 !important;
+        font-weight: 600 !important;
+    }
+
+    html.light-mode .researcher-name-en {
+        color: #9A3412 !important;
+    }
+
+    html.light-mode .tag-pill {
+        background-color: #FFF7ED !important;
+        color: #7C2D12 !important;
+        border-color: #FDBA74 !important;
+        font-weight: 600 !important;
+    }
+
+    html.light-mode .code-pill {
+        background-color: #FFEDD5 !important;
+        color: #9A3412 !important;
+        border-color: #FDBA74 !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode .metric-label,
+    html.light-mode .metric-title {
+        color: #7C2D12 !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode .metric-unit {
+        color: #9A3412 !important;
+    }
+
+    html.light-mode .portal-action {
+        color: #EA580C !important;
+    }
+
+    /* Tables in Light Mode */
+    html.light-mode table thead tr {
+        background-color: #FFEDD5 !important;
+        color: #7C2D12 !important;
+        border-color: #FED7AA !important;
+    }
+
+    html.light-mode table thead th {
+        color: #7C2D12 !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode table tbody tr {
+        border-color: #F5F5F4 !important;
+    }
+
+    html.light-mode table tbody tr:hover {
+        background-color: #FFF7ED !important;
+    }
+
+    html.light-mode table tbody td {
+        color: #292524 !important;
+    }
+
+    html.light-mode table tbody td strong {
+        color: #1C1917 !important;
+    }
+
+    html.light-mode table tbody td div {
+        color: #292524 !important;
+    }
+
+    html.light-mode table td span.bg-black\/50 {
+        background-color: #FFEDD5 !important;
+        color: #9A3412 !important;
+        border-color: #FDBA74 !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode .divide-orange-500\/10 > :not([hidden]) ~ :not([hidden]) {
+        border-color: #F5F5F4 !important;
+    }
+
+    /* Table Action Buttons in Light Mode */
+    html.light-mode button[onclick*="testZKInferenceRow"] {
+        background-color: #FFEDD5 !important;
+        color: #9A3412 !important;
+        border-color: #FB923C !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode button[onclick*="testZKInferenceRow"]:hover {
+        background-color: #FF6B00 !important;
+        color: #FFFFFF !important;
+    }
+
+    html.light-mode button[onclick*="deleteRecord"] {
+        background-color: #FFE4E6 !important;
+        color: #9F1239 !important;
+        border-color: #FDA4AF !important;
+    }
+
+    html.light-mode button[onclick*="deleteRecord"]:hover {
+        background-color: #E11D48 !important;
+        color: #FFFFFF !important;
+    }
+
+    /* Badges in Light Mode */
+    html.light-mode .status-badge.sunset,
+    html.light-mode .badge-tag {
+        background-color: #FFEDD5 !important;
+        color: #9A3412 !important;
+        border-color: #FDBA74 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Navigation in Light Mode */
+    html.light-mode nav a:not(.bg-gradient-to-r) {
+        background-color: #FFFFFF !important;
+        color: #44403C !important;
+        border-color: rgba(234, 56, 21, 0.2) !important;
+    }
+
+    html.light-mode nav a:not(.bg-gradient-to-r):hover {
+        background-color: #FFF7ED !important;
+        color: #EA580C !important;
+        border-color: #FF6B00 !important;
+    }
+
+    /* Callout Box */
+    html.light-mode .thesis-callout {
+        background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%) !important;
+        border-color: #FDBA74 !important;
+    }
+
+    html.light-mode .callout-title {
+        color: #7C2D12 !important;
+    }
+
+    html.light-mode .callout-quote {
+        background-color: #FFFFFF !important;
+        border-left-color: #FF6B00 !important;
+        color: #44403C !important;
+    }
+
+    html.light-mode .result-box {
+        background-color: #FFF7ED !important;
+        border-color: #FDBA74 !important;
+    }
+
+    html.light-mode #resMessage {
+        color: #292524 !important;
+    }
+
+    /* Dropzone */
+    html.light-mode #dropzone {
+        background-color: #FFF7ED !important;
+        border-color: #FDBA74 !important;
+    }
+
+    html.light-mode #dropzone:hover {
+        background-color: #FFEDD5 !important;
+        border-color: #FF6B00 !important;
+    }
+</style>
+
+<nav class="flex flex-wrap items-center justify-between gap-4 py-4 mb-8 border-b border-orange-500/20">
+    <!-- Brand Logo & Title -->
+    <a href="/" class="flex items-center gap-3 no-underline transition-transform duration-200 hover:-translate-y-0.5 group">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#EA3815] via-[#FF6B00] to-[#FBBF24] flex items-center justify-center text-xl shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/60 transition-all duration-300">
+            🛡️
+        </div>
+        <div>
+            <div class="text-base font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors duration-200 brand-title">
+                ZK-ML Research Platform
+            </div>
+            <div class="text-xs text-orange-200/70 font-medium brand-sub">
+                Privacy-Preserving Inference for Student Mental Health
+            </div>
+        </div>
+    </a>
+
+    <!-- Navigation Buttons & Theme Toggle Switch -->
+    <div class="flex flex-wrap items-center gap-2.5">
+        <a href="/" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'home' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+            <span>🏠</span> Home
+        </a>
+        <a href="/students" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'student' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+            <span>👨‍🎓</span> Student Data & CSV
+        </a>
+        <a href="/test-quantization-impact" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'quantization' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+            <span>📊</span> Quantization Benchmark
+        </a>
+        <a href="/test-cryptographic-benchmark" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'cryptographic' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+            <span>🔬</span> Cryptographic Benchmark
+        </a>
+        <a href="/api/v1/zkml/model-info" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5">
+            <span>⚙️</span> Model Weights
+        </a>
+        <a href="/docs" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold no-underline transition-all duration-200 bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white shadow-md shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5">
+            <span>📖</span> Swagger Docs
+        </a>
+
+        <!-- Modern Toggle Switch UI (Dark / Light) -->
+        <div class="flex items-center gap-2 pl-2 border-l border-orange-500/20">
+            <span class="text-xs font-bold" id="switch-mode-text">🌙</span>
+            <button type="button" 
+                    id="themeSwitchBtn" 
+                    onclick="toggleThemeMode()" 
+                    role="switch" 
+                    aria-checked="true"
+                    class="relative inline-flex h-6 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-orange-500/40 bg-black/60 p-0.5 transition-colors duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 shadow-inner"
+                    title="สลับโหมด มืด / สว่าง (Toggle Dark/Light Mode)">
+                <span class="sr-only">Toggle Theme</span>
+                <!-- Sliding Thumb with Icon -->
+                <span id="themeSwitchThumb" 
+                      class="pointer-events-none inline-flex h-4.5 w-4.5 translate-x-6 transform items-center justify-center rounded-full bg-gradient-to-br from-[#EA3815] to-[#FBBF24] text-[10px] text-white shadow-md transition duration-300 ease-in-out">
+                    🌙
+                </span>
+            </button>
+            <span class="text-xs font-bold text-amber-300" id="switch-mode-label">Dark</span>
+        </div>
+    </div>
+</nav>
+
+<script>
+    // Theme Switcher Logic
+    function updateThemeUI(isDark) {
+        const thumb = document.getElementById('themeSwitchThumb');
+        const switchBtn = document.getElementById('themeSwitchBtn');
+        const textIcon = document.getElementById('switch-mode-text');
+        const textLabel = document.getElementById('switch-mode-label');
+
+        if (switchBtn && thumb) {
+            if (isDark) {
+                switchBtn.setAttribute('aria-checked', 'true');
+                switchBtn.classList.remove('bg-orange-100', 'border-orange-300');
+                switchBtn.classList.add('bg-black/60', 'border-orange-500/40');
+                thumb.classList.remove('translate-x-0');
+                thumb.classList.add('translate-x-6');
+                thumb.innerHTML = '🌙';
+                if (textIcon) textIcon.textContent = '🌙';
+                if (textLabel) {
+                    textLabel.textContent = 'Dark';
+                    textLabel.className = 'text-xs font-bold text-amber-300';
+                }
+            } else {
+                switchBtn.setAttribute('aria-checked', 'false');
+                switchBtn.classList.remove('bg-black/60', 'border-orange-500/40');
+                switchBtn.classList.add('bg-orange-200', 'border-orange-400');
+                thumb.classList.remove('translate-x-6');
+                thumb.classList.add('translate-x-0');
+                thumb.innerHTML = '☀️';
+                if (textIcon) textIcon.textContent = '☀️';
+                if (textLabel) {
+                    textLabel.textContent = 'Light';
+                    textLabel.className = 'text-xs font-bold text-orange-700';
+                }
+            }
+        }
+    }
+
+    function toggleThemeMode() {
+        const isCurrentlyDark = document.documentElement.classList.contains('dark') && !document.documentElement.classList.contains('light-mode');
+        const nextDark = !isCurrentlyDark;
+        
+        if (nextDark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light-mode');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light-mode');
+            localStorage.setItem('theme', 'light');
+        }
+        updateThemeUI(nextDark);
+    }
+
+    // Sync button on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        updateThemeUI(savedTheme === 'dark');
+    });
+</script>

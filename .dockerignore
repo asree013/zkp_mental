@@ -1,0 +1,24 @@
+# Git & IDE
+.git
+.gitignore
+.vscode
+.DS_Store
+.agents
+.agent
+
+# Python Virtual Environment & Cache
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Local circuit build artifacts
+circuit/target/
+circuit/witness/
+
+# System temp files
+*.log

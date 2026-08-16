@@ -2,16 +2,18 @@
 ZK-ML Controller - Zero-Knowledge Machine Learning API Endpoints
 """
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 from app.models.schemas import StudentFeatures, ZKMLResult
 from app.models.ml_model import load_model_weights
 from app.services.zk_service import execute_zkml_inference, get_student_sample_zk
+from app.config.limiter import limiter
 
 router = APIRouter()
 
 
 @router.get('/api/v1/zkml/model-info', tags=["ZK-ML Model"])
-def get_model_info():
+@limiter.limit("60/minute")
+def get_model_info(request: Request):
     """
     ดึงข้อมูลพารามิเตอร์ของโมเดล ML, Quantized Weights, Bias และค่า Accuracy
     """
@@ -19,7 +21,8 @@ def get_model_info():
 
 
 @router.post('/api/v1/zkml/inference', response_model=ZKMLResult, tags=["ZK-ML Inference"])
-async def run_inference(features: StudentFeatures):
+@limiter.limit("30/minute")
+async def run_inference(request: Request, features: StudentFeatures):
     """
     ส่งข้อมูลสุขภาพจิตนักเรียนเพื่อประมวลผล ZK-ML Inference บน Noir ZK Circuit
     - ข้อมูลส่วนบุคคลจะถูกเก็บเป็น **Private Input** ไม่ส่งคืนใน Response
