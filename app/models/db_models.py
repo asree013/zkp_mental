@@ -19,6 +19,7 @@ class MentalHealthRecord(Base):
     time_date = Column(String(100), nullable=True, comment="Timestamp จากแบบสำรวจ")
     gender = Column(String(50), nullable=True, comment="เพศ (Female, Male)")
     age = Column(Integer, nullable=True, comment="อายุ")
+    education_level = Column(String(50), default="UNK", nullable=True, comment="ระดับการศึกษา (ย่อ: PP, PE, LSE, USE_VS, BBDL, BD, MD, PHD, UNK)")
     course = Column(String(255), nullable=True, comment="สาขาวิชา/คณะ")
     year_of_study = Column(String(50), nullable=True, comment="ชั้นปีการศึกษา")
     cgpa = Column(String(50), nullable=True, comment="ช่วงเกรดเฉลี่ยสะสม CGPA")

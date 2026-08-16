@@ -11,13 +11,23 @@ import pandas as pd
 from typing import List, Optional, Union
 from sqlalchemy.orm import Session
 from app.models.db_models import MentalHealthRecord
-from app.models.schemas import MentalHealthCreate, ImportCSVResponse, CSVColumnMapping
+from app.models.schemas import MentalHealthCreate, ImportCSVResponse, CSVColumnMapping, EducationLevel
 
 # ตารางชื่อเรียกคอลัมน์พัวพันหลายรูปแบบ (Column Aliases Mapping)
 COLUMN_ALIASES = {
     "time_date": ["timestamp", "time_date", "time", "date", "created_at"],
     "gender": ["choose your gender", "gender", "sex"],
     "age": ["age", "student_age"],
+    "education_level": [
+        "education level",
+        "education_level",
+        "education",
+        "education_level_code",
+        "level of education",
+        "study level",
+        "degree level",
+        "ระดับการศึกษา"
+    ],
     "course": ["what is your course?", "course", "major", "department", "degree"],
     "year_of_study": ["your current year of study", "year_of_study", "year of study", "year"],
     "cgpa": ["what is your cgpa?", "cgpa", "gpa"],
@@ -32,6 +42,102 @@ COLUMN_ALIASES = {
         "treatment"
     ]
 }
+
+# ตารางแปลงชื่อระดับการศึกษาแบบเต็ม / ตัวย่อ ให้เป็น Enum รหัสมาตรฐาน
+EDUCATION_LEVEL_MAP = {
+    # PP: Pre-primary Education (การศึกษาก่อนประถมศึกษา)
+    "pp": "PP",
+    "pre_primary": "PP",
+    "pre-primary": "PP",
+    "pre-primary education": "PP",
+    "pre primary education": "PP",
+    "อนุบาล": "PP",
+    "ก่อนประถมศึกษา": "PP",
+
+    # PE: Primary Education (ประถมศึกษา)
+    "pe": "PE",
+    "primary_education": "PE",
+    "primary": "PE",
+    "primary education": "PE",
+    "ประถม": "PE",
+    "ประถมศึกษา": "PE",
+
+    # LSE: Lower Secondary Education (มัธยมศึกษาตอนต้น)
+    "lse": "LSE",
+    "lower_secondary_education": "LSE",
+    "lower secondary": "LSE",
+    "lower secondary education": "LSE",
+    "มัธยมศึกษาตอนต้น": "LSE",
+    "ม.ต้น": "LSE",
+
+    # USE_VS: Upper Secondary Education / Vocational Stream (มัธยมศึกษาตอนปลาย / สายอาชีวศึกษา)
+    "use_vs": "USE_VS",
+    "upper secondary education / vocational stream": "USE_VS",
+    "upper secondary education": "USE_VS",
+    "upper secondary": "USE_VS",
+    "vocational stream": "USE_VS",
+    "vocational": "USE_VS",
+    "มัธยมศึกษาตอนปลาย": "USE_VS",
+    "ม.ปลาย": "USE_VS",
+    "ปวช": "USE_VS",
+    "ปวช.": "USE_VS",
+
+    # BBDL: Below bachelor's degree level (ต่ำกว่าปริญญาตรี / อนุปริญญา / ปวส.)
+    "bbdl": "BBDL",
+    "below bachelor's degree level": "BBDL",
+    "below bachelor": "BBDL",
+    "diploma": "BBDL",
+    "อนุปริญญา": "BBDL",
+    "ปวส": "BBDL",
+    "ปวส.": "BBDL",
+
+    # BD: Bachelor's degree (ปริญญาตรี)
+    "bd": "BD",
+    "bachelor's degree": "BD",
+    "bachelor": "BD",
+    "bachelor degree": "BD",
+    "undergraduate": "BD",
+    "ปริญญาตรี": "BD",
+    "ป.ตรี": "BD",
+
+    # MD: Master's Degree (ปริญญาโท)
+    "md": "MD",
+    "master's degree": "MD",
+    "master": "MD",
+    "master degree": "MD",
+    "postgraduate": "MD",
+    "ปริญญาโท": "MD",
+    "ป.โท": "MD",
+
+    # PHD: Doctoral Degree (ปริญญาเอก)
+    "phd": "PHD",
+    "doctoral degree": "PHD",
+    "doctorate": "PHD",
+    "doctoral": "PHD",
+    "ปริญญาเอก": "PHD",
+    "ป.เอก": "PHD",
+
+    # UNK: Unknown / Not Specified (ไม่ระบุ / ไม่ทราบข้อมูล)
+    "unk": "UNK",
+    "unknown": "UNK",
+    "none": "UNK",
+    "n/a": "UNK",
+    "-": "UNK",
+    "": "UNK"
+}
+
+
+def normalize_education_level(val: Optional[Union[str, EducationLevel]]) -> str:
+    """
+    แปลงค่าระดับการศึกษาให้อยู่ในรูปแบบ Enum Code (PP, PE, LSE, USE_VS, BBDL, BD, MD, PHD, UNK)
+    หากไม่ระบุหรือค่าว่าง จะได้ผลลัพธ์เป็น 'UNK' อัตโนมัติ
+    """
+    if not val:
+        return "UNK"
+    if isinstance(val, EducationLevel):
+        return val.value
+    clean_val = str(val).strip().lower()
+    return EDUCATION_LEVEL_MAP.get(clean_val, "UNK")
 
 
 def extract_value_by_alias(
@@ -72,6 +178,7 @@ def create_mental_health_record(db: Session, record: MentalHealthCreate) -> Ment
         time_date=record.time_date,
         gender=record.gender,
         age=record.age,
+        education_level=normalize_education_level(record.education_level),
         course=record.course,
         year_of_study=record.year_of_study,
         cgpa=record.cgpa,
@@ -154,18 +261,86 @@ def clear_all_mental_health_records(db: Session) -> int:
     return count
 
 
+def make_record_signature(
+    time_date: Optional[str],
+    gender: Optional[str],
+    age: Optional[Union[int, str]],
+    education_level: Optional[Union[str, EducationLevel]],
+    course: Optional[str],
+    year_of_study: Optional[str],
+    cgpa: Optional[str],
+    marital_status: Optional[str],
+    depression: Optional[str],
+    anxiety: Optional[str],
+    panic_attack: Optional[str],
+    specialist_treatment: Optional[str]
+) -> tuple:
+    """
+    สร้าง Unique Signature สำหรับเปรียบเทียบข้อมูลแถวว่าเหมือนกันทุกประการหรือไม่
+    (ตัดช่องว่างส่วนเกินและแปลงเป็นตัวพิมพ์เล็กเพื่อความแม่นยำในการเปรียบเทียบ)
+    """
+    try:
+        age_int = int(age) if age is not None and str(age).strip() != "" else 0
+    except (ValueError, TypeError):
+        age_int = 0
+
+    return (
+        str(time_date or "").strip(),
+        str(gender or "").strip().lower(),
+        age_int,
+        normalize_education_level(education_level).lower(),
+        str(course or "").strip().lower(),
+        str(year_of_study or "").strip().lower(),
+        str(cgpa or "").strip().lower(),
+        str(marital_status or "").strip().lower(),
+        str(depression or "").strip().lower(),
+        str(anxiety or "").strip().lower(),
+        str(panic_attack or "").strip().lower(),
+        str(specialist_treatment or "").strip().lower()
+    )
+
+
 def process_df_to_db(
     db: Session,
     df: pd.DataFrame,
     mapping: Optional[CSVColumnMapping] = None
 ) -> ImportCSVResponse:
     """
-    แปลงข้อมูลจาก Pandas DataFrame ลงตาราง mental_health_records โดยใช้ User Mapping หรือ Dynamic Aliases
+    แปลงข้อมูลจาก Pandas DataFrame ลงตาราง mental_health_records
+    โดยตรวจเช็คว่าถ้าข้อมูลใน DB กับในไฟล์เหมือนกันอยู่แล้ว จะไม่ insert ซ้ำ แต่ถ้าต่างกัน/เป็นข้อมูลใหม่ จะเพิ่มลง DB
     """
-    count = 0
+    # ดึง Signature ของข้อมูลที่มีอยู่แล้วในฐานข้อมูลเพื่อป้องกันข้อมูลซ้ำซ้อน
+    existing_rows = db.query(
+        MentalHealthRecord.time_date,
+        MentalHealthRecord.gender,
+        MentalHealthRecord.age,
+        MentalHealthRecord.education_level,
+        MentalHealthRecord.course,
+        MentalHealthRecord.year_of_study,
+        MentalHealthRecord.cgpa,
+        MentalHealthRecord.marital_status,
+        MentalHealthRecord.depression,
+        MentalHealthRecord.anxiety,
+        MentalHealthRecord.panic_attack,
+        MentalHealthRecord.specialist_treatment
+    ).all()
+
+    existing_signatures = {
+        make_record_signature(
+            r.time_date, r.gender, r.age, r.education_level, r.course, r.year_of_study,
+            r.cgpa, r.marital_status, r.depression, r.anxiety,
+            r.panic_attack, r.specialist_treatment
+        )
+        for r in existing_rows
+    }
+
+    imported_count = 0
+    skipped_count = 0
+
     m_time = mapping.time_date if mapping else None
     m_gender = mapping.gender if mapping else None
     m_age = mapping.age if mapping else None
+    m_edu = mapping.education_level if mapping else None
     m_course = mapping.course if mapping else None
     m_year = mapping.year_of_study if mapping else None
     m_cgpa = mapping.cgpa if mapping else None
@@ -177,36 +352,72 @@ def process_df_to_db(
 
     for _, row in df.iterrows():
         try:
+            raw_time = extract_value_by_alias(row, "time_date", user_mapped_col=m_time)
+            raw_gender = extract_value_by_alias(row, "gender", user_mapped_col=m_gender)
             raw_age = extract_value_by_alias(row, "age", user_mapped_col=m_age)
+            raw_edu = extract_value_by_alias(row, "education_level", user_mapped_col=m_edu)
+            edu_norm = normalize_education_level(raw_edu)
+            raw_course = extract_value_by_alias(row, "course", user_mapped_col=m_course)
+            raw_year = extract_value_by_alias(row, "year_of_study", user_mapped_col=m_year)
+            raw_cgpa = extract_value_by_alias(row, "cgpa", user_mapped_col=m_cgpa)
+            raw_marital = extract_value_by_alias(row, "marital_status", user_mapped_col=m_marital)
+            raw_dep = extract_value_by_alias(row, "depression", user_mapped_col=m_dep, default="No")
+            raw_anx = extract_value_by_alias(row, "anxiety", user_mapped_col=m_anx, default="No")
+            raw_panic = extract_value_by_alias(row, "panic_attack", user_mapped_col=m_panic, default="No")
+            raw_treat = extract_value_by_alias(row, "specialist_treatment", user_mapped_col=m_treat, default="No")
+
             try:
-                age_val = int(raw_age) if raw_age is not None else 20
+                age_val = int(raw_age) if raw_age is not None and str(raw_age).strip() != "" else 20
             except (ValueError, TypeError):
                 age_val = 20
 
+            # ตรวจสอบว่าข้อมูลแถวนี้มีอยู่ในฐานข้อมูลแล้วหรือไม่
+            row_signature = make_record_signature(
+                raw_time, raw_gender, age_val, edu_norm, raw_course, raw_year,
+                raw_cgpa, raw_marital, raw_dep, raw_anx, raw_panic, raw_treat
+            )
+
+            if row_signature in existing_signatures:
+                skipped_count += 1
+                continue
+
             db_record = MentalHealthRecord(
-                time_date=extract_value_by_alias(row, "time_date", user_mapped_col=m_time),
-                gender=extract_value_by_alias(row, "gender", user_mapped_col=m_gender),
+                time_date=raw_time,
+                gender=raw_gender,
                 age=age_val,
-                course=extract_value_by_alias(row, "course", user_mapped_col=m_course),
-                year_of_study=extract_value_by_alias(row, "year_of_study", user_mapped_col=m_year),
-                cgpa=extract_value_by_alias(row, "cgpa", user_mapped_col=m_cgpa),
-                marital_status=extract_value_by_alias(row, "marital_status", user_mapped_col=m_marital),
-                depression=extract_value_by_alias(row, "depression", user_mapped_col=m_dep, default="No"),
-                anxiety=extract_value_by_alias(row, "anxiety", user_mapped_col=m_anx, default="No"),
-                panic_attack=extract_value_by_alias(row, "panic_attack", user_mapped_col=m_panic, default="No"),
-                specialist_treatment=extract_value_by_alias(row, "specialist_treatment", user_mapped_col=m_treat, default="No")
+                education_level=edu_norm,
+                course=raw_course,
+                year_of_study=raw_year,
+                cgpa=raw_cgpa,
+                marital_status=raw_marital,
+                depression=raw_dep,
+                anxiety=raw_anx,
+                panic_attack=raw_panic,
+                specialist_treatment=raw_treat
             )
             db.add(db_record)
-            count += 1
+            existing_signatures.add(row_signature)
+            imported_count += 1
         except Exception as e:
             print(f"Skipping row due to error: {e}")
+            skipped_count += 1
             continue
 
-    db.commit()
+    if imported_count > 0:
+        db.commit()
+
+    if imported_count > 0 and skipped_count > 0:
+        msg = f"นำเข้าข้อมูลใหม่สำเร็จ {imported_count} รายการ (ข้ามข้อมูลที่ซ้ำกับในระบบ {skipped_count} รายการ)"
+    elif imported_count > 0:
+        msg = f"นำเข้าข้อมูลใหม่สำเร็จจำนวน {imported_count} รายการ"
+    else:
+        msg = f"ไม่มีข้อมูลใหม่ที่ต้องนำเข้า (ข้อมูลทั้งหมด {skipped_count} รายการซ้ำกับที่มีอยู่ในฐานข้อมูลแล้ว)"
+
     return ImportCSVResponse(
-        imported_count=count,
+        imported_count=imported_count,
+        skipped_count=skipped_count,
         status="success",
-        message=f"นำเข้าข้อมูลลง MySQL Database สำเร็จจำนวน {count} รายการ"
+        message=msg
     )
 
 

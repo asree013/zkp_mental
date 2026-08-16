@@ -6,8 +6,15 @@ import io
 import pandas as pd
 from fastapi.testclient import TestClient
 from main import app
+from app.config.database import engine, Base, SessionLocal, init_db_schema
 from app.models.schemas import CSVColumnMapping
 from app.services.student_service import process_df_to_db
+
+# สร้างตารางและซิงค์คอลัมน์สำหรับการทดสอบอัตโนมัติ
+try:
+    init_db_schema()
+except Exception as e:
+    print(f"Warning DB init: {e}")
 
 client = TestClient(app)
 
@@ -117,7 +124,7 @@ def test_student_ui_and_management():
     assert "total_count" in stats
     print("✅ GET /api/v1/students/statistics PASSED: Total =", stats["total_count"])
 
-    # 3. Test Create Single Record
+    # 3. Test Create Single Record (Default education_level is UNK)
     payload = {
         "time_date": "2026-08-16 10:00:00",
         "gender": "Female",
@@ -135,7 +142,28 @@ def test_student_ui_and_management():
     assert create_res.status_code == 201
     created = create_res.json()
     record_id = created["id"]
-    print(f"✅ POST /api/v1/students/records PASSED: Created ID #{record_id}")
+    assert created["education_level"] == "UNK"
+    print(f"✅ POST /api/v1/students/records PASSED: Created ID #{record_id}, EducationLevel = {created['education_level']}")
+
+    # 3.1 Test Create Record with explicit education_level Enum (BD = Bachelor's Degree)
+    payload_bd = {
+        "time_date": "2026-08-16 10:05:00",
+        "gender": "Male",
+        "age": 24,
+        "education_level": "BD",
+        "course": "Data Science",
+        "year_of_study": "year 4",
+        "cgpa": "3.80 - 4.00",
+        "marital_status": "No",
+        "depression": "No",
+        "anxiety": "No",
+        "panic_attack": "No",
+        "specialist_treatment": "No"
+    }
+    create_res_bd = client.post("/api/v1/students/records", json=payload_bd)
+    assert create_res_bd.status_code == 201
+    assert create_res_bd.json()["education_level"] == "BD"
+    print(f"✅ POST /api/v1/students/records with BD Enum PASSED: EducationLevel = BD")
 
     # 4. Test DELETE Endpoint is securely disabled (Not Found / 405 Method Not Allowed)
     del_res = client.delete(f"/api/v1/students/records/{record_id}")
@@ -160,6 +188,33 @@ def test_cors_configuration():
     print(f"🌐 CORS Origin Configured Successfully: Origin Allowed = {res.headers.get('access-control-allow-origin')}")
 
 
+def test_csv_upload_deduplication():
+    import time
+    ts = int(time.time())
+    # สร้าง CSV ตัวอย่างสำหรับการทดสอบ Duplicate Prevention (พร้อมทดสอบ education_level)
+    csv_content = f"""Timestamp,Choose your gender,Age,Education Level,What is your course?,Your current year of Study,What is your CGPA?,Marital status,Do you have Depression?,Do you have Anxiety?,Do you have Panic attack?,Did you seek any specialist for a treatment?
+{ts}_01,Female,20,Bachelor's degree,Engineering,year 1,3.50 - 4.00,No,No,No,No,No
+{ts}_01,Female,20,Bachelor's degree,Engineering,year 1,3.50 - 4.00,No,No,No,No,No
+{ts}_02,Male,22,,BIT,year 2,3.00 - 3.49,No,Yes,No,No,No
+"""
+    files = {"file": ("test_students.csv", csv_content.encode("utf-8"), "text/csv")}
+    res1 = client.post("/api/v1/students/upload-csv", files=files)
+    assert res1.status_code == 200
+    data1 = res1.json()
+    assert data1["imported_count"] == 2 # 2 unique rows inserted (1 duplicate skipped)
+    assert data1["skipped_count"] == 1
+    print("✅ First CSV upload succeeded with Deduplication & EducationLevel parsing:", data1)
+
+    # อัปโหลดไฟล์เดิมซ้ำอีกรอบ -> ต้องไม่ insert ซ้ำ (skipped_count = 3, imported_count = 0)
+    files2 = {"file": ("test_students.csv", csv_content.encode("utf-8"), "text/csv")}
+    res2 = client.post("/api/v1/students/upload-csv", files=files2)
+    assert res2.status_code == 200
+    data2 = res2.json()
+    assert data2["imported_count"] == 0
+    assert data2["skipped_count"] == 3
+    print(f"✅ Duplicate prevention PASSED: Imported = {data2['imported_count']}, Skipped = {data2['skipped_count']}")
+
+
 if __name__ == "__main__":
     test_health()
     test_model_info()
@@ -169,6 +224,7 @@ if __name__ == "__main__":
     test_quantization_benchmark()
     test_cryptographic_benchmark()
     test_student_ui_and_management()
+    test_csv_upload_deduplication()
     test_rate_limiting()
     test_cors_configuration()
-    print("\n🎉 ALL API, DB, HOME PORTAL, QUANTIZATION, CRYPTOGRAPHIC, STUDENT DATA, RATE LIMIT & CORS TESTS PASSED!")
+    print("\n🎉 ALL API, DB, HOME PORTAL, QUANTIZATION, CRYPTOGRAPHIC, STUDENT DATA, DEDUPLICATION, RATE LIMIT & CORS TESTS PASSED!")

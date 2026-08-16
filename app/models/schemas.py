@@ -31,6 +31,33 @@ class HealthCheckResponse(BaseModel):
     database: Optional[Dict[str, Any]] = None
 
 
+from enum import Enum
+
+
+class EducationLevel(str, Enum):
+    """
+    ระดับการศึกษา (Education Level)
+    - PP: Pre-primary Education (การศึกษาก่อนประถมศึกษา)
+    - PE: Primary Education (ประถมศึกษา)
+    - LSE: Lower Secondary Education (มัธยมศึกษาตอนต้น)
+    - USE_VS: Upper Secondary Education / Vocational Stream (มัธยมศึกษาตอนปลาย / สายอาชีวศึกษา)
+    - BBDL: Below bachelor's degree level (ต่ำกว่าปริญญาตรี / อนุปริญญา / ปวส.)
+    - BD: Bachelor's degree (ปริญญาตรี)
+    - MD: Master's Degree (ปริญญาโท)
+    - PHD: Doctoral Degree (ปริญญาเอก)
+    - UNK: Unknown / Not Specified (ไม่ระบุ / ไม่ทราบข้อมูล)
+    """
+    PP = "PP"
+    PE = "PE"
+    LSE = "LSE"
+    USE_VS = "USE_VS"
+    BBDL = "BBDL"
+    BD = "BD"
+    MD = "MD"
+    PHD = "PHD"
+    UNK = "UNK"
+
+
 # -------------------------------------------------------------
 # DATABASE RECORD SCHEMAS
 # -------------------------------------------------------------
@@ -40,6 +67,7 @@ class MentalHealthCreate(BaseModel):
     time_date: Optional[str] = Field(None, alias="time_date", description="Timestamp จากแบบสำรวจ")
     gender: Optional[str] = Field(None, description="เพศ e.g. Female, Male")
     age: int = Field(..., ge=10, le=100, description="อายุ")
+    education_level: Optional[EducationLevel] = Field(default=EducationLevel.UNK, description="ระดับการศึกษา (Enum: PP, PE, LSE, USE_VS, BBDL, BD, MD, PHD, UNK)")
     course: Optional[str] = Field(None, description="สาขาวิชา/คณะ")
     year_of_study: Optional[str] = Field(None, description="ชั้นปีการศึกษา e.g. Year 1, year 2")
     cgpa: Optional[str] = Field(None, alias="CGPA", description="เกรดเฉลี่ยสะสม CGPA e.g. 3.50 - 4.00")
@@ -59,6 +87,7 @@ class MentalHealthResponse(BaseModel):
     time_date: Optional[str] = None
     gender: Optional[str] = None
     age: int
+    education_level: Optional[str] = "UNK"
     course: Optional[str] = None
     year_of_study: Optional[str] = None
     cgpa: Optional[str] = None
@@ -79,6 +108,7 @@ class CSVColumnMapping(BaseModel):
     time_date: Optional[str] = Field("Timestamp", description="ชื่อคอลัมน์ใน CSV สำหรับ Time/Date")
     gender: Optional[str] = Field("Choose your gender", description="ชื่อคอลัมน์ใน CSV สำหรับ Gender")
     age: Optional[str] = Field("Age", description="ชื่อคอลัมน์ใน CSV สำหรับ Age")
+    education_level: Optional[str] = Field("Education Level", alias="education_level", description="ชื่อคอลัมน์ใน CSV สำหรับ Education Level")
     course: Optional[str] = Field("What is your course?", description="ชื่อคอลัมน์ใน CSV สำหรับ Course")
     year_of_study: Optional[str] = Field("Your current year of Study", description="ชื่อคอลัมน์ใน CSV สำหรับ Year of Study")
     cgpa: Optional[str] = Field("What is your CGPA?", alias="CGPA", description="ชื่อคอลัมน์ใน CSV สำหรับ CGPA")
@@ -95,5 +125,6 @@ class CSVColumnMapping(BaseModel):
 class ImportCSVResponse(BaseModel):
     """Schema ตอบกลับผลลัพธ์การนำเข้าไฟล์ CSV"""
     imported_count: int
+    skipped_count: Optional[int] = 0
     status: str
     message: str

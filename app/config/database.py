@@ -38,6 +38,30 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+def init_db_schema():
+    """
+    สร้างตาราง และเพิ่มคอลัมน์ใหม่อัตโนมัติ (Auto Schema Migration)
+    """
+    try:
+        Base.metadata.create_all(bind=engine)
+        with engine.connect() as conn:
+            # ตรวจสอบว่ามีคอลัมน์ education_level ในตาราง mental_health_records หรือยัง
+            check_col = conn.execute(text(
+                "SELECT COUNT(*) FROM information_schema.COLUMNS "
+                "WHERE TABLE_SCHEMA = :db_name AND TABLE_NAME = 'mental_health_records' AND COLUMN_NAME = 'education_level'"
+            ), {"db_name": DB_NAME}).scalar()
+
+            if check_col == 0:
+                conn.execute(text(
+                    "ALTER TABLE mental_health_records ADD COLUMN education_level VARCHAR(50) DEFAULT 'UNK' "
+                    "COMMENT 'ระดับการศึกษา (PP, PE, LSE, USE_VS, BBDL, BD, MD, PHD, UNK)' AFTER age"
+                ))
+                conn.commit()
+                print("✨ Auto-migrated: Added 'education_level' column to mental_health_records table.")
+    except Exception as e:
+        print(f"⚠️ init_db_schema note: {e}")
+
+
 def check_db_connection() -> dict:
     """
     ฟังก์ชันตรวจสอบความพร้อมของการเชื่อมต่อ MySQL Database

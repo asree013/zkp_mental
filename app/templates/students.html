@@ -163,6 +163,21 @@
                         </div>
 
                         <div>
+                            <label class="block text-xs font-semibold text-stone-300 mb-1">ระดับการศึกษา (Education Level)</label>
+                            <select name="education_level" id="form-education-level" class="w-full bg-[#1c1614] border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200">
+                                <option value="UNK" selected>UNK - ไม่ระบุ / ไม่ทราบ (Unknown)</option>
+                                <option value="PP">PP - การศึกษาก่อนประถมศึกษา (Pre-primary)</option>
+                                <option value="PE">PE - ประถมศึกษา (Primary)</option>
+                                <option value="LSE">LSE - มัธยมศึกษาตอนต้น (Lower Secondary)</option>
+                                <option value="USE_VS">USE_VS - มัธยมปลาย / อาชีวศึกษา (Upper Secondary / Vocational)</option>
+                                <option value="BBDL">BBDL - ต่ำกว่าปริญญาตรี / ปวส. (Below Bachelor)</option>
+                                <option value="BD">BD - ปริญญาตรี (Bachelor's degree)</option>
+                                <option value="MD">MD - ปริญญาโท (Master's Degree)</option>
+                                <option value="PHD">PHD - ปริญญาเอก (Doctoral Degree)</option>
+                            </select>
+                        </div>
+
+                        <div>
                             <label class="block text-xs font-semibold text-stone-300 mb-1">สาขาวิชา / คณะ (Course) *</label>
                             <input type="text" name="course" id="form-course" class="w-full bg-black/50 border border-orange-500/20 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" value="Data Science" required>
                         </div>
@@ -311,6 +326,7 @@
                         <tr class="bg-white/5 text-orange-200/80 uppercase tracking-wider font-semibold sticky top-0 backdrop-blur-md z-10 border-b border-orange-500/20">
                             <th class="py-3 px-4">ID</th>
                             <th class="py-3 px-4">Age / Gender</th>
+                            <th class="py-3 px-4">Education Level</th>
                             <th class="py-3 px-4">Course & Year</th>
                             <th class="py-3 px-4">CGPA</th>
                             <th class="py-3 px-4">Depression</th>
@@ -328,6 +344,11 @@
                             </td>
                             <td class="py-3 px-4">
                                 <strong class="text-white">{{ r.age }}</strong> ปี / {{ r.gender }}
+                            </td>
+                            <td class="py-3 px-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                    {{ r.education_level or 'UNK' }}
+                                </span>
                             </td>
                             <td class="py-3 px-4">
                                 <div class="font-semibold text-white">{{ r.course }}</div>
@@ -372,7 +393,7 @@
                         </tr>
                         {% else %}
                         <tr id="empty-row">
-                            <td colspan="9" class="text-center py-12 text-stone-300">
+                            <td colspan="10" class="text-center py-12 text-stone-300">
                                 📭 ยังไม่มีข้อมูลนักเรียนในฐานข้อมูล กรุณาเพิ่มข้อมูลหรือนำเข้าไฟล์ CSV ด้านบน
                             </td>
                         </tr>
@@ -436,10 +457,20 @@
                         <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
                             <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
                                 <span>age</span>
-                                <span class="text-[10px] text-stone-400 font-normal">string | null</span>
+                                <span class="text-[10px] text-stone-400 font-normal">number</span>
                             </div>
                             <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Age</div>
                             <input type="text" id="map_age" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Age" required>
+                        </div>
+
+                        <!-- 3.1 education_level -->
+                        <div class="bg-white/[0.02] border border-orange-500/15 rounded-xl p-3.5 focus-within:border-orange-500 transition-colors duration-200">
+                            <div class="flex items-center justify-between text-xs font-mono font-bold text-amber-300 mb-1">
+                                <span>education_level (Enum)</span>
+                                <span class="text-[10px] text-stone-400 font-normal">string | UNK</span>
+                            </div>
+                            <div class="text-[11px] text-stone-300 mb-2">ชื่อคอลัมน์ใน CSV สำหรับ Education Level (ระดับการศึกษา)</div>
+                            <input type="text" id="map_education_level" class="w-full bg-black/50 border border-orange-500/20 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-orange-500" value="Education Level">
                         </div>
 
                         <!-- 4. course -->
@@ -569,6 +600,7 @@
                 time_date: new Date().toISOString(),
                 gender: document.getElementById('form-gender').value,
                 age: parseInt(document.getElementById('form-age').value),
+                education_level: document.getElementById('form-education-level').value,
                 course: document.getElementById('form-course').value,
                 year_of_study: document.getElementById('form-year').value,
                 cgpa: document.getElementById('form-cgpa').value,
@@ -652,6 +684,7 @@
             document.getElementById('map_time_date').value = "Timestamp";
             document.getElementById('map_gender').value = "Choose your gender";
             document.getElementById('map_age').value = "Age";
+            document.getElementById('map_education_level').value = "Education Level";
             document.getElementById('map_course').value = "What is your course?";
             document.getElementById('map_year_of_study').value = "Your current year of Study";
             document.getElementById('map_cgpa').value = "What is your CGPA?";
@@ -680,6 +713,7 @@
             formData.append('time_date', document.getElementById('map_time_date').value);
             formData.append('gender', document.getElementById('map_gender').value);
             formData.append('age', document.getElementById('map_age').value);
+            formData.append('education_level', document.getElementById('map_education_level').value);
             formData.append('course', document.getElementById('map_course').value);
             formData.append('year_of_study', document.getElementById('map_year_of_study').value);
             formData.append('cgpa', document.getElementById('map_cgpa').value);

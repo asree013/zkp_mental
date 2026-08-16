@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.config.database import engine, Base
+from app.config.database import engine, Base, init_db_schema
 from app.models.db_models import MentalHealthRecord, ExperimentBenchmarkLog  # Import to register ORM models in Base.metadata
 from app.models.ml_model import load_model_weights
 from app.services.zk_service import get_nargo_bin
@@ -22,12 +22,12 @@ from app.controllers.benchmark_controller import router as benchmark_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # สร้างตารางใน MySQL อัตโนมัติหากยังไม่มี
+    # สร้างตารางและซิงค์คอลัมน์ใน MySQL อัตโนมัติ
     try:
-        Base.metadata.create_all(bind=engine)
-        print("✅ Database tables verified / created successfully.")
+        init_db_schema()
+        print("✅ Database tables & schema verified successfully.")
     except Exception as e:
-        print(f"⚠️ Could not connect to MySQL database during startup: {e}")
+        print(f"⚠️ Could not initialize MySQL database during startup: {e}")
 
     model_data = load_model_weights()
     nargo_bin = get_nargo_bin()

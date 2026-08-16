@@ -84,6 +84,21 @@
 ### Rule 3: Asynchronous REST API Standards
 - คำสั่ง Nargo CLI (`nargo execute`, `nargo prove`) ต้องสั่งผ่าน `asyncio.create_subprocess_exec` เสมอ เพื่อไม่บล็อก Main Event Loop
 
+### Rule 4: Standardized Education Level Enum Specification (รหัสย่อระดับการศึกษา)
+ฟิลด์ `education_level` ในฐานข้อมูลและ API ใช้รหัสย่อ Enum มาตรฐาน หากไม่มีการระบุหรือไม่กรอกข้อมูล ระบบจะกำหนดค่าเริ่มต้นเป็น `UNK` เสมอ:
+
+| Code (ตัวย่อ) | Full Name / Description | ภาษาไทย | หมายเหตุ / ตัวอย่าง |
+|:---:|---|---|---|
+| **`PP`** | Pre-primary Education | การศึกษาก่อนประถมศึกษา | อนุบาล / ก่อนวัยเรียน |
+| **`PE`** | Primary Education | ประถมศึกษา | ป.1 - ป.6 |
+| **`LSE`** | Lower Secondary Education | มัธยมศึกษาตอนต้น | ม.1 - ม.3 |
+| **`USE_VS`** | Upper Secondary Education / Vocational Stream | มัธยมศึกษาตอนปลาย / สายอาชีวศึกษา | ม.4 - ม.6, ปวช. |
+| **`BBDL`** | Below bachelor's degree level | ต่ำกว่าปริญญาตรี | อนุปริญญา, ปวส. |
+| **`BD`** | Bachelor's degree | ปริญญาตรี | ป.ตรี / Undergraduate |
+| **`MD`** | Master's Degree | ปริญญาโท | ป.โท / Postgraduate |
+| **`PHD`** | Doctoral Degree | ปริญญาเอก | ป.เอก / Doctorate |
+| **`UNK`** | Unknown / Not Specified | ไม่ทราบ / ไม่ได้ระบุ | **Default (ค่าเริ่มต้นเมื่อไม่กรอกข้อมูล)** |
+
 ---
 
 ## 🌐 5. Standardized Endpoints Specification
