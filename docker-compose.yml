@@ -1,8 +1,8 @@
-version: '3.8'
-
 services:
   # 1. FastAPI ZK-ML Backend Application
   api:
+    image: asree001/zkp_mental-api:latest
+    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile

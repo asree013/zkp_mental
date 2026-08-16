@@ -35,9 +35,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # 4. Copy Application Source Code
 COPY . .
 
-# 5. Pre-train ML model & compile Noir circuit (if not present)
+# 5. Pre-train ML model & compile Noir circuit (must pass without error)
 RUN python lib/train_ml_model.py && \
-    cd circuit && nargo check || true
+    cd circuit && nargo check
 
 # 6. Expose FastAPI Server Port
 EXPOSE 8000

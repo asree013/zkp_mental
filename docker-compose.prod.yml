@@ -1,0 +1,74 @@
+services:
+  # 1. Caddy Reverse Proxy & Auto-SSL
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: zkp_mental_caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data       # เก็บ SSL certificates อัตโนมัติ (Let's Encrypt / ZeroSSL)
+      - caddy_config:/config   # เก็บ Caddy configuration cache
+    depends_on:
+      - api
+    networks:
+      - zkp_network
+
+  # 2. FastAPI ZK-ML Backend Application (Pull Image จาก Docker Hub / Registry)
+  api:
+    image: ${DOCKER_IMAGE:-asree001/zkp_mental-api:latest}
+    container_name: zkp_mental_api
+    restart: always
+    # ไม่จำเป็นต้องเปิดพอร์ต 8000 ออกสู่ภายนอก เพราะคุยผ่านเครือข่ายภายใน zkp_network ไปยัง Caddy
+    expose:
+      - "8000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=${DB_NAME:-default-db}
+      - DB_USER=${DB_USER:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-12345678}
+      - DATABASE_URL=mysql+pymysql://${DB_USER:-root}:${DB_PASSWORD:-12345678}@db:3306/${DB_NAME:-default-db}
+      - CORS_ORIGINS=${CORS_ORIGINS:-*}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - zkp_network
+
+  # 3. MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: zkp_mental_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-12345678}
+      - MYSQL_DATABASE=${DB_NAME:-default-db}
+    # ปิด port 3306 สู่โลกภายนอกเพื่อความปลอดภัย (เปิดเฉพาะถ้าต้องการรีโมทต่อ DBeaver/Navicat)
+    # ports:
+    #   - "127.0.0.1:3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-12345678}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - zkp_network
+
+networks:
+  zkp_network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
