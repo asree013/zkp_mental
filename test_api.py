@@ -215,6 +215,93 @@ def test_csv_upload_deduplication():
     print(f"✅ Duplicate prevention PASSED: Imported = {data2['imported_count']}, Skipped = {data2['skipped_count']}")
 
 
+def test_pdf_paper_upload_and_management():
+    # 1. Test GET /paper (Jinja2 Web UI)
+    ui_res = client.get("/paper")
+    assert ui_res.status_code == 200
+    assert "ระบบจัดการเอกสารงานวิจัยและวิทยานิพนธ์" in ui_res.text
+    print("✅ GET /paper (Jinja2 Web UI) PASSED!")
+
+    # 2. Test upload invalid file (non-pdf) -> Expected 400 Bad Request
+    txt_content = b"This is not a pdf file"
+    invalid_file = {"file": ("invalid_doc.txt", txt_content, "text/plain")}
+    err_res = client.post("/api/upload/pdf", files=invalid_file)
+    assert err_res.status_code == 400
+    print("✅ Non-PDF rejection test PASSED (400 Bad Request)")
+
+    # 3. Test upload valid PDF to /api/upload/pdf
+    pdf_content = b"%PDF-1.4 Mock Thesis Chapter 1 PDF Content for Testing ZKP Mental Health"
+    pdf_file = {"file": ("thesis_chapter_1.pdf", pdf_content, "application/pdf")}
+    data_payload = {"type_paper": "chapter_1", "custom_name": "บทที่1_บทนำ_ฉบับสมบูรณ์.pdf"}
+    upload_res = client.post("/api/upload/pdf", files=pdf_file, data=data_payload)
+    assert upload_res.status_code == 200
+    upload_data = upload_res.json()
+
+    assert upload_data["name_file"] == "บทที่1_บทนำ_ฉบับสมบูรณ์.pdf"
+    assert "/uploads/" in upload_data["link"]
+    assert upload_data["type"] == "pdf"
+    assert "create_date" in upload_data
+    assert "update_date" in upload_data
+    print("✅ POST /api/upload/pdf PASSED:", upload_data)
+
+    # 4. Test accessing the uploaded PDF via static URL
+    relative_path = upload_data["link"].split("http://testserver")[-1]
+    static_res = client.get(relative_path)
+    assert static_res.status_code == 200
+    assert static_res.content == pdf_content
+    print(f"✅ Static PDF Access via {relative_path} PASSED!")
+
+    # 5. Test List Research Papers API
+    list_res = client.get("/api/v1/papers/records")
+    assert list_res.status_code == 200
+    papers_list = list_res.json()
+    assert len(papers_list) >= 1
+    target_paper = next((p for p in papers_list if p["name"] == "บทที่1_บทนำ_ฉบับสมบูรณ์.pdf"), None)
+    assert target_paper is not None
+    paper_id = target_paper["id"]
+    print(f"✅ GET /api/v1/papers/records PASSED: Found Paper ID #{paper_id}, Type = {target_paper['type_paper']}")
+
+    # 6. Test Get Single Research Paper Record By ID
+    single_res = client.get(f"/api/v1/papers/records/{paper_id}")
+    assert single_res.status_code == 200
+    assert single_res.json()["id"] == paper_id
+    print(f"✅ GET /api/v1/papers/records/{paper_id} PASSED!")
+
+    # 7. Test Update (PUT) Research Paper
+    update_payload = {
+        "name": "บทที่1_บทนำ_แก้ไขเพิ่มเติม.pdf",
+        "type_paper": "chapter_1"
+    }
+    update_res = client.put(f"/api/v1/papers/records/{paper_id}", json=update_payload)
+    assert update_res.status_code == 200
+    assert update_res.json()["name"] == "บทที่1_บทนำ_แก้ไขเพิ่มเติม.pdf"
+    print(f"✅ PUT /api/v1/papers/records/{paper_id} PASSED: Updated Name = {update_res.json()['name']}")
+
+    # 8. Test Upload Proposal and verify it appears on Home Page (GET /)
+    prop_content = b"%PDF-1.4 Mock Thesis Proposal Document"
+    prop_file = {"file": ("thesis_proposal_v2026.pdf", prop_content, "application/pdf")}
+    prop_data = {"type_paper": "proposal", "custom_name": "โครงร่างวิทยานิพนธ์_ฉบับล่าสุด_2026.pdf"}
+    prop_upload_res = client.post("/api/upload/pdf", files=prop_file, data=prop_data)
+    assert prop_upload_res.status_code == 200
+
+    home_res = client.get("/")
+    assert home_res.status_code == 200
+    assert "โครงร่างวิทยานิพนธ์_ฉบับล่าสุด_2026.pdf" in home_res.text
+    print("✅ Home Page (GET /) renders latest proposal document successfully!")
+
+    # 9. Test Delete Paper without Password or Wrong Password -> Expected 403 Forbidden
+    del_wrong_res = client.delete(f"/api/v1/papers/records/{paper_id}?pass_for_delete=wrong_password")
+    assert del_wrong_res.status_code == 403
+    print("✅ DELETE with wrong password correctly rejected (403 Forbidden)")
+
+    # 10. Test Delete Paper with Correct Password (pass_for_delete=P@ssw0rd) -> Expected 200 OK
+    del_correct_res = client.delete(f"/api/v1/papers/records/{paper_id}?pass_for_delete=P@ssw0rd")
+    assert del_correct_res.status_code == 200
+    print(f"✅ DELETE /api/v1/papers/records/{paper_id}?pass_for_delete=P@ssw0rd PASSED!")
+
+
+
+
 if __name__ == "__main__":
     test_health()
     test_model_info()
@@ -225,6 +312,8 @@ if __name__ == "__main__":
     test_cryptographic_benchmark()
     test_student_ui_and_management()
     test_csv_upload_deduplication()
+    test_pdf_paper_upload_and_management()
     test_rate_limiting()
     test_cors_configuration()
-    print("\n🎉 ALL API, DB, HOME PORTAL, QUANTIZATION, CRYPTOGRAPHIC, STUDENT DATA, DEDUPLICATION, RATE LIMIT & CORS TESTS PASSED!")
+    print("\n🎉 ALL API, DB, HOME PORTAL, QUANTIZATION, CRYPTOGRAPHIC, STUDENT DATA, DEDUPLICATION, PDF UPLOAD, RATE LIMIT & CORS TESTS PASSED!")
+

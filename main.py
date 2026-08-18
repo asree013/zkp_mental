@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.config.database import engine, Base, init_db_schema
-from app.models.db_models import MentalHealthRecord, ExperimentBenchmarkLog  # Import to register ORM models in Base.metadata
+from app.models.db_models import MentalHealthRecord, ExperimentBenchmarkLog, ResearchPaper  # Register ORM models
 from app.models.ml_model import load_model_weights
 from app.services.zk_service import get_nargo_bin
 from app.controllers.home_controller import router as home_router
@@ -18,6 +18,8 @@ from app.controllers.health_controller import router as health_router
 from app.controllers.zkml_controller import router as zkml_router
 from app.controllers.student_controller import router as student_router
 from app.controllers.benchmark_controller import router as benchmark_router
+from app.controllers.paper_controller import router as paper_router
+
 
 
 @asynccontextmanager
@@ -84,12 +86,20 @@ static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app", "st
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
+# Mount Uploads Directory for PDF Papers
+uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+os.makedirs(uploads_dir, exist_ok=True)
+app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
+app.mount("/images", StaticFiles(directory=uploads_dir), name="images")
+
 # Register MVC Controller Routers
 app.include_router(home_router)
 app.include_router(health_router)
 app.include_router(zkml_router)
 app.include_router(student_router)
 app.include_router(benchmark_router)
+app.include_router(paper_router)
+
 
 
 if __name__ == "__main__":

@@ -25,3 +25,6 @@ __pycache__/
 # Noir / Nargo Build & Runtime Files
 circuit/target/
 circuit/Prover.toml
+
+# file for export result data
+THESIS_SYSTEM_SUMMARY.md

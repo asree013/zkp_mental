@@ -51,3 +51,20 @@ class ExperimentBenchmarkLog(Base):
     details_json = Column(Text, nullable=False, comment="ผลการทดลองแบบละเอียดในรูปแบบ JSON (Long Text)")
     created_at = Column(DateTime, default=datetime.utcnow, comment="เวลาที่ทำการทดลองและบันทึกผล")
     execution_note = Column(String(255), nullable=True, comment="บันทึกช่วยจำการทดลอง (Experiment Note)")
+
+
+class ResearchPaper(Base):
+    """
+    SQLAlchemy Model สำหรับตาราง research_papers
+    เก็บข้อมูลเอกสารและไฟล์ PDF งานวิจัย/วิทยานิพนธ์ (บทที่ 1-5, เล่มเต็ม, โครงร่าง, ข้อเสนอแนะ)
+    """
+    __tablename__ = "research_papers"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    type_paper = Column(String(50), nullable=False, default="proposal", comment="ประเภทงานวิจัย (chapter_1..chapter_5, all_paper, proposal, recommend)")
+    name = Column(String(255), nullable=False, comment="ชื่อไฟล์เอกสารเดิม")
+    link = Column(String(500), nullable=False, comment="Path/URL สำหรับเข้าถึงไฟล์ PDF")
+    file_type = Column(String(20), default="pdf", nullable=False, comment="ประเภทไฟล์ (pdf)")
+    create_date = Column(DateTime, default=datetime.utcnow, comment="เวลาอัปโหลดไฟล์")
+    update_date = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, comment="เวลาแก้ไขข้อมูลล่าสุด")
+

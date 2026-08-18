@@ -10,7 +10,6 @@ import os
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-
 def parse_cgpa(cgpa_val: str) -> int:
     """
     แปลงช่วง CGPA แบบข้อความ เป็นค่าสเกลตัวเลขจำนวนเต็ม (Scaled Integer x 100)

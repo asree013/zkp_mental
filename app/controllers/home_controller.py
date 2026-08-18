@@ -1,17 +1,21 @@
 """
 Home Controller - Master's Thesis Portal & Researcher Dashboard
 ================================================================
-หน้าแรก (Homepage /) แสดงโปรไฟล์ผู้วิจัย โครงสร้างวิทยานิพนธ์ และศูนย์ควบคุมระบบ ZK-ML
+หน้าแรก (Homepage /) แสดงโปรไฟล์ผู้วิจัย โครงสร้างวิทยานิพนธ์ ศูนย์ควบคุมระบบ ZK-ML
+และแสดงผลเอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal) ฉบับล่าสุดจากฐานข้อมูล
 """
 
 import os
-from fastapi import APIRouter, Request
+from typing import Optional
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
 from app.models.ml_model import load_model_weights
 from app.services.zk_service import get_nargo_bin
-from app.config.database import check_db_connection
+from app.config.database import check_db_connection, get_db
+from app.models.db_models import ResearchPaper
 
 router = APIRouter(tags=["Home & Researcher Profile"])
 
@@ -20,13 +24,29 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
 @router.get("/", response_class=HTMLResponse, summary="Master's Thesis Research Portal Homepage")
-async def home_page(request: Request):
+async def home_page(
+    request: Request,
+    db: Session = Depends(get_db)
+):
     """
-    เรนเดอร์หน้าแรก แสดงข้อมูลงานวิจัยวิทยานิพนธ์ โปรไฟล์ผู้วิจัย และระบบทดสอบ ZK-ML แบบโต้ตอบ
+    เรนเดอร์หน้าแรก แสดงข้อมูลงานวิจัยวิทยานิพนธ์ โปรไฟล์ผู้วิจัย เอกสาร Proposal ล่าสุด และระบบทดสอบ ZK-ML
     """
     model_data = load_model_weights()
     db_status = check_db_connection()
     nargo_bin = get_nargo_bin()
+
+    # ดึงเอกสารโครงร่างงานวิจัย (Thesis Proposal) ตัวล่าสุดเพียง 1 ฉบับ
+    latest_proposal = None
+    try:
+        if db_status.get("status") == "connected":
+            latest_proposal = (
+                db.query(ResearchPaper)
+                .filter(ResearchPaper.type_paper.in_(["proposal", "proposol"]))
+                .order_by(ResearchPaper.id.desc())
+                .first()
+            )
+    except Exception as e:
+        print(f"⚠️ Warning: Could not query latest proposal from database: {e}")
 
     researcher_info = {
         "name_th": "นายอัสรี หะยีมะ",
@@ -52,6 +72,8 @@ async def home_page(request: Request):
         name="index.html",
         context={
             "researcher": researcher_info,
-            "thesis": thesis_info
+            "thesis": thesis_info,
+            "latest_proposal": latest_proposal,
+            "db_status": db_status
         }
     )

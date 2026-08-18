@@ -128,3 +128,72 @@ class ImportCSVResponse(BaseModel):
     skipped_count: Optional[int] = 0
     status: str
     message: str
+
+
+# -------------------------------------------------------------
+# RESEARCH PAPER / PDF UPLOAD SCHEMAS
+# -------------------------------------------------------------
+
+class PaperType(str, Enum):
+    """
+    ประเภทเอกสารงานวิจัย/วิทยานิพนธ์
+    - chapter_1: บทที่ 1 บทนำ (Introduction)
+    - chapter_2: บทที่ 2 ทบทวนวรรณกรรม (Literature Review)
+    - chapter_3: บทที่ 3 ระเบียบวิธีวิจัย (Methodology)
+    - chapter_4: บทที่ 4 ผลการทดลองและการวิเคราะห์ (Results & Analysis)
+    - chapter_5: บทที่ 5 สรุปผลการวิจัยและข้อเสนอแนะ (Conclusion & Discussion)
+    - all_paper: เล่มงานวิจัยฉบับสมบูรณ์ (Full Paper / Thesis)
+    - proposal: เอกสารโครงร่างงานวิจัย (Proposal)
+    - proposol: เอกสารโครงร่างงานวิจัย (Alias)
+    - recommend: ข้อเสนอแนะและข้อคิดเห็น (Recommendations & Review Comments)
+    - recomment: ข้อเสนอแนะและข้อคิดเห็น (Alias)
+    """
+    CHAPTER_1 = "chapter_1"
+    CHAPTER_2 = "chapter_2"
+    CHAPTER_3 = "chapter_3"
+    CHAPTER_4 = "chapter_4"
+    CHAPTER_5 = "chapter_5"
+    ALL_PAPER = "all_paper"
+    PROPOSAL = "proposal"
+    PROPOSOL = "proposol"
+    RECOMMEND = "recommend"
+    RECOMMENT = "recomment"
+
+
+class PDFUploadResponse(BaseModel):
+    """Schema ตอบกลับเมื่ออัปโหลดไฟล์ PDF งานวิจัยสำเร็จ"""
+    name_file: str = Field(..., description="ชื่อไฟล์เดิมที่อัปโหลด")
+    link: str = Field(..., description="URL หรือ Path สำหรับเรียกเปิด/ดาวน์โหลดไฟล์")
+    type: str = Field("pdf", description="ประเภทไฟล์ (pdf)")
+    create_date: datetime = Field(..., description="เวลาที่อัปโหลดไฟล์")
+    update_date: datetime = Field(..., description="เวลาอัปเดตไฟล์")
+
+
+class ResearchPaperCreate(BaseModel):
+    """Schema สำหรับสร้าง/บันทึกข้อมูลเอกสารงานวิจัยลงฐานข้อมูล"""
+    type_paper: PaperType = Field(default=PaperType.PROPOSAL, description="ประเภทเอกสาร (chapter_1..chapter_5, all_paper, proposal, recommend)")
+    name: str = Field(..., description="ชื่อไฟล์เอกสาร")
+    link: str = Field(..., description="Link หรือ Path ไฟล์ที่ได้จาก API Upload PDF")
+    file_type: Optional[str] = Field("pdf", description="ประเภทไฟล์ (pdf)")
+
+
+class ResearchPaperUpdate(BaseModel):
+    """Schema สำหรับแก้ไขข้อมูลเอกสารงานวิจัยในฐานข้อมูล"""
+    name: Optional[str] = Field(None, description="ชื่อไฟล์เอกสารใหม่")
+    type_paper: Optional[PaperType] = Field(None, description="ประเภทเอกสารใหม่")
+
+
+class ResearchPaperResponse(BaseModel):
+    """Schema ตอบกลับข้อมูลเอกสารงานวิจัยจากตาราง research_papers"""
+    id: int
+    type_paper: str
+    name: str
+    link: str
+    file_type: str
+    create_date: datetime
+    update_date: datetime
+
+    class Config:
+        from_attributes = True
+
+

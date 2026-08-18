@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Papers & PDF Repository | ZK-ML Thesis Platform</title>
+    
+    <!-- Tailwind CSS v3 Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        sunset: {
+                            crimson: '#EA3815',
+                            orange: '#FF6B00',
+                            amber: '#FBBF24',
+                            cream: '#FDE68A',
+                            dark: '#0C0A09',
+                            card: '#161210',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Sarabun', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #0C0A09;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+            background-attachment: fixed;
+        }
+
+        .dropzone-active {
+            border-color: #FF6B00 !important;
+            background-color: rgba(255, 107, 0, 0.12) !important;
+            transform: scale(1.01);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(234, 56, 21, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 107, 0, 0.7);
+        }
+    </style>
+</head>
+<body class="text-stone-100 font-sans min-h-screen py-8 px-4 sm:px-6 lg:px-8 antialiased">
+
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Top Navbar Component -->
+        {% set active_page = 'paper' %}
+        {% include 'components/navbar.html' %}
+
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 pb-6 border-b border-orange-500/20">
+            <div>
+                <div class="flex flex-wrap items-center gap-2 mb-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-500/15 border border-orange-500/30 text-amber-300">
+                        📑 Master's Thesis Document Repository
+                    </span>
+                    {% if db_status.status == 'connected' %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        MySQL Connected: {{ db_status.database }}
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 border border-rose-500/30 text-rose-400">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                        Database Offline
+                    </span>
+                    {% endif %}
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                    ระบบจัดการเอกสารงานวิจัยและวิทยานิพนธ์ (Research Papers)
+                </h1>
+                <p class="text-sm text-stone-300 mt-1">
+                    อัปโหลด จัดหมวดหมู่บทที่ 1-5 โครงร่างวิทยานิพนธ์ และพรีวิวเอกสาร PDF พร้อมระบบรักษาความปลอดภัยในการลบข้อมูล
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="scrollToUpload()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-200 hover:-translate-y-0.5">
+                    <span>📤</span> อัปโหลดเอกสารใหม่
+                </button>
+            </div>
+        </header>
+
+        <!-- Stats Overview Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+            <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
+                <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
+                    <span>เอกสารทั้งหมด</span>
+                    <span class="text-lg">📚</span>
+                </div>
+                <div class="text-2xl font-extrabold text-white" id="statTotalPapers">{{ papers|length }}</div>
+                <div class="text-[11px] text-amber-300/80 mt-1">Total Research Papers</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
+                <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
+                    <span>บทที่ 1 - 5</span>
+                    <span class="text-lg">📑</span>
+                </div>
+                <div class="text-2xl font-extrabold text-amber-400" id="statChaptersCount">
+                    {{ papers|selectattr('type_paper', 'in', ['chapter_1', 'chapter_2', 'chapter_3', 'chapter_4', 'chapter_5'])|list|length }}
+                </div>
+                <div class="text-[11px] text-stone-400 mt-1">Individual Chapters</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
+                <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
+                    <span>โครงร่าง / Proposal</span>
+                    <span class="text-lg">📝</span>
+                </div>
+                <div class="text-2xl font-extrabold text-orange-400" id="statProposalsCount">
+                    {{ papers|selectattr('type_paper', 'equalto', 'proposal')|list|length }}
+                </div>
+                <div class="text-[11px] text-stone-400 mt-1">Thesis Proposals</div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
+                <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
+                    <span>เล่มสมบูรณ์ / ข้อเสนอแนะ</span>
+                    <span class="text-lg">🎓</span>
+                </div>
+                <div class="text-2xl font-extrabold text-emerald-400" id="statAllPapersCount">
+                    {{ papers|selectattr('type_paper', 'in', ['all_paper', 'recommend'])|list|length }}
+                </div>
+                <div class="text-[11px] text-stone-400 mt-1">Full Thesis & Reviews</div>
+            </div>
+        </div>
+
+        <!-- Main Grid: Upload Area & Table Management -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+            
+            <!-- Left Column: Upload Form (4 cols) -->
+            <div id="uploadSection" class="lg:col-span-4 flex flex-col gap-6">
+                <div class="p-6 rounded-3xl bg-[#161210]/95 border border-orange-500/30 shadow-xl shadow-black/40 backdrop-blur-xl sticky top-6">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-orange-500/20">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">📤</span>
+                            <h2 class="text-base font-bold text-white">อัปโหลดไฟล์ PDF งานวิจัย</h2>
+                        </div>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-500/20 text-amber-300 border border-orange-500/30">
+                            PDF ONLY
+                        </span>
+                    </div>
+
+                    <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
+                        <!-- Paper Type Selector -->
+                        <div>
+                            <label class="block text-xs font-bold text-stone-200 mb-1.5">
+                                หมวดหมู่งานวิจัย / ประเภทเอกสาร <span class="text-rose-400">*</span>
+                            </label>
+                            <select id="type_paper" name="type_paper" required class="w-full bg-black/50 border border-orange-500/30 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 font-medium focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors">
+                                <option value="chapter_1">บทที่ 1 : บทนำ (Introduction)</option>
+                                <option value="chapter_2">บทที่ 2 : ทบทวนวรรณกรรม (Literature Review)</option>
+                                <option value="chapter_3">บทที่ 3 : ระเบียบวิธีวิจัย (Methodology)</option>
+                                <option value="chapter_4">บทที่ 4 : ผลการทดลองและการวิเคราะห์ (Results & Analysis)</option>
+                                <option value="chapter_5">บทที่ 5 : สรุปผลและข้อเสนอแนะ (Conclusion)</option>
+                                <option value="proposal" selected>โครงร่างงานวิจัย (Thesis Proposal)</option>
+                                <option value="all_paper">เล่มงานวิจัยฉบับสมบูรณ์ (Full Thesis)</option>
+                                <option value="recommend">ข้อเสนอแนะและข้อคิดเห็น (Recommendations)</option>
+                            </select>
+                        </div>
+
+                        <!-- Custom Name Input -->
+                        <div>
+                            <label class="block text-xs font-bold text-stone-200 mb-1.5">
+                                ชื่อเอกสาร / ชื่อไฟล์ที่แสดง (Custom Name)
+                            </label>
+                            <input type="text" id="custom_name" name="custom_name" placeholder="เช่น วิทยานิพนธ์_บทที่1_ฉบับปรับปรุง.pdf" class="w-full bg-black/50 border border-orange-500/30 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors">
+                            <p class="text-[10px] text-stone-400 mt-1">หากไม่ระบุ จะใช้ชื่อไฟล์เดิมที่อัปโหลดโดยอัตโนมัติ</p>
+                        </div>
+
+                        <!-- Drag & Drop Zone -->
+                        <div>
+                            <label class="block text-xs font-bold text-stone-200 mb-1.5">
+                                เลือกไฟล์ PDF <span class="text-rose-400">*</span>
+                            </label>
+                            <div id="dropzone" onclick="document.getElementById('fileInput').click()" class="relative border-2 border-dashed border-orange-500/40 hover:border-orange-500 rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 bg-black/30 hover:bg-orange-500/5 group">
+                                <input type="file" id="fileInput" name="file" accept=".pdf,application/pdf" class="hidden" onchange="handleFileSelected(this)">
+                                <div class="flex flex-col items-center gap-2">
+                                    <div class="w-12 h-12 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                        📄
+                                    </div>
+                                    <div class="text-xs font-bold text-stone-200 group-hover:text-amber-300 transition-colors" id="fileNameDisplay">
+                                        คลิกเพื่อเลือกไฟล์ หรือลากไฟล์ PDF มาวางที่นี่
+                                    </div>
+                                    <div class="text-[11px] text-stone-400" id="fileSizeDisplay">
+                                        รองรับเฉพาะไฟล์ .pdf ขนาดไม่เกิน 50MB
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar (Hidden by default) -->
+                        <div id="uploadProgressContainer" class="hidden space-y-1.5">
+                            <div class="flex justify-between text-[11px] font-bold text-amber-300">
+                                <span id="uploadProgressText">กำลังอัปโหลด...</span>
+                                <span id="uploadProgressPercent">0%</span>
+                            </div>
+                            <div class="w-full h-2 rounded-full bg-black/60 overflow-hidden border border-orange-500/30">
+                                <div id="uploadProgressBar" class="h-full bg-gradient-to-r from-[#EA3815] to-[#FBBF24] rounded-full transition-all duration-200" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#EA3815] via-[#FF6B00] to-[#FBBF24] hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-200 flex items-center justify-center gap-2">
+                            <span id="btnIcon">🚀</span>
+                            <span id="btnText">บันทึกและอัปโหลด PDF</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Right Column: Papers Management Table & List (8 cols) -->
+            <div class="lg:col-span-8 flex flex-col gap-6">
+                <div class="p-6 rounded-3xl bg-[#161210]/95 border border-orange-500/30 shadow-xl shadow-black/40 backdrop-blur-xl">
+                    
+                    <!-- Table Toolbar (Search & Filter Tabs) -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-orange-500/20">
+                        <div>
+                            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                                <span>📚</span> รายการเอกสารงานวิจัยในระบบ
+                            </h2>
+                            <p class="text-xs text-stone-400 mt-0.5">
+                                คลิกดูตัวอย่างไฟล์ (Preview), แก้ไขข้อมูล หรือคัดลอก Link เข้าถึงเอกสาร
+                            </p>
+                        </div>
+
+                        <!-- Search Bar -->
+                        <div class="relative min-w-[240px]">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-stone-400 text-xs">
+                                🔍
+                            </span>
+                            <input type="text" id="searchInput" onkeyup="filterPapers()" placeholder="ค้นหาชื่อเอกสาร หรือบท..." class="w-full bg-black/50 border border-orange-500/30 rounded-xl pl-9 pr-3.5 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-orange-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <!-- Category Filter Tabs -->
+                    <div class="flex flex-wrap items-center gap-1.5 mb-5" id="filterTabs">
+                        <button onclick="setFilter('all', this)" class="filter-tab active px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500/25 border border-orange-500 text-amber-300 shadow-sm">
+                            ทั้งหมด (<span id="countAll">{{ papers|length }}</span>)
+                        </button>
+                        <button onclick="setFilter('chapter_1', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            บทที่ 1
+                        </button>
+                        <button onclick="setFilter('chapter_2', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            บทที่ 2
+                        </button>
+                        <button onclick="setFilter('chapter_3', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            บทที่ 3
+                        </button>
+                        <button onclick="setFilter('chapter_4', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            บทที่ 4
+                        </button>
+                        <button onclick="setFilter('chapter_5', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            บทที่ 5
+                        </button>
+                        <button onclick="setFilter('proposal', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            Proposal
+                        </button>
+                        <button onclick="setFilter('all_paper', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            เล่มเต็ม
+                        </button>
+                        <button onclick="setFilter('recommend', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            ข้อเสนอแนะ
+                        </button>
+                    </div>
+
+                    <!-- Papers Table -->
+                    <div class="overflow-x-auto rounded-2xl border border-orange-500/20">
+                        <table class="w-full text-left text-xs" id="papersTable">
+                            <thead class="bg-black/60 text-stone-300 font-bold uppercase tracking-wider border-b border-orange-500/20">
+                                <tr>
+                                    <th class="py-3 px-3.5 text-center w-12">#</th>
+                                    <th class="py-3 px-3.5">หมวดหมู่ / บท</th>
+                                    <th class="py-3 px-3.5">ชื่อเอกสาร</th>
+                                    <th class="py-3 px-3.5">URL Link เข้าถึงไฟล์</th>
+                                    <th class="py-3 px-3.5 text-center">วันที่อัปโหลด</th>
+                                    <th class="py-3 px-3.5 text-center w-36">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-orange-500/10" id="papersTableBody">
+                                {% if papers %}
+                                    {% for p in papers %}
+                                    <tr class="paper-row hover:bg-orange-500/5 transition-colors" data-type="{{ p.type_paper }}" data-name="{{ p.name }}" data-id="{{ p.id }}">
+                                        <td class="py-3.5 px-3.5 text-center font-mono font-bold text-stone-400">
+                                            #{{ p.id }}
+                                        </td>
+                                        <td class="py-3.5 px-3.5">
+                                            {% if p.type_paper == 'chapter_1' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/20 border border-blue-500/40 text-blue-300">
+                                                📘 บทที่ 1
+                                            </span>
+                                            {% elif p.type_paper == 'chapter_2' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300">
+                                                📖 บทที่ 2
+                                            </span>
+                                            {% elif p.type_paper == 'chapter_3' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
+                                                🔬 บทที่ 3
+                                            </span>
+                                            {% elif p.type_paper == 'chapter_4' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
+                                                📊 บทที่ 4
+                                            </span>
+                                            {% elif p.type_paper == 'chapter_5' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-500/20 border border-teal-500/40 text-teal-300">
+                                                💡 บทที่ 5
+                                            </span>
+                                            {% elif p.type_paper == 'proposal' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 border border-amber-500/40 text-amber-300">
+                                                📝 Proposal
+                                            </span>
+                                            {% elif p.type_paper == 'all_paper' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-orange-500/20 border border-orange-500/40 text-orange-300">
+                                                🎓 เล่มสมบูรณ์
+                                            </span>
+                                            {% elif p.type_paper == 'recommend' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 border border-rose-500/40 text-rose-300">
+                                                💬 ข้อเสนอแนะ
+                                            </span>
+                                            {% else %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-stone-500/20 border border-stone-500/40 text-stone-300">
+                                                📄 {{ p.type_paper }}
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="py-3.5 px-3.5 font-medium text-white max-w-[200px] truncate" title="{{ p.name }}">
+                                            {{ p.name }}
+                                        </td>
+                                        <td class="py-3.5 px-3.5 font-mono text-[11px] text-amber-300/90 max-w-[220px]">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="truncate" title="{{ p.link }}">{{ p.link }}</span>
+                                                <button onclick="copyLink('{{ p.link }}')" class="p-1 rounded hover:bg-orange-500/20 text-stone-400 hover:text-amber-300 transition-colors" title="คัดลอก Link">
+                                                    📋
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td class="py-3.5 px-3.5 text-center text-[11px] text-stone-400 whitespace-nowrap">
+                                            {{ p.create_date.strftime('%Y-%m-%d %H:%M') if p.create_date else '-' }}
+                                        </td>
+                                        <td class="py-3.5 px-3.5 text-center whitespace-nowrap">
+                                            <div class="flex items-center justify-center gap-1">
+                                                <!-- Preview Button -->
+                                                <button onclick="openPreviewModal('{{ p.link }}', '{{ p.name }}')" class="p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/25 border border-blue-500/20 text-blue-300 transition-all duration-150" title="ดูตัวอย่างเอกสาร (Preview)">
+                                                    👁️
+                                                </button>
+                                                <!-- Edit Button -->
+                                                <button onclick="openEditModal({{ p.id }}, '{{ p.name }}', '{{ p.type_paper }}')" class="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/20 text-amber-300 transition-all duration-150" title="แก้ไขชื่อและประเภท">
+                                                    ✏️
+                                                </button>
+                                                <!-- Delete Button -->
+                                                <button onclick="openDeleteModal({{ p.id }}, '{{ p.name }}')" class="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/20 text-rose-400 transition-all duration-150" title="ลบเอกสาร (ต้องใช้รหัสผ่าน)">
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr id="emptyRow">
+                                        <td colspan="6" class="py-12 text-center text-stone-400">
+                                            <div class="text-3xl mb-2">📭</div>
+                                            <div class="font-bold text-stone-300 text-sm">ยังไม่มีเอกสารงานวิจัยในระบบ</div>
+                                            <div class="text-xs text-stone-500 mt-1">สามารถอัปโหลดไฟล์ PDF งานวิจัยผ่านแบบฟอร์มด้านซ้ายมือ</div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- No Results Row (Hidden by default) -->
+                    <div id="noResultsMsg" class="hidden py-10 text-center text-stone-400">
+                        <div class="text-2xl mb-1">🔍</div>
+                        <div class="font-bold text-stone-300 text-xs">ไม่พบเอกสารที่ตรงกับเงื่อนไขการค้นหา</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 1: PDF PREVIEW MODAL -->
+    <!-- ================================================================= -->
+    <div id="previewModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#161210] border border-orange-500/30 rounded-3xl w-full max-w-5xl h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-4 border-b border-orange-500/20 bg-black/40">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-xl">📄</span>
+                    <div>
+                        <h3 class="text-sm font-bold text-white truncate max-w-md" id="previewTitle">เอกสาร PDF</h3>
+                        <p class="text-[10px] text-amber-300" id="previewUrlText"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a id="previewOpenTabBtn" href="#" target="_blank" class="px-3 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 text-amber-300 border border-orange-500/40 text-xs font-bold transition-colors">
+                        ↗️ เปิดแท็บใหม่
+                    </a>
+                    <button onclick="closePreviewModal()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors">
+                        ✕
+                    </button>
+                </div>
+            </div>
+            <!-- Modal Body (Iframe) -->
+            <div class="flex-1 bg-stone-900 relative">
+                <iframe id="pdfIframe" src="" class="w-full h-full border-0"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 2: EDIT PAPER MODAL -->
+    <!-- ================================================================= -->
+    <div id="editModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#161210] border border-orange-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-orange-500/20">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <span>✏️</span> แก้ไขข้อมูลเอกสารงานวิจัย
+                </h3>
+                <button onclick="closeEditModal()" class="text-stone-400 hover:text-white">✕</button>
+            </div>
+            <form id="editForm" onsubmit="handleEditSubmit(event)" class="space-y-4">
+                <input type="hidden" id="editPaperId">
+                <div>
+                    <label class="block text-xs font-bold text-stone-200 mb-1.5">ชื่อเอกสาร</label>
+                    <input type="text" id="editPaperName" required class="w-full bg-black/50 border border-orange-500/30 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-orange-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-stone-200 mb-1.5">หมวดหมู่งานวิจัย</label>
+                    <select id="editPaperType" required class="w-full bg-black/50 border border-orange-500/30 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-orange-500">
+                        <option value="chapter_1">บทที่ 1 : บทนำ (Introduction)</option>
+                        <option value="chapter_2">บทที่ 2 : ทบทวนวรรณกรรม (Literature Review)</option>
+                        <option value="chapter_3">บทที่ 3 : ระเบียบวิธีวิจัย (Methodology)</option>
+                        <option value="chapter_4">บทที่ 4 : ผลการทดลองและการวิเคราะห์ (Results & Analysis)</option>
+                        <option value="chapter_5">บทที่ 5 : สรุปผลและข้อเสนอแนะ (Conclusion)</option>
+                        <option value="proposal">โครงร่างงานวิจัย (Thesis Proposal)</option>
+                        <option value="all_paper">เล่มงานวิจัยฉบับสมบูรณ์ (Full Thesis)</option>
+                        <option value="recommend">ข้อเสนอแนะและข้อคิดเห็น (Recommendations)</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-end gap-2.5 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 text-xs font-medium transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white text-xs font-bold shadow-md transition-all">
+                        บันทึกการแก้ไข
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- MODAL 3: DELETE CONFIRMATION MODAL WITH SECURITY PASSWORD -->
+    <!-- ================================================================= -->
+
+    <div id="deleteModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#161210] border border-rose-500/40 rounded-3xl w-full max-w-md p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-xl text-rose-400">
+                    ⚠️
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white">ยืนยันการลบเอกสาร</h3>
+                    <p class="text-xs text-stone-400">การดำเนินการนี้ไม่สามารถเรียกคืนข้อมูลได้</p>
+                </div>
+            </div>
+            <div class="p-3 bg-black/40 rounded-xl border border-rose-500/20 mb-4 text-xs">
+                <span class="text-stone-400">เอกสารที่ต้องการลบ:</span>
+                <div class="font-bold text-white mt-0.5 truncate" id="deletePaperNameDisplay"></div>
+            </div>
+            <form id="deleteForm" onsubmit="handleDeleteSubmit(event)" class="space-y-4">
+                <input type="hidden" id="deletePaperId">
+                <div>
+                    <label class="block text-xs font-bold text-rose-300 mb-1.5">
+                        กรุณาระบุรหัสผ่านเพื่อยืนยันการลบ (Security Password) <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="password" id="deletePasswordInput" required placeholder="ป้อนรหัสผ่านเพื่อยืนยันการลบ..." class="w-full bg-black/60 border border-rose-500/40 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500">
+                </div>
+
+                <div class="flex items-center justify-end gap-2.5 pt-2">
+                    <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 text-xs font-medium transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="deleteConfirmBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition-colors flex items-center gap-1.5">
+                        <span>🗑️</span> ยืนยันการลบ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- TOAST NOTIFICATION -->
+    <!-- ================================================================= -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm">
+        <div id="toastContent" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#161210] border border-orange-500/40 text-stone-100 shadow-2xl text-xs">
+            <span id="toastIcon" class="text-lg">✅</span>
+            <span id="toastMsg" class="font-medium">ข้อความแจ้งเตือน</span>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- JAVASCRIPT CLIENT LOGIC -->
+    <!-- ================================================================= -->
+    <script>
+        let currentFilter = 'all';
+
+        // Drag & Drop Handling
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.classList.add('dropzone-active');
+            }, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropzone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropzone.classList.remove('dropzone-active');
+            }, false);
+        });
+
+        dropzone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelected(fileInput);
+            }
+        });
+
+        function handleFileSelected(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                if (!file.name.toLowerCase().endsWith('.pdf')) {
+                    showToast('ระบบรองรับเฉพาะไฟล์ .pdf เท่านั้น', '❌');
+                    input.value = '';
+                    return;
+                }
+                document.getElementById('fileNameDisplay').textContent = file.name;
+                const sizeInMB = (file.size / (1024 * 1024)).toFixed(2);
+                document.getElementById('fileSizeDisplay').textContent = `ขนาดไฟล์: ${sizeInMB} MB`;
+
+                const customNameInput = document.getElementById('custom_name');
+                if (!customNameInput.value) {
+                    customNameInput.value = file.name;
+                }
+            }
+        }
+
+        // Upload Form Handler
+        async function handleUpload(e) {
+            e.preventDefault();
+            if (!fileInput.files || !fileInput.files[0]) {
+                showToast('กรุณาเลือกไฟล์ PDF ที่ต้องการอัปโหลด', '⚠️');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('type_paper', document.getElementById('type_paper').value);
+            formData.append('custom_name', document.getElementById('custom_name').value);
+            formData.append('save_to_db', 'true');
+
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnIcon = document.getElementById('btnIcon');
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const progressPercent = document.getElementById('uploadProgressPercent');
+
+            submitBtn.disabled = true;
+            btnText.textContent = 'กำลังอัปโหลด...';
+            btnIcon.textContent = '⏳';
+            progressContainer.classList.remove('hidden');
+            progressBar.style.width = '40%';
+            progressPercent.textContent = '40%';
+
+            try {
+                const response = await fetch('/api/upload/pdf', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                progressBar.style.width = '100%';
+                progressPercent.textContent = '100%';
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'เกิดข้อผิดพลาดในการอัปโหลด');
+                }
+
+                const result = await response.json();
+                showToast('อัปโหลดไฟล์ PDF เรียบร้อยแล้ว!', '✅');
+
+                // Reload page after short delay to refresh SSR table & stats
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+
+            } catch (err) {
+                showToast(err.message, '❌');
+                submitBtn.disabled = false;
+                btnText.textContent = 'บันทึกและอัปโหลด PDF';
+                btnIcon.textContent = '🚀';
+                progressContainer.classList.add('hidden');
+            }
+        }
+
+        // Category Filter & Search
+        function setFilter(type, btn) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-tab').forEach(b => {
+                b.classList.remove('active', 'bg-orange-500/25', 'border-orange-500', 'text-amber-300', 'shadow-sm');
+                b.classList.add('bg-white/5', 'border-orange-500/10', 'text-stone-300');
+            });
+            btn.classList.add('active', 'bg-orange-500/25', 'border-orange-500', 'text-amber-300', 'shadow-sm');
+            btn.classList.remove('bg-white/5', 'border-orange-500/10', 'text-stone-300');
+            filterPapers();
+        }
+
+        function filterPapers() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.paper-row');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const type = row.getAttribute('data-type');
+                const name = row.getAttribute('data-name').toLowerCase();
+                const id = row.getAttribute('data-id');
+
+                const matchesFilter = (currentFilter === 'all' || type === currentFilter);
+                const matchesSearch = (!query || name.includes(query) || id.includes(query) || type.includes(query));
+
+                if (matchesFilter && matchesSearch) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const noResults = document.getElementById('noResultsMsg');
+            if (noResults) {
+                if (visibleCount === 0 && rows.length > 0) {
+                    noResults.classList.remove('hidden');
+                } else {
+                    noResults.classList.add('hidden');
+                }
+            }
+        }
+
+        // Preview Modal Logic
+        function openPreviewModal(link, name) {
+            document.getElementById('previewTitle').textContent = name;
+            document.getElementById('previewUrlText').textContent = link;
+            document.getElementById('pdfIframe').src = link;
+            document.getElementById('previewOpenTabBtn').href = link;
+            document.getElementById('previewModal').classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+            document.getElementById('pdfIframe').src = '';
+        }
+
+        // Edit Modal Logic
+        function openEditModal(id, name, type) {
+            document.getElementById('editPaperId').value = id;
+            document.getElementById('editPaperName').value = name;
+            document.getElementById('editPaperType').value = type;
+            document.getElementById('editModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+        }
+
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('editPaperId').value;
+            const name = document.getElementById('editPaperName').value;
+            const type_paper = document.getElementById('editPaperType').value;
+
+            try {
+                const response = await fetch(`/api/v1/papers/records/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, type_paper })
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'แก้ไขข้อมูลไม่สำเร็จ');
+                }
+
+                showToast('แก้ไขข้อมูลเรียบร้อยแล้ว', '✅');
+                closeEditModal();
+                setTimeout(() => window.location.reload(), 800);
+            } catch (err) {
+                showToast(err.message, '❌');
+            }
+        }
+
+        // Delete Modal Logic
+        function openDeleteModal(id, name) {
+            document.getElementById('deletePaperId').value = id;
+            document.getElementById('deletePaperNameDisplay').textContent = `#${id} - ${name}`;
+            document.getElementById('deletePasswordInput').value = '';
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+        }
+
+        async function handleDeleteSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('deletePaperId').value;
+            const password = document.getElementById('deletePasswordInput').value;
+
+            const btn = document.getElementById('deleteConfirmBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span>⏳</span> กำลังลบ...';
+
+            try {
+                const response = await fetch(`/api/v1/papers/records/${id}?pass_for_delete=${encodeURIComponent(password)}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || 'ลบข้อมูลไม่สำเร็จ รหัสผ่านอาจไม่ถูกต้อง');
+                }
+
+                showToast('ลบเอกสารสำเร็จเรียบร้อย', '✅');
+                closeDeleteModal();
+                setTimeout(() => window.location.reload(), 800);
+            } catch (err) {
+                showToast(err.message, '❌');
+                btn.disabled = false;
+                btn.innerHTML = '<span>🗑️</span> ยืนยันการลบ';
+            }
+        }
+
+        // Utility: Copy Link to Clipboard
+        function copyLink(link) {
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('คัดลอก Link เข้าสู่คลิปบอร์ดแล้ว', '📋');
+            }).catch(() => {
+                showToast('ไม่สามารถคัดลอก Link ได้', '❌');
+            });
+        }
+
+        function scrollToUpload() {
+            document.getElementById('uploadSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Toast Notification System
+        function showToast(msg, icon = '✅') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            document.getElementById('toastIcon').textContent = icon;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>

@@ -33,6 +33,9 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-12345678}
       - DATABASE_URL=mysql+pymysql://${DB_USER:-root}:${DB_PASSWORD:-12345678}@db:3306/${DB_NAME:-default-db}
       - CORS_ORIGINS=${CORS_ORIGINS:-*}
+      - APP_BASE_URL=${APP_BASE_URL:-https://zk-ml.yeedev.asia}
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       db:
         condition: service_healthy
@@ -67,7 +70,10 @@ networks:
 volumes:
   mysql_data:
     driver: local
+  uploads_data:
+    driver: local
   caddy_data:
     driver: local
   caddy_config:
     driver: local
+

@@ -70,6 +70,30 @@
 
 ---
 
+### 🧠 3.3 Model Selection Rationale: Why Logistic Regression over Decision Tree, Naive Bayes, & Random Forest? (เหตุผลเชิงวิชาการในการเลือกโมเดลสำหรับ ZK-ML)
+
+| มิติการเปรียบเทียบ | Logistic Regression ⭐ (งานวิจัยนี้) | Decision Tree / Random Forest | Naive Bayes |
+|---|:---:|:---:|:---:|
+| **รูปแบบการคำนวณใน ZK Circuit** | **Linear Combination (คูณและบวก)** | Conditional Branching (`if/else` หลายชั้น) | Probability Product / Log-Likelihood ($\log P$) |
+| **ขนาด Circuit Constraints** | **312 Constraints** (Ultra-Lightweight) | 5,000 - 50,000+ Constraints (ขนาดใหญ่มาก) | 3,000 - 10,000+ Constraints |
+| **เวลาสร้าง Proof (Proving Time)** | **~185.4 ms (Sub-second)** | 1.5 - 10+ วินาที | 1.2 - 4 วินาที |
+| **ความเสี่ยงข้อมูลรั่วไหล (Side-channel/Leakage)** | **ไม่มี** (คำนวณสมการเดียวแบบคงที่) | เสี่ยง Branch Leakage (ต้องคำนวณทุกกิ่งในป่า) | ความคลาดเคลื่อนจากการประมาณค่าทศนิยม |
+| **ความซับซ้อนของการ Quantize** | **ง่ายและแม่นยำ 100% ($S=1,000$)** | ต้อง Quantize ทุก Threshold ในแต่ละ Node | ต้อง Quantize ค่า Probability และ Logarithm |
+
+#### 💡 ประเด็นอภิปรายและข้อต่อสู้เชิงวิชาการ (Scientific & Cryptographic Justification):
+1. **ปัญหาของ Decision Tree / Random Forest ใน ZK Circuit (Branching Overhead):**
+   - ในระบบปกติ `if (age > 20)` จะกระโดดข้ามไปกิ่งที่ต้องการได้อย่างรวดเร็ว แต่ใน **Zero-Knowledge Proofs (Noir / R1CS Finite Field)** เพื่อไม่ให้ผู้ตรวจสอบรู้ว่าข้อมูลของนักเรียนตกอยู่ที่กิ่งไหน (Privacy Preservation) วงจร ZK จำเป็นต้องคำนวณทุกกิ่งของทุกต้นไม้ (Evaluate All Branches via Multiplexers)
+   - การใช้ Random Forest (50-100 ต้นไม้) จะทำให้ขนาดวงจรพุ่งสูงเป็น **หลายหมื่น Opcodes** ส่งผลให้ Proving Latency ช้าลงหลายเท่าตัว เปลือง RAM มหาศาล และไม่เหมาะกับการประมวลผลบน Client/Web
+2. **ปัญหาของ Naive Bayes ใน ZK Circuit (Non-linear & Logarithm Complexity):**
+   - Naive Bayes ต้องคำนวณผลคูณความน่าจะเป็น $P(x_1|y) \times P(x_2|y) \times ...$ หรือใช้ $\sum \log P(x_i|y)$
+   - ใน ZK Finite Field ไม่มีฟังก์ชัน $\log$ หรือเลขทศนิยมโดยตรง การประมาณค่า $\log$ และการหาร (Division) ต้องใช้ Brillig Opcodes หรือ Polynomial Approximation ซึ่งสร้าง Rounding Errors สูงและสิ้นเปลือง Constraints
+3. **เหตุผลที่ Logistic Regression คือจุดเหมาะสมที่สุด (Optimal Trade-off):**
+   - **Linear Compatibility**: แปลงเป็นสมการผลรวมเชิงเส้น $\sum (w_i \times x_i) + b \ge 0$ มีเฉพาะการคูณและบวกเลขจำนวนเต็ม (`i32`) บน Finite Field ได้ตรงไปตรงมา
+   - **No Accuracy Trade-off**: ชุดข้อมูลสุขภาพจิตนักเรียนมี Feature สำคัญ (Depression, Anxiety, Panic) ที่สามารถแบ่งแยกกลุ่มเสี่ยง (Linearly Separable) ได้สมบูรณ์แบบที่ความแม่นยำ $100\%$ อยู่แล้ว การใช้โมเดลที่ซับซ้อนกว่านี้จึงเป็น Overkill โดยไม่เพิ่มความแม่นยำ แต่เพิ่ม Cryptographic Overhead มหาศาล
+   - **High Real-Time Throughput**: ใช้วงจรเพียง 312 Constraints สร้าง Proof ได้เร็วเพียง ~185 ms ตอบสนองได้ทันทีตามมาตรฐานความปลอดภัย PDPA
+
+---
+
 ## 🎯 4. AI Development Directives & Zero-Knowledge Security Rules
 
 ### Rule 1: Zero-Knowledge Privacy Standard (ห้ามรั่วไหลข้อมูลส่วนบุคคล)
@@ -115,10 +139,17 @@
 | `GET` | `/api/v1/students/records` | List of Student Mental Health DB Records | JSON |
 | `POST` | `/api/v1/students/records` | Create Single Student Mental Health Record | JSON |
 | `POST` | `/api/v1/students/upload-csv` | Upload & Ingest CSV File to MySQL Database | JSON |
-| `POST` | `/api/v1/students/import-csv` | Import Baseline Server CSV to Database | JSON |
 | `GET` | `/api/v1/students/statistics` | Student Risk & Mental Health Statistics | JSON |
+| `GET` | `/paper` | Research Papers & PDF Repository Web Dashboard | HTML (Jinja2) |
+| `POST` | `/api/upload/pdf` | Upload PDF Research Paper to `./uploads` with Timestamp Link | JSON |
+| `POST` | `/api/v1/papers/upload` | Upload PDF Research Paper (v1 Alias) | JSON |
+| `GET` | `/api/v1/papers/records` | List All Uploaded Research Papers from DB | JSON |
+| `GET` | `/api/v1/papers/records/{id}` | Get Specific Research Paper by ID | JSON |
+| `PUT` | `/api/v1/papers/records/{id}` | Update Research Paper Name & Type | JSON |
+| `DELETE` | `/api/v1/papers/records/{id}` | Delete Research Paper (Requires `pass_for_delete=P@ssw0rd`) | JSON |
 | `GET` | `/api/v1/benchmark/quantization` | Raw Quantization Benchmark Dataset & MAE | JSON |
 | `GET` | `/api/v1/benchmark/cryptographic` | ZK Circuit Constraints & Latency Profile | JSON |
+
 
 ---
 
