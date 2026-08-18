@@ -302,8 +302,20 @@ def test_pdf_paper_upload_and_management():
 
 
 
+def test_favicon():
+    ico_res = client.get("/favicon.ico")
+    assert ico_res.status_code == 200
+    assert "svg" in ico_res.headers.get("content-type", "")
+
+    svg_res = client.get("/static/favicon.svg")
+    assert svg_res.status_code == 200
+    assert "<svg" in svg_res.text
+    print("✅ GET /favicon.ico and /static/favicon.svg PASSED!")
+
+
 if __name__ == "__main__":
     test_health()
+    test_favicon()
     test_model_info()
     test_zkml_inference()
     test_user_custom_column_mapping_body()
@@ -316,4 +328,5 @@ if __name__ == "__main__":
     test_rate_limiting()
     test_cors_configuration()
     print("\n🎉 ALL API, DB, HOME PORTAL, QUANTIZATION, CRYPTOGRAPHIC, STUDENT DATA, DEDUPLICATION, PDF UPLOAD, RATE LIMIT & CORS TESTS PASSED!")
+
 

@@ -6,8 +6,10 @@ Main Application Entry Point - FastAPI REST API System
 
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+
 
 from app.config.database import engine, Base, init_db_schema
 from app.models.db_models import MentalHealthRecord, ExperimentBenchmarkLog, ResearchPaper  # Register ORM models
@@ -92,6 +94,14 @@ os.makedirs(uploads_dir, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 app.mount("/images", StaticFiles(directory=uploads_dir), name="images")
 
+# Favicon Route for direct browser request
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    favicon_path = os.path.join(static_dir, "favicon.svg")
+    if os.path.exists(favicon_path):
+        return FileResponse(favicon_path, media_type="image/svg+xml")
+    return Response(status_code=204)
+
 # Register MVC Controller Routers
 app.include_router(home_router)
 app.include_router(health_router)
@@ -99,6 +109,7 @@ app.include_router(zkml_router)
 app.include_router(student_router)
 app.include_router(benchmark_router)
 app.include_router(paper_router)
+
 
 
 
