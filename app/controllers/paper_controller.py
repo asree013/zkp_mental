@@ -293,15 +293,25 @@ def update_paper_record(
     return paper
 
 
+DELETE_AUTH_PASSWORD = os.getenv("DELETE_AUTH_PASSWORD", "P@ssw0rd")
+
+
 @router.delete("/api/v1/papers/records/{paper_id}", summary="Delete Research Paper Record")
 def delete_paper_record(
     paper_id: int,
+    pass_for_delete: str = Query(..., description="รหัสผ่านความปลอดภัยสำหรับยืนยันการลบไฟล์เอกสาร"),
     delete_file: bool = Query(True, description="ลบไฟล์ PDF จริงออกจากดิสก์ด้วยหรือไม่"),
     db: Session = Depends(get_db)
 ):
     """
-    ลบรายการเอกสารงานวิจัยและไฟล์ออกจากระบบ
+    ลบรายการเอกสารงานวิจัยและไฟล์ออกจากระบบ (ต้องระบุรหัสผ่านความปลอดภัยที่ถูกต้อง)
     """
+    if pass_for_delete != DELETE_AUTH_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="รหัสผ่านสำหรับลบข้อมูลไม่ถูกต้อง (Invalid pass_for_delete)"
+        )
+
     paper = db.query(ResearchPaper).filter(ResearchPaper.id == paper_id).first()
     if not paper:
         raise HTTPException(

@@ -302,8 +302,12 @@ def test_pdf_paper_upload_and_management():
     assert "โครงร่างวิทยานิพนธ์_ฉบับล่าสุด_2026.pdf" in home_res.text
     print("✅ Home Page (GET /) renders latest proposal document successfully!")
 
-    # 9. Test Delete Paper -> Expected 200 OK
-    del_res = client.delete(f"/api/v1/papers/records/{paper_id}")
+    # 9. Test Delete Paper with wrong password -> Expected 403 Forbidden
+    del_wrong_res = client.delete(f"/api/v1/papers/records/{paper_id}?pass_for_delete=wrong_pass")
+    assert del_wrong_res.status_code == 403
+
+    # 10. Test Delete Paper with correct password -> Expected 200 OK
+    del_res = client.delete(f"/api/v1/papers/records/{paper_id}?pass_for_delete=P@ssw0rd")
     assert del_res.status_code == 200
     print(f"✅ DELETE /api/v1/papers/records/{paper_id} PASSED!")
 
