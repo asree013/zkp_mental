@@ -244,12 +244,25 @@ def test_pdf_paper_upload_and_management():
     assert "update_date" in upload_data
     print("✅ POST /api/upload/pdf PASSED:", upload_data)
 
-    # 4. Test accessing the uploaded PDF via static URL
-    relative_path = upload_data["link"].split("http://testserver")[-1]
+    # 3.1 Verify Encryption At Rest on Disk:
+    import os
+    from app.services.crypto_service import is_encrypted
+    saved_filename = upload_data["link"].split("/uploads/")[-1]
+    on_disk_path = os.path.join(os.path.dirname(__file__), "uploads", saved_filename)
+    assert os.path.exists(on_disk_path), f"File {on_disk_path} must exist on disk"
+    with open(on_disk_path, "rb") as f:
+        disk_raw_bytes = f.read()
+    assert not disk_raw_bytes.startswith(b"%PDF"), "On-disk file MUST NOT be raw plaintext PDF!"
+    assert is_encrypted(disk_raw_bytes), "On-disk file MUST be AES-256 Fernet encrypted ciphertext!"
+    print(f"🔒 Encryption At Rest Verified: File on disk is ciphertext ({len(disk_raw_bytes)} bytes) and not readable plaintext.")
+
+    # 4. Test accessing the uploaded PDF via URL (On-the-fly Decryption stream)
+    relative_path = f"/uploads/{saved_filename}"
     static_res = client.get(relative_path)
     assert static_res.status_code == 200
+    assert static_res.headers.get("content-type") == "application/pdf"
     assert static_res.content == pdf_content
-    print(f"✅ Static PDF Access via {relative_path} PASSED!")
+    print(f"🔓 On-The-Fly Decryption Verified: GET {relative_path} returned valid decrypted PDF content.")
 
     # 5. Test List Research Papers API
     list_res = client.get("/api/v1/papers/records")

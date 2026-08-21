@@ -680,14 +680,14 @@
                 <div class="profile-wrapper">
                     <img src="{{ researcher.profile_image }}" alt="{{ researcher.name_th }}" class="profile-img" onerror="this.src='https://via.placeholder.com/190x240?text=Researcher';">
                     <div class="profile-badge">
-                        <span>🎓 M.Sc. Data Science</span>
+                        <span class="inline-flex items-center gap-1.5"><i data-lucide="graduation-cap" class="w-4 h-4"></i> M.Sc. Data Science</span>
                     </div>
                 </div>
 
                 <!-- Profile Information -->
                 <div class="hero-content">
-                    <div class="academic-tag">
-                        <span>🏛️</span> วิทยานิพนธ์ระดับปริญญาโท (Master's Thesis แผน ก แบบ ก 2)
+                    <div class="academic-tag inline-flex items-center gap-1.5">
+                        <i data-lucide="landmark" class="w-4 h-4"></i> วิทยานิพนธ์ระดับปริญญาโท (Master's Thesis แผน ก แบบ ก 2)
                     </div>
 
                     <div>
@@ -696,29 +696,29 @@
                     </div>
 
                     <div class="profile-details">
-                        <div class="detail-item">
-                            <span>🆔</span> รหัสนักศึกษา: <span class="detail-highlight code-pill">{{ researcher.student_id }}</span> | {{ researcher.year }}
+                        <div class="detail-item flex items-center gap-2">
+                            <i data-lucide="badge-check" class="w-4 h-4 text-orange-400"></i> รหัสนักศึกษา: <span class="detail-highlight code-pill">{{ researcher.student_id }}</span> | {{ researcher.year }}
                         </div>
-                        <div class="detail-item">
-                            <span>📚</span> หลักสูตร: <span class="detail-highlight">{{ researcher.degree }}</span>
+                        <div class="detail-item flex items-center gap-2">
+                            <i data-lucide="book-marked" class="w-4 h-4 text-orange-400"></i> หลักสูตร: <span class="detail-highlight">{{ researcher.degree }}</span>
                         </div>
-                        <div class="detail-item">
-                            <span>🏢</span> สังกัด: <span class="detail-highlight">{{ researcher.faculty }}</span>
+                        <div class="detail-item flex items-center gap-2">
+                            <i data-lucide="building-2" class="w-4 h-4 text-orange-400"></i> สังกัด: <span class="detail-highlight">{{ researcher.faculty }}</span>
                         </div>
                     </div>
 
                     <div class="profile-tags">
-                        <span class="tag-pill">🔒 Zero-Knowledge Proofs</span>
-                        <span class="tag-pill">🧠 Machine Learning Inference</span>
-                        <span class="tag-pill">📐 Fixed-Point Quantization</span>
-                        <span class="tag-pill">⚡ Noir DSL & Nargo CLI</span>
-                        <span class="tag-pill">🌐 FastAPI MVC Architecture</span>
+                        <span class="tag-pill inline-flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> Zero-Knowledge Proofs</span>
+                        <span class="tag-pill inline-flex items-center gap-1"><i data-lucide="brain" class="w-3 h-3"></i> Machine Learning Inference</span>
+                        <span class="tag-pill inline-flex items-center gap-1"><i data-lucide="ruler" class="w-3 h-3"></i> Fixed-Point Quantization</span>
+                        <span class="tag-pill inline-flex items-center gap-1"><i data-lucide="zap" class="w-3 h-3"></i> Noir DSL & Nargo CLI</span>
+                        <span class="tag-pill inline-flex items-center gap-1"><i data-lucide="globe" class="w-3 h-3"></i> FastAPI MVC Architecture</span>
                     </div>
 
                     <!-- Official Thesis Title Box -->
                     <div class="thesis-showcase">
-                        <div style="font-size: 0.78rem; font-weight: 700; color: #FBBF24; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
-                            📌 ชื่อหัวข้อวิทยานิพนธ์ (Official Research Title)
+                        <div class="inline-flex items-center gap-1.5" style="font-size: 0.78rem; font-weight: 700; color: #FBBF24; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.35rem;">
+                            <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> ชื่อหัวข้อวิทยานิพนธ์ (Official Research Title)
                         </div>
                         <div class="thesis-th">
                             "{{ thesis.title_th }}"
@@ -739,7 +739,7 @@
                 <!-- Section Header Bar -->
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid rgba(255, 107, 0, 0.2);">
                     <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
-                        <span style="font-size: 1.35rem;">📝</span>
+                        <i data-lucide="file-text" class="w-6 h-6 text-amber-400"></i>
                         <div>
                             <h2 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em; margin: 0;">
                                 เอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal Document)
@@ -749,8 +749,8 @@
                             </p>
                         </div>
                         {% if latest_proposal %}
-                        <span style="font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px; background: rgba(234, 56, 21, 0.2); border: 1px solid rgba(234, 56, 21, 0.45); color: #FDE68A; margin-left: 0.25rem;">
-                            ⭐ ฉบับล่าสุด (Latest)
+                        <span class="inline-flex items-center gap-1" style="font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px; background: rgba(234, 56, 21, 0.2); border: 1px solid rgba(234, 56, 21, 0.45); color: #FDE68A; margin-left: 0.25rem;">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> ฉบับล่าสุด (Latest)
                         </span>
                         {% endif %}
                     </div>
@@ -758,14 +758,14 @@
                     <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                         {% if latest_proposal %}
                         <a href="{{ latest_proposal.link }}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #FDE68A; text-decoration: none; padding: 0.45rem 0.85rem; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 107, 0, 0.3); transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 107, 0, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.08)'">
-                            <span>↗️ เปิดแท็บใหม่</span>
+                            <i data-lucide="external-link" class="w-3.5 h-3.5"></i> <span>เปิดแท็บใหม่</span>
                         </a>
                         <a href="{{ latest_proposal.link }}" download="{{ latest_proposal.name }}" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #FFFFFF; text-decoration: none; padding: 0.45rem 0.95rem; border-radius: 10px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); box-shadow: 0 4px 12px rgba(234, 56, 21, 0.3); transition: all 0.2s;">
-                            <span>⬇️ ดาวน์โหลด PDF</span>
+                            <i data-lucide="download" class="w-3.5 h-3.5"></i> <span>ดาวน์โหลด PDF</span>
                         </a>
                         {% endif %}
                         <a href="/paper" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 700; color: #FF6B00; text-decoration: none; padding: 0.45rem 0.85rem; border-radius: 10px; background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.25); transition: all 0.2s;" onmouseover="this.style.color='#FBBF24'; this.style.borderColor='rgba(255, 107, 0, 0.5)'" onmouseout="this.style.color='#FF6B00'; this.style.borderColor='rgba(255, 107, 0, 0.25)'">
-                            <span>📑 จัดการเอกสารทั้งหมด</span> →
+                            <i data-lucide="folder-open" class="w-3.5 h-3.5"></i> <span>จัดการเอกสารทั้งหมด</span> <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </a>
                     </div>
                 </div>
@@ -774,7 +774,7 @@
                 <!-- Document Info Metadata -->
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding: 0.65rem 1rem; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 107, 0, 0.25); border-radius: 12px; margin-bottom: 1rem; font-size: 0.8rem;">
                     <div style="display: flex; align-items: center; gap: 0.6rem; color: #FFFFFF; font-weight: 600; font-family: 'Sarabun', sans-serif;">
-                        <span style="font-size: 1.1rem;">📄</span>
+                        <i data-lucide="file" class="w-4 h-4 text-amber-400"></i>
                         <span>ชื่อไฟล์: <strong style="color: #FDE68A;">{{ latest_proposal.name }}</strong></span>
                     </div>
                     <div style="color: #A8A29E; font-size: 0.75rem;">
@@ -793,15 +793,15 @@
                 </div>
                 {% else %}
                 <div class="proposal-empty-card" style="padding: 1.5rem; text-align: center; justify-content: center; flex-direction: column; gap: 1rem;">
-                    <div style="font-size: 1.8rem;">📭</div>
+                    <div class="flex justify-center"><i data-lucide="inbox" class="w-10 h-10 text-stone-500"></i></div>
                     <div style="font-size: 0.92rem; font-weight: 700; color: #FFFFFF;">
                         ยังไม่มีการอัปโหลดเอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal) เข้าสู่ระบบ
                     </div>
                     <p style="font-size: 0.8rem; color: #A8A29E; max-width: 460px; margin: 0 auto;">
                         คุณสามารถอัปโหลดไฟล์ PDF โครงร่างงานวิจัย บทที่ 1-5 หรือเอกสารวิทยานิพนธ์ฉบับสมบูรณ์ได้ที่หน้าจัดการเอกสาร
                     </p>
-                    <a href="/paper" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 12px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); color: #FFFFFF; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 4px 15px rgba(234, 56, 21, 0.4); margin-top: 0.5rem;">
-                        <span>📤</span> อัปโหลด Proposal ตอนนี้
+                    <a href="/paper" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 12px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); color: #FFFFFF; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 4px 15px rgba(234, 56, 21, 0.4); margin: 0.5rem auto 0;">
+                        <i data-lucide="upload" class="w-4 h-4"></i> <span>อัปโหลด Proposal ตอนนี้</span>
                     </a>
                 </div>
                 {% endif %}
@@ -840,8 +840,8 @@
         <section style="margin-bottom: 2.5rem;">
             <div class="section-header">
                 <div>
-                    <h2 class="section-title">
-                        <span>🧭</span> ศูนย์ควบคุมและระบบประเมินผลงานวิจัย (Research Portals)
+                    <h2 class="section-title flex items-center gap-2">
+                        <i data-lucide="compass" class="w-5 h-5 text-amber-400"></i> ศูนย์ควบคุมและระบบประเมินผลงานวิจัย (Research Portals)
                     </h2>
                     <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.25rem;">
                         เข้าถึงโมดูลการทดลอง, REST API Documentation, และสถิติเชิงปริมาณของงานวิจัย
@@ -854,7 +854,9 @@
                 <!-- Portal 0: Student Data Management -->
                 <a href="/students" class="portal-card" style="border-color: rgba(255, 107, 0, 0.35);">
                     <div>
-                        <div class="portal-icon" style="background: rgba(255, 107, 0, 0.2); color: #FBBF24;">👨‍🎓</div>
+                        <div class="portal-icon flex items-center justify-center" style="background: rgba(255, 107, 0, 0.2); color: #FBBF24;">
+                            <i data-lucide="users" class="w-6 h-6"></i>
+                        </div>
                         <div class="portal-name">Student Data & CSV Ingestion</div>
                         <div class="portal-desc">
                             ระบบจัดการฐานข้อมูลนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลด Batch CSV, ลบข้อมูล และทดสอบ ZK Proof รายบุคคล
@@ -862,14 +864,16 @@
                     </div>
                     <div class="portal-action" style="color: #FBBF24;">
                         <span>จัดการข้อมูลนักเรียน</span>
-                        <span>→</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </div>
                 </a>
 
                 <!-- Portal 1: Quantization Benchmark -->
                 <a href="/test-quantization-impact" class="portal-card">
                     <div>
-                        <div class="portal-icon">📊</div>
+                        <div class="portal-icon flex items-center justify-center">
+                            <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                        </div>
                         <div class="portal-name">Quantization Impact Benchmark</div>
                         <div class="portal-desc">
                             วิเคราะห์ผลกระทบของ Integer Quantization ตารางเปรียบเทียบ Scaling Factors และกราฟสำหรับเล่มวิจัยบทที่ 4
@@ -877,14 +881,16 @@
                     </div>
                     <div class="portal-action">
                         <span>เข้าสู่หน้า Dashboard</span>
-                        <span>→</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </div>
                 </a>
 
                 <!-- Portal 2: Cryptographic Benchmark -->
                 <a href="/test-cryptographic-benchmark" class="portal-card">
                     <div>
-                        <div class="portal-icon">🔬</div>
+                        <div class="portal-icon flex items-center justify-center">
+                            <i data-lucide="microscope" class="w-6 h-6"></i>
+                        </div>
                         <div class="portal-name">Cryptographic & ZK Benchmark</div>
                         <div class="portal-desc">
                             วิเคราะห์ ACIR Constraints (312 Opcodes), Latency Distribution, Throughput และ Feature Scaling O(N)
@@ -892,14 +898,16 @@
                     </div>
                     <div class="portal-action">
                         <span>ดูสถิติ Cryptography</span>
-                        <span>→</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </div>
                 </a>
 
                 <!-- Portal 3: Swagger Docs -->
                 <a href="/docs" class="portal-card">
                     <div>
-                        <div class="portal-icon">📖</div>
+                        <div class="portal-icon flex items-center justify-center">
+                            <i data-lucide="book-open" class="w-6 h-6"></i>
+                        </div>
                         <div class="portal-name">Interactive REST API Docs</div>
                         <div class="portal-desc">
                             เอกสาร OpenAPI / Swagger UI สำหรับทดสอบส่ง Request สร้าง ZK Proof และเรียกดูข้อมูลโมเดลแบบ Real-time
@@ -907,14 +915,16 @@
                     </div>
                     <div class="portal-action">
                         <span>เปิดเอกสาร Swagger</span>
-                        <span>→</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </div>
                 </a>
 
                 <!-- Portal 4: Model Weights -->
                 <a href="/api/v1/zkml/model-info" target="_blank" class="portal-card">
                     <div>
-                        <div class="portal-icon">⚙️</div>
+                        <div class="portal-icon flex items-center justify-center">
+                            <i data-lucide="sliders" class="w-6 h-6"></i>
+                        </div>
                         <div class="portal-name">Public Model Weights & Bias</div>
                         <div class="portal-desc">
                             ดึงค่าสัมประสิทธิ์ค่าน้ำหนัก Quantized Weights, Threshold และ Metadata ของโมเดลในรูปแบบ JSON API
@@ -922,7 +932,7 @@
                     </div>
                     <div class="portal-action">
                         <span>ดู JSON Metadata</span>
-                        <span>→</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
                     </div>
                 </a>
 
@@ -933,15 +943,15 @@
         <section class="tester-card">
             <div class="tester-header">
                 <div>
-                    <h2 class="section-title">
-                        <span>🔐</span> ทดสอบรันการประมวลผล ZK-ML สด (Live Interactive ZK Prover)
+                    <h2 class="section-title flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i> ทดสอบรันการประมวลผล ZK-ML สด (Live Interactive ZK Prover)
                     </h2>
                     <p style="font-size: 0.88rem; color: #D1D5DB; margin-top: 0.35rem; font-family: 'Sarabun', sans-serif;">
                         จำลองการส่งข้อมูลสุขภาพจิตเข้าสู่วงจร Noir Circuit เพื่อสร้างและยืนยัน ZK Proof โดยข้อมูลส่วนบุคคลจะไม่รั่วไหล
                     </p>
                 </div>
-                <div style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.78rem; color: #6EE7B7; font-weight: 600;">
-                    ● Privacy Shield Active
+                <div class="inline-flex items-center gap-1.5" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.78rem; color: #6EE7B7; font-weight: 600;">
+                    <i data-lucide="shield" class="w-3.5 h-3.5"></i> Privacy Shield Active
                 </div>
             </div>
 
@@ -996,8 +1006,8 @@
                     </div>
                 </div>
 
-                <button type="submit" id="btnSubmitZk" class="btn-run-zkp">
-                    <span>⚡</span> สั่งรัน Zero-Knowledge Proof Inference (Nargo Prover)
+                <button type="submit" id="btnSubmitZk" class="btn-run-zkp flex items-center justify-center gap-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i> สั่งรัน Zero-Knowledge Proof Inference (Nargo Prover)
                 </button>
             </form>
 
@@ -1012,10 +1022,10 @@
                 <div style="font-size: 0.9rem; color: #E5E7EB; font-family: 'Sarabun', sans-serif; line-height: 1.6;" id="resMessage">
                     -
                 </div>
-                <div style="display: flex; gap: 1.5rem; margin-top: 0.85rem; font-size: 0.82rem; color: #9CA3AF; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
-                    <div>⏱️ Proving Latency: <strong id="resLatency" style="color: #FBBF24;">- ms</strong></div>
-                    <div>🎯 Risk Assessment: <strong id="resRiskLabel" style="color: #FDE68A;">-</strong></div>
-                    <div>🔒 Privacy Shield: <strong style="color: #FF6B00;">Zero Feature Leakage</strong></div>
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.85rem; font-size: 0.82rem; color: #9CA3AF; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem; flex-wrap: wrap;">
+                    <div class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i> Proving Latency: <strong id="resLatency" style="color: #FBBF24;">- ms</strong></div>
+                    <div class="inline-flex items-center gap-1"><i data-lucide="target" class="w-3.5 h-3.5 text-amber-300"></i> Risk Assessment: <strong id="resRiskLabel" style="color: #FDE68A;">-</strong></div>
+                    <div class="inline-flex items-center gap-1"><i data-lucide="shield" class="w-3.5 h-3.5 text-orange-400"></i> Privacy Shield: <strong style="color: #FF6B00;">Zero Feature Leakage</strong></div>
                 </div>
             </div>
         </section>
@@ -1035,8 +1045,9 @@
             const btn = document.getElementById('btnSubmitZk');
             const resultBox = document.getElementById('resultBox');
             
-            btn.innerHTML = '<span>⏳</span> กำลังคำนวณ ZK Witness & Proof ในวงจร Noir...';
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังคำนวณ ZK Witness & Proof ในวงจร Noir...';
             btn.disabled = true;
+            if (window.lucide) lucide.createIcons();
 
             const payload = {
                 age: parseInt(document.getElementById('inputAge').value),
@@ -1059,11 +1070,11 @@
 
                 const resBadge = document.getElementById('resBadge');
                 if (data.verification_status === 'Pass') {
-                    resBadge.textContent = '✅ ZK Proof Verified (Pass)';
+                    resBadge.innerHTML = '<span class="inline-flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> ZK Proof Verified (Pass)</span>';
                     resBadge.style.color = '#6EE7B7';
                     resBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
                 } else {
-                    resBadge.textContent = '❌ Verification Failed';
+                    resBadge.innerHTML = '<span class="inline-flex items-center gap-1"><i data-lucide="x-circle" class="w-3.5 h-3.5"></i> Verification Failed</span>';
                     resBadge.style.color = '#FCA5A5';
                     resBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
                 }
@@ -1076,8 +1087,9 @@
                 resultBox.style.display = 'block';
                 document.getElementById('resMessage').textContent = 'เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err.message;
             } finally {
-                btn.innerHTML = '<span>⚡</span> สั่งรัน Zero-Knowledge Proof Inference (Nargo Prover)';
+                btn.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i> สั่งรัน Zero-Knowledge Proof Inference (Nargo Prover)';
                 btn.disabled = false;
+                if (window.lucide) lucide.createIcons();
             }
         }
     </script>

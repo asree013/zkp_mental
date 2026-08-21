@@ -1,0 +1,31 @@
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: zkp_mental_watchtower
+    restart: always
+    volumes:
+      # Mount Docker Socket เพื่อให้ Watchtower ตรวจสอบและสั่งอัปเดตคอนเทนเนอร์ใน Host ได้
+      - /var/run/docker.sock:/var/run/docker.sock
+      # (ทางเลือก) ปลดคอมเมนต์หาก Docker Hub / Container Registry เป็น Private Repo
+      # - /root/.docker/config.json:/config.json:ro
+    environment:
+      # กำหนด Timezone
+      - TZ=Asia/Bangkok
+      # ความถี่ในการตรวจสอบ Image ใหม่ (หน่วยเป็นวินาที: 60 = 1 นาที, 300 = 5 นาที)
+      - WATCHTOWER_POLL_INTERVAL=60
+      # ลบ Image เวอร์ชั่นเก่าทิ้งอัตโนมัติหลังอัปเดต เพื่อประหยัดพื้นที่ Disk
+      - WATCHTOWER_CLEANUP=true
+      # อัปเดตเฉพาะ Container ที่กำลังรันอยู่
+      - WATCHTOWER_INCLUDE_STOPPED=false
+      - WATCHTOWER_REVIVE_STOPPED=false
+      # เปิดแจ้งเตือนผ่าน Discord/Telegram/Slack หรือ Webhook ได้ตามต้องการ
+      # - WATCHTOWER_NOTIFICATIONS=shoutrrr
+      # - WATCHTOWER_NOTIFICATION_URL=generic+https://...
+      
+      # (ทางเลือก) Credential สำหรับ Private Docker Hub Registry
+      # - REPO_USER=${DOCKER_USERNAME}
+      # - REPO_PASS=${DOCKER_PASSWORD}
+
+    # ระบุชื่อ Container ที่ต้องการให้ Watchtower เฝ้าติดตามและอัปเดตอัตโนมัติ
+    # หากไม่ระบุ argument ใดๆ Watchtower จะเฝ้าติดตามทุก container ใน host
+    command: zkp_mental_api

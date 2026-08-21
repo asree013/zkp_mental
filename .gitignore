@@ -13,8 +13,14 @@ __pycache__/
 # Agent file for use in Branch Group-1
 ./agents
 
+# file uplaod
+.uploads
+
 # environment variables
 .env
+.text.txt
+text.txt
+*.txt
 
 # macOS system files
 .DS_Store

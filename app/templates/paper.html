@@ -88,7 +88,7 @@
             <div>
                 <div class="flex flex-wrap items-center gap-2 mb-3">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-orange-500/15 border border-orange-500/30 text-amber-300">
-                        📑 Master's Thesis Document Repository
+                        <i data-lucide="folder-git-2" class="w-3.5 h-3.5"></i> Master's Thesis Document Repository
                     </span>
                     {% if db_status.status == 'connected' %}
                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
@@ -112,7 +112,7 @@
 
             <div class="flex items-center gap-3">
                 <button onclick="scrollToUpload()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-200 hover:-translate-y-0.5">
-                    <span>📤</span> อัปโหลดเอกสารใหม่
+                    <i data-lucide="upload" class="w-4 h-4"></i> อัปโหลดเอกสารใหม่
                 </button>
             </div>
         </header>
@@ -122,7 +122,7 @@
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
                     <span>เอกสารทั้งหมด</span>
-                    <span class="text-lg">📚</span>
+                    <i data-lucide="book-open" class="w-5 h-5 text-amber-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-white" id="statTotalPapers">{{ papers|length }}</div>
                 <div class="text-[11px] text-amber-300/80 mt-1">Total Research Papers</div>
@@ -131,7 +131,7 @@
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
                     <span>บทที่ 1 - 5</span>
-                    <span class="text-lg">📑</span>
+                    <i data-lucide="file-check" class="w-5 h-5 text-emerald-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-amber-400" id="statChaptersCount">
                     {{ papers|selectattr('type_paper', 'in', ['chapter_1', 'chapter_2', 'chapter_3', 'chapter_4', 'chapter_5'])|list|length }}
@@ -142,7 +142,7 @@
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
                     <span>โครงร่าง / Proposal</span>
-                    <span class="text-lg">📝</span>
+                    <i data-lucide="file-text" class="w-5 h-5 text-orange-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-orange-400" id="statProposalsCount">
                     {{ papers|selectattr('type_paper', 'equalto', 'proposal')|list|length }}
@@ -153,7 +153,7 @@
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
                     <span>เล่มสมบูรณ์ / ข้อเสนอแนะ</span>
-                    <span class="text-lg">🎓</span>
+                    <i data-lucide="graduation-cap" class="w-5 h-5 text-rose-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-emerald-400" id="statAllPapersCount">
                     {{ papers|selectattr('type_paper', 'in', ['all_paper', 'recommend'])|list|length }}
@@ -170,7 +170,7 @@
                 <div class="p-6 rounded-3xl bg-[#161210]/95 border border-orange-500/30 shadow-xl shadow-black/40 backdrop-blur-xl sticky top-6">
                     <div class="flex items-center justify-between mb-4 pb-3 border-b border-orange-500/20">
                         <div class="flex items-center gap-2">
-                            <span class="text-xl">📤</span>
+                            <i data-lucide="upload-cloud" class="w-5 h-5 text-orange-400"></i>
                             <h2 class="text-base font-bold text-white">อัปโหลดไฟล์ PDF งานวิจัย</h2>
                         </div>
                         <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-500/20 text-amber-300 border border-orange-500/30">
@@ -213,8 +213,8 @@
                             <div id="dropzone" onclick="document.getElementById('fileInput').click()" class="relative border-2 border-dashed border-orange-500/40 hover:border-orange-500 rounded-2xl p-6 text-center cursor-pointer transition-all duration-200 bg-black/30 hover:bg-orange-500/5 group">
                                 <input type="file" id="fileInput" name="file" accept=".pdf,application/pdf" class="hidden" onchange="handleFileSelected(this)">
                                 <div class="flex flex-col items-center gap-2">
-                                    <div class="w-12 h-12 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                                        📄
+                                    <div class="w-12 h-12 rounded-full bg-orange-500/15 border border-orange-500/30 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
+                                        <i data-lucide="file-up" class="w-6 h-6"></i>
                                     </div>
                                     <div class="text-xs font-bold text-stone-200 group-hover:text-amber-300 transition-colors" id="fileNameDisplay">
                                         คลิกเพื่อเลือกไฟล์ หรือลากไฟล์ PDF มาวางที่นี่
@@ -239,7 +239,7 @@
 
                         <!-- Submit Button -->
                         <button type="submit" id="submitBtn" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-[#EA3815] via-[#FF6B00] to-[#FBBF24] hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-200 flex items-center justify-center gap-2">
-                            <span id="btnIcon">🚀</span>
+                            <i id="btnIcon" data-lucide="upload" class="w-4 h-4"></i>
                             <span id="btnText">บันทึกและอัปโหลด PDF</span>
                         </button>
                     </form>
@@ -254,7 +254,7 @@
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-orange-500/20">
                         <div>
                             <h2 class="text-base font-bold text-white flex items-center gap-2">
-                                <span>📚</span> รายการเอกสารงานวิจัยในระบบ
+                                <i data-lucide="files" class="w-5 h-5 text-orange-400"></i> รายการเอกสารงานวิจัยในระบบ
                             </h2>
                             <p class="text-xs text-stone-400 mt-0.5">
                                 คลิกดูตัวอย่างไฟล์ (Preview), แก้ไขข้อมูล หรือคัดลอก Link เข้าถึงเอกสาร
@@ -264,7 +264,7 @@
                         <!-- Search Bar -->
                         <div class="relative min-w-[240px]">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-stone-400 text-xs">
-                                🔍
+                                <i data-lucide="search" class="w-3.5 h-3.5"></i>
                             </span>
                             <input type="text" id="searchInput" onkeyup="filterPapers()" placeholder="ค้นหาชื่อเอกสาร หรือบท..." class="w-full bg-black/50 border border-orange-500/30 rounded-xl pl-9 pr-3.5 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-orange-500 transition-colors">
                         </div>
@@ -324,39 +324,39 @@
                                         <td class="py-3.5 px-3.5">
                                             {% if p.type_paper == 'chapter_1' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/20 border border-blue-500/40 text-blue-300">
-                                                📘 บทที่ 1
+                                                <i data-lucide="book-open" class="w-3.5 h-3.5 inline-block"></i> บทที่ 1
                                             </span>
                                             {% elif p.type_paper == 'chapter_2' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/20 border border-purple-500/40 text-purple-300">
-                                                📖 บทที่ 2
+                                                <i data-lucide="book-open" class="w-3.5 h-3.5 inline-block"></i> บทที่ 2
                                             </span>
                                             {% elif p.type_paper == 'chapter_3' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-indigo-500/20 border border-indigo-500/40 text-indigo-300">
-                                                🔬 บทที่ 3
+                                                <i data-lucide="microscope" class="w-3.5 h-3.5 inline-block"></i> บทที่ 3
                                             </span>
                                             {% elif p.type_paper == 'chapter_4' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">
-                                                📊 บทที่ 4
+                                                <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 inline-block"></i> บทที่ 4
                                             </span>
                                             {% elif p.type_paper == 'chapter_5' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-teal-500/20 border border-teal-500/40 text-teal-300">
-                                                💡 บทที่ 5
+                                                <i data-lucide="lightbulb" class="w-3.5 h-3.5 inline-block"></i> บทที่ 5
                                             </span>
                                             {% elif p.type_paper == 'proposal' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/20 border border-amber-500/40 text-amber-300">
-                                                📝 Proposal
+                                                <i data-lucide="file-text" class="w-3.5 h-3.5 inline-block"></i> Proposal
                                             </span>
                                             {% elif p.type_paper == 'all_paper' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-orange-500/20 border border-orange-500/40 text-orange-300">
-                                                🎓 เล่มสมบูรณ์
+                                                <i data-lucide="graduation-cap" class="w-3.5 h-3.5 inline-block"></i> เล่มสมบูรณ์
                                             </span>
                                             {% elif p.type_paper == 'recommend' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 border border-rose-500/40 text-rose-300">
-                                                💬 ข้อเสนอแนะ
+                                                <i data-lucide="message-square" class="w-3.5 h-3.5 inline-block"></i> ข้อเสนอแนะ
                                             </span>
                                             {% else %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-stone-500/20 border border-stone-500/40 text-stone-300">
-                                                📄 {{ p.type_paper }}
+                                                <i data-lucide="file" class="w-3.5 h-3.5 inline-block"></i> {{ p.type_paper }}
                                             </span>
                                             {% endif %}
                                         </td>
@@ -367,7 +367,7 @@
                                             <div class="flex items-center gap-1.5">
                                                 <span class="truncate" title="{{ p.link }}">{{ p.link }}</span>
                                                 <button onclick="copyLink('{{ p.link }}')" class="p-1 rounded hover:bg-orange-500/20 text-stone-400 hover:text-amber-300 transition-colors" title="คัดลอก Link">
-                                                    📋
+                                                    <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -378,15 +378,15 @@
                                             <div class="flex items-center justify-center gap-1">
                                                 <!-- Preview Button -->
                                                 <button onclick="openPreviewModal('{{ p.link }}', '{{ p.name }}')" class="p-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/25 border border-blue-500/20 text-blue-300 transition-all duration-150" title="ดูตัวอย่างเอกสาร (Preview)">
-                                                    👁️
+                                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                                                 </button>
                                                 <!-- Edit Button -->
                                                 <button onclick="openEditModal({{ p.id }}, '{{ p.name }}', '{{ p.type_paper }}')" class="p-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/25 border border-amber-500/20 text-amber-300 transition-all duration-150" title="แก้ไขชื่อและประเภท">
-                                                    ✏️
+                                                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
                                                 </button>
                                                 <!-- Delete Button -->
                                                 <button onclick="openDeleteModal({{ p.id }}, '{{ p.name }}')" class="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 border border-rose-500/20 text-rose-400 transition-all duration-150" title="ลบเอกสาร (ต้องใช้รหัสผ่าน)">
-                                                    🗑️
+                                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -395,7 +395,7 @@
                                 {% else %}
                                     <tr id="emptyRow">
                                         <td colspan="6" class="py-12 text-center text-stone-400">
-                                            <div class="text-3xl mb-2">📭</div>
+                                            <div class="flex justify-center mb-2"><i data-lucide="inbox" class="w-10 h-10 text-stone-500"></i></div>
                                             <div class="font-bold text-stone-300 text-sm">ยังไม่มีเอกสารงานวิจัยในระบบ</div>
                                             <div class="text-xs text-stone-500 mt-1">สามารถอัปโหลดไฟล์ PDF งานวิจัยผ่านแบบฟอร์มด้านซ้ายมือ</div>
                                         </td>
@@ -407,7 +407,7 @@
 
                     <!-- No Results Row (Hidden by default) -->
                     <div id="noResultsMsg" class="hidden py-10 text-center text-stone-400">
-                        <div class="text-2xl mb-1">🔍</div>
+                        <div class="flex justify-center mb-1"><i data-lucide="search-x" class="w-8 h-8 text-stone-500"></i></div>
                         <div class="font-bold text-stone-300 text-xs">ไม่พบเอกสารที่ตรงกับเงื่อนไขการค้นหา</div>
                     </div>
                 </div>
@@ -423,7 +423,7 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between px-6 py-4 border-b border-orange-500/20 bg-black/40">
                 <div class="flex items-center gap-2.5">
-                    <span class="text-xl">📄</span>
+                    <i data-lucide="file-text" class="w-5 h-5 text-amber-400"></i>
                     <div>
                         <h3 class="text-sm font-bold text-white truncate max-w-md" id="previewTitle">เอกสาร PDF</h3>
                         <p class="text-[10px] text-amber-300" id="previewUrlText"></p>
@@ -431,10 +431,10 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <a id="previewOpenTabBtn" href="#" target="_blank" class="px-3 py-1.5 rounded-xl bg-orange-500/20 hover:bg-orange-500/30 text-amber-300 border border-orange-500/40 text-xs font-bold transition-colors">
-                        ↗️ เปิดแท็บใหม่
+                        <span class="inline-flex items-center gap-1"><i data-lucide="external-link" class="w-3.5 h-3.5"></i> เปิดแท็บใหม่</span>
                     </a>
                     <button onclick="closePreviewModal()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-colors">
-                        ✕
+                        <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
             </div>
@@ -452,9 +452,9 @@
         <div class="bg-[#161210] border border-orange-500/30 rounded-3xl w-full max-w-md p-6 shadow-2xl">
             <div class="flex items-center justify-between mb-4 pb-3 border-b border-orange-500/20">
                 <h3 class="text-base font-bold text-white flex items-center gap-2">
-                    <span>✏️</span> แก้ไขข้อมูลเอกสารงานวิจัย
+                    <i data-lucide="edit-3" class="w-5 h-5 text-amber-400"></i> แก้ไขข้อมูลเอกสารงานวิจัย
                 </h3>
-                <button onclick="closeEditModal()" class="text-stone-400 hover:text-white">✕</button>
+                <button onclick="closeEditModal()" class="text-stone-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
             </div>
             <form id="editForm" onsubmit="handleEditSubmit(event)" class="space-y-4">
                 <input type="hidden" id="editPaperId">
@@ -494,8 +494,8 @@
     <div id="deleteModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="bg-[#161210] border border-rose-500/40 rounded-3xl w-full max-w-md p-6 shadow-2xl">
             <div class="flex items-center gap-3 mb-3">
-                <div class="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-xl text-rose-400">
-                    ⚠️
+                <div class="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                 </div>
                 <div>
                     <h3 class="text-base font-bold text-white">ยืนยันการลบเอกสาร</h3>
@@ -520,7 +520,7 @@
                         ยกเลิก
                     </button>
                     <button type="submit" id="deleteConfirmBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition-colors flex items-center gap-1.5">
-                        <span>🗑️</span> ยืนยันการลบ
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> ยืนยันการลบ
                     </button>
                 </div>
             </form>
@@ -532,7 +532,7 @@
     <!-- ================================================================= -->
     <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 max-w-sm">
         <div id="toastContent" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#161210] border border-orange-500/40 text-stone-100 shadow-2xl text-xs">
-            <span id="toastIcon" class="text-lg">✅</span>
+            <i id="toastIcon" data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
             <span id="toastMsg" class="font-medium">ข้อความแจ้งเตือน</span>
         </div>
     </div>
@@ -574,7 +574,7 @@
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 if (!file.name.toLowerCase().endsWith('.pdf')) {
-                    showToast('ระบบรองรับเฉพาะไฟล์ .pdf เท่านั้น', '❌');
+                    showToast('ระบบรองรับเฉพาะไฟล์ .pdf เท่านั้น', false);
                     input.value = '';
                     return;
                 }
@@ -593,7 +593,7 @@
         async function handleUpload(e) {
             e.preventDefault();
             if (!fileInput.files || !fileInput.files[0]) {
-                showToast('กรุณาเลือกไฟล์ PDF ที่ต้องการอัปโหลด', '⚠️');
+                showToast('กรุณาเลือกไฟล์ PDF ที่ต้องการอัปโหลด', false);
                 return;
             }
 
@@ -632,7 +632,7 @@
                 }
 
                 const result = await response.json();
-                showToast('อัปโหลดไฟล์ PDF เรียบร้อยแล้ว!', '✅');
+                showToast('อัปโหลดไฟล์ PDF เรียบร้อยแล้ว!', true);
 
                 // Reload page after short delay to refresh SSR table & stats
                 setTimeout(() => {
@@ -640,10 +640,10 @@
                 }, 1000);
 
             } catch (err) {
-                showToast(err.message, '❌');
+                showToast(err.message, false);
                 submitBtn.disabled = false;
                 btnText.textContent = 'บันทึกและอัปโหลด PDF';
-                btnIcon.textContent = '🚀';
+                
                 progressContainer.classList.add('hidden');
             }
         }
@@ -735,11 +735,11 @@
                     throw new Error(err.detail || 'แก้ไขข้อมูลไม่สำเร็จ');
                 }
 
-                showToast('แก้ไขข้อมูลเรียบร้อยแล้ว', '✅');
+                showToast('แก้ไขข้อมูลเรียบร้อยแล้ว', true);
                 closeEditModal();
                 setTimeout(() => window.location.reload(), 800);
             } catch (err) {
-                showToast(err.message, '❌');
+                showToast(err.message, false);
             }
         }
 
@@ -774,22 +774,22 @@
                     throw new Error(err.detail || 'ลบข้อมูลไม่สำเร็จ รหัสผ่านอาจไม่ถูกต้อง');
                 }
 
-                showToast('ลบเอกสารสำเร็จเรียบร้อย', '✅');
+                showToast('ลบเอกสารสำเร็จเรียบร้อย', true);
                 closeDeleteModal();
                 setTimeout(() => window.location.reload(), 800);
             } catch (err) {
-                showToast(err.message, '❌');
+                showToast(err.message, false);
                 btn.disabled = false;
-                btn.innerHTML = '<span>🗑️</span> ยืนยันการลบ';
+                btn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4"></i> ยืนยันการลบ';
             }
         }
 
         // Utility: Copy Link to Clipboard
         function copyLink(link) {
             navigator.clipboard.writeText(link).then(() => {
-                showToast('คัดลอก Link เข้าสู่คลิปบอร์ดแล้ว', '📋');
+                showToast('คัดลอก Link เข้าสู่คลิปบอร์ดแล้ว', true);
             }).catch(() => {
-                showToast('ไม่สามารถคัดลอก Link ได้', '❌');
+                showToast('ไม่สามารถคัดลอก Link ได้', false);
             });
         }
 
@@ -798,10 +798,16 @@
         }
 
         // Toast Notification System
-        function showToast(msg, icon = '✅') {
+        function showToast(msg, isSuccess = true) {
             const toast = document.getElementById('toast');
+            const iconContainer = document.getElementById('toastIcon');
             document.getElementById('toastMsg').textContent = msg;
-            document.getElementById('toastIcon').textContent = icon;
+            if (isSuccess) {
+                iconContainer.innerHTML = '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+            } else {
+                iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>';
+            }
+            if (window.lucide) lucide.createIcons();
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');

@@ -88,11 +88,9 @@ static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app", "st
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-# Mount Uploads Directory for PDF Papers
+# Ensure Uploads Directory exists
 uploads_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(uploads_dir, exist_ok=True)
-app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
-app.mount("/images", StaticFiles(directory=uploads_dir), name="images")
 
 # Favicon Route for direct browser request
 @app.get("/favicon.ico", include_in_schema=False)

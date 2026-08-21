@@ -521,15 +521,15 @@
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <div class="badge-tag">
-                        <span>🔬</span> Cryptographic & ZK-SNARKs Benchmark (M.Sc. Data Science)
+                        <i data-lucide="microscope" class="w-3.5 h-3.5 text-amber-400"></i> Cryptographic & ZK-SNARKs Benchmark (M.Sc. Data Science)
                     </div>
                     {% if snapshot_info and snapshot_info.is_cached %}
                     <div class="badge-tag" style="background: rgba(255, 107, 0, 0.15); border-color: rgba(255, 107, 0, 0.4); color: #FDE68A;">
-                        <span>🗄️</span> DB Snapshot #{{ snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i> DB Snapshot #{{ snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
                     </div>
                     {% else %}
                     <div class="badge-tag" style="background: rgba(234, 56, 21, 0.15); border-color: rgba(234, 56, 21, 0.4); color: #FCA5A5;">
-                        <span>⚡</span> Live Prover Run (Saved to MySQL)
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Live Prover Run (Saved to MySQL)
                     </div>
                     {% endif %}
                 </div>
@@ -538,16 +538,16 @@
             </div>
             <div class="action-btns">
                 <a href="/" class="btn btn-secondary">
-                    <span>🏠</span> Home Portal
+                    <i data-lucide="home" class="w-3.5 h-3.5"></i> Home Portal
                 </a>
                 <a href="/test-quantization-impact" class="btn btn-secondary">
-                    <span>📊</span> Quantization Benchmark
+                    <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> Quantization Benchmark
                 </a>
                 <a href="/api/v1/benchmark/cryptographic" target="_blank" class="btn btn-secondary">
-                    <span>📄</span> JSON API
+                    <i data-lucide="file-code" class="w-3.5 h-3.5"></i> JSON API
                 </a>
                 <button onclick="window.location.href='/test-cryptographic-benchmark?force_refresh=true';" class="btn btn-primary">
-                    <span>🔄</span> Re-Run & Save to DB
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-Run & Save to DB
                 </button>
             </div>
         </header>
@@ -597,7 +597,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <span>📈</span> Circuit Opcodes Scaling vs Feature Dimension ($O(N)$)
+                        <i data-lucide="trending-up" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> Circuit Opcodes Scaling vs Feature Dimension ($O(N)$)
                     </div>
                 </div>
                 <div class="chart-container">
@@ -610,7 +610,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <span>⚙️</span> การจัดสรรขนาดเกตและโครงสร้างวงจร (Circuit Constraint Allocation Breakdown)
+                    <i data-lucide="cpu" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> การจัดสรรขนาดเกตและโครงสร้างวงจร (Circuit Constraint Allocation Breakdown)
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
                     Compiler: Nargo ACIR (Abstract Circuit Intermediate Representation)
@@ -647,7 +647,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <span>📐</span> ตารางวิเคราะห์ความสามารถในการขยายขนาด (Feature Scaling Complexity Analysis)
+                    <i data-lucide="ruler" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> ตารางวิเคราะห์ความสามารถในการขยายขนาด (Feature Scaling Complexity Analysis)
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
                     Asymptotic Complexity: $O(N)$ Linear Scaling
@@ -692,7 +692,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <span>🛡️</span> การวิเคราะห์คุณสมบัติความปลอดภัยทางรหัสวิทยา (Cryptographic Properties)
+                    <i data-lucide="shield-check" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> การวิเคราะห์คุณสมบัติความปลอดภัยทางรหัสวิทยา (Cryptographic Properties)
                 </div>
             </div>
 
@@ -733,7 +733,7 @@
         <!-- Academic Thesis Callout Box -->
         <div class="thesis-callout">
             <div class="callout-title">
-                <span>🎓</span> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Cryptographic Results & Discussion)
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Cryptographic Results & Discussion)
             </div>
             <div class="callout-text">
                 <p>จากการประเมินประสิทธิภาพเชิงรหัสวิทยาของวงจร <strong>Noir ZK-ML Circuit</strong> พบว่าโมเดลการจำแนกความเสี่ยงสุขภาพจิตนักเรียนขนาด 6 คุณลักษณะ ใช้จำนวน <strong>ACIR Opcodes รวมเพียง 312 คำสั่ง</strong> ซึ่งมีอัตราการเติบโตเชิงเส้น <strong>$O(N)$</strong> ตามจำนวน Features โดยใช้เวลาในการสร้างและแก้พยานหลักฐาน (Witness & Proving Time) เฉลี่ยเพียง <strong>{{ summary.mean_latency_ms }} มิลลิวินาที</strong> (P95 = {{ summary.p95_latency_ms }} ms) ทำให้ระบบมีความเร็วเพียงพอสำหรับการให้บริการผ่าน RESTful Web API ในสถานการณ์จริงแบบ Real-time โดยไม่สูญเสียความปลอดภัยและความเป็นส่วนตัวของข้อมูลสุขภาพจิตนักเรียน</p>

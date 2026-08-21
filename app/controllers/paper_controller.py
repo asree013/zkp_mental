@@ -10,13 +10,14 @@ import os
 import re
 from datetime import datetime, timezone
 from typing import List, Optional
-from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status, Request, Query
+from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status, Request, Query, Response
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db, check_db_connection
 from app.models.db_models import ResearchPaper
+from app.services.crypto_service import encrypt_bytes, decrypt_bytes
 from app.models.schemas import (
     PaperType,
     PDFUploadResponse,
@@ -145,7 +146,7 @@ async def upload_pdf_file(
     saved_filename = f"{timestamp_prefix}_{clean_name}"
     file_path = os.path.join(UPLOAD_DIR, saved_filename)
 
-    # เขียนไฟล์ลงโฟลเดอร์ ./uploads
+    # เข้ารหัสไฟล์ (AES-256 Fernet Encryption at Rest) ก่อนบันทึกลงโฟลเดอร์ ./uploads
     try:
         contents = await file.read()
         if len(contents) == 0:
@@ -154,14 +155,15 @@ async def upload_pdf_file(
                 detail="ไฟล์ที่อัปโหลดมีขนาด 0 ไบต์ (Empty file)"
             )
 
+        encrypted_contents = encrypt_bytes(contents)
         with open(file_path, "wb") as f:
-            f.write(contents)
+            f.write(encrypted_contents)
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"เกิดข้อผิดพลาดในการบันทึกไฟล์: {str(e)}"
+            detail=f"เกิดข้อผิดพลาดในการบันทึกและเข้ารหัสไฟล์: {str(e)}"
         )
 
     # สร้าง URL Link สำหรับเข้าถึงไฟล์ (รองรับ Reverse Proxy และ Production Base URL)
@@ -336,3 +338,62 @@ def delete_paper_record(
         "status": "success",
         "message": f"ลบเอกสาร ID #{paper_id} ('{paper.name}') และไฟล์ในระบบเรียบร้อยแล้ว"
     }
+
+
+# =========================================================================
+# SECURE ON-THE-FLY DECRYPTION STREAMING ENDPOINT
+# =========================================================================
+
+@router.get("/uploads/{filename}", summary="Download / View Decrypted Research Paper")
+@router.get("/images/{filename}", summary="Download / View Decrypted Asset")
+async def serve_decrypted_file(
+    filename: str,
+    download: bool = Query(False, description="ดาวน์โหลดเป็น Attachment หรือเปิดดูแบบ Inline ใน Browser")
+):
+    """
+    ดึงไฟล์ที่ถูกเข้ารหัสไว้บนดิสก์เซิร์ฟเวอร์ (AES-256 Fernet Encryption at Rest)
+    และทำการถอดรหัสแบบ On-the-fly ในหน่วยความจำ (RAM) เพื่อส่งให้ผู้ใช้เปิดอ่าน/ดาวน์โหลด
+    โดยไม่มีการเขียนไฟล์ Plaintext ค้างไว้บนดิสก์
+    """
+    clean_name = sanitize_filename(filename)
+    file_path = os.path.join(UPLOAD_DIR, clean_name)
+    if not os.path.exists(file_path):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"ไม่พบไฟล์ {clean_name} บนเซิร์ฟเวอร์"
+        )
+
+    try:
+        with open(file_path, "rb") as f:
+            raw_encrypted_data = f.read()
+
+        decrypted_data = decrypt_bytes(raw_encrypted_data)
+
+        # วิเคราะห์ Content-Type ตามนามสกุลไฟล์
+        lower_name = clean_name.lower()
+        if lower_name.endswith(".pdf"):
+            media_type = "application/pdf"
+        elif lower_name.endswith(".png"):
+            media_type = "image/png"
+        elif lower_name.endswith(".jpg") or lower_name.endswith(".jpeg"):
+            media_type = "image/jpeg"
+        elif lower_name.endswith(".svg"):
+            media_type = "image/svg+xml"
+        elif lower_name.endswith(".txt"):
+            media_type = "text/plain; charset=utf-8"
+        else:
+            media_type = "application/octet-stream"
+
+        disposition = "attachment" if download else "inline"
+        headers = {
+            "Content-Disposition": f'{disposition}; filename="{clean_name}"',
+            "Cache-Control": "private, max-age=3600",
+            "X-Content-Type-Options": "nosniff"
+        }
+
+        return Response(content=decrypted_data, media_type=media_type, headers=headers)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"เกิดข้อผิดพลาดในการอ่านหรือถอดรหัสไฟล์: {str(e)}"
+        )

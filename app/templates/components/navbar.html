@@ -345,11 +345,13 @@ Path: app/templates/components/navbar.html
     }
 </style>
 
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <nav class="flex flex-wrap items-center justify-between gap-4 py-4 mb-8 border-b border-orange-500/20">
     <!-- Brand Logo & Title -->
     <a href="/" class="flex items-center gap-3 no-underline transition-transform duration-200 hover:-translate-y-0.5 group">
-        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#EA3815] via-[#FF6B00] to-[#FBBF24] flex items-center justify-center text-xl shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/60 transition-all duration-300">
-            🛡️
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#EA3815] via-[#FF6B00] to-[#FBBF24] flex items-center justify-center text-white shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/60 transition-all duration-300">
+            <i data-lucide="shield-check" class="w-6 h-6 stroke-[2.2]"></i>
         </div>
         <div>
             <div class="text-base font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors duration-200 brand-title">
@@ -364,31 +366,33 @@ Path: app/templates/components/navbar.html
     <!-- Navigation Buttons & Theme Toggle Switch -->
     <div class="flex flex-wrap items-center gap-2.5">
         <a href="/" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'home' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <span>🏠</span> Home
+            <i data-lucide="home" class="w-3.5 h-3.5"></i> Home
         </a>
         <a href="/students" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'student' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <span>👨‍🎓</span> Student Data & CSV
+            <i data-lucide="users" class="w-3.5 h-3.5"></i> Student Data & CSV
         </a>
         <a href="/paper" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'paper' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <span>📑</span> Research Papers
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Research Papers
         </a>
 
         <a href="/test-quantization-impact" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'quantization' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <span>📊</span> Quantization Benchmark
+            <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> Quantization Benchmark
         </a>
         <a href="/test-cryptographic-benchmark" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'cryptographic' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <span>🔬</span> Cryptographic Benchmark
+            <i data-lucide="microscope" class="w-3.5 h-3.5"></i> Cryptographic Benchmark
         </a>
         <a href="/api/v1/zkml/model-info" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5">
-            <span>⚙️</span> Model Weights
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Model Weights
         </a>
         <a href="/docs" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold no-underline transition-all duration-200 bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white shadow-md shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5">
-            <span>📖</span> Swagger Docs
+            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Swagger Docs
         </a>
 
         <!-- Modern Toggle Switch UI (Dark / Light) -->
         <div class="flex items-center gap-2 pl-2 border-l border-orange-500/20">
-            <span class="text-xs font-bold" id="switch-mode-text">🌙</span>
+            <span class="text-xs font-bold text-amber-300 inline-flex items-center" id="switch-mode-text">
+                <i data-lucide="moon" class="w-3.5 h-3.5"></i>
+            </span>
             <button type="button" 
                     id="themeSwitchBtn" 
                     onclick="toggleThemeMode()" 
@@ -399,8 +403,8 @@ Path: app/templates/components/navbar.html
                 <span class="sr-only">Toggle Theme</span>
                 <!-- Sliding Thumb with Icon -->
                 <span id="themeSwitchThumb" 
-                      class="pointer-events-none inline-flex h-4.5 w-4.5 translate-x-6 transform items-center justify-center rounded-full bg-gradient-to-br from-[#EA3815] to-[#FBBF24] text-[10px] text-white shadow-md transition duration-300 ease-in-out">
-                    🌙
+                      class="pointer-events-none inline-flex h-4.5 w-4.5 translate-x-6 transform items-center justify-center rounded-full bg-gradient-to-br from-[#EA3815] to-[#FBBF24] text-white shadow-md transition duration-300 ease-in-out">
+                    <i data-lucide="moon" class="w-2.5 h-2.5"></i>
                 </span>
             </button>
             <span class="text-xs font-bold text-amber-300" id="switch-mode-label">Dark</span>
@@ -423,8 +427,8 @@ Path: app/templates/components/navbar.html
                 switchBtn.classList.add('bg-black/60', 'border-orange-500/40');
                 thumb.classList.remove('translate-x-0');
                 thumb.classList.add('translate-x-6');
-                thumb.innerHTML = '🌙';
-                if (textIcon) textIcon.textContent = '🌙';
+                thumb.innerHTML = '<i data-lucide="moon" class="w-2.5 h-2.5"></i>';
+                if (textIcon) textIcon.innerHTML = '<i data-lucide="moon" class="w-3.5 h-3.5"></i>';
                 if (textLabel) {
                     textLabel.textContent = 'Dark';
                     textLabel.className = 'text-xs font-bold text-amber-300';
@@ -435,12 +439,15 @@ Path: app/templates/components/navbar.html
                 switchBtn.classList.add('bg-orange-200', 'border-orange-400');
                 thumb.classList.remove('translate-x-6');
                 thumb.classList.add('translate-x-0');
-                thumb.innerHTML = '☀️';
-                if (textIcon) textIcon.textContent = '☀️';
+                thumb.innerHTML = '<i data-lucide="sun" class="w-2.5 h-2.5 text-amber-800"></i>';
+                if (textIcon) textIcon.innerHTML = '<i data-lucide="sun" class="w-3.5 h-3.5 text-orange-600"></i>';
                 if (textLabel) {
                     textLabel.textContent = 'Light';
                     textLabel.className = 'text-xs font-bold text-orange-700';
                 }
+            }
+            if (window.lucide) {
+                lucide.createIcons();
             }
         }
     }
@@ -461,9 +468,18 @@ Path: app/templates/components/navbar.html
         updateThemeUI(nextDark);
     }
 
-    // Sync button on page load
+    // Initialize Lucide icons and sync theme on load
     document.addEventListener('DOMContentLoaded', () => {
         const savedTheme = localStorage.getItem('theme') || 'dark';
         updateThemeUI(savedTheme === 'dark');
+        if (window.lucide) {
+            lucide.createIcons();
+        }
     });
+
+    window.refreshLucideIcons = function() {
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    };
 </script>

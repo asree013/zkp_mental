@@ -539,39 +539,39 @@
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <div class="badge-tag">
-                        <span>🔬</span> Master's Thesis Research Experiment (M.Sc. Data Science)
+                        <i data-lucide="microscope" class="w-3.5 h-3.5 text-amber-400"></i> Master's Thesis Research Experiment (M.Sc. Data Science)
                     </div>
                     <div class="badge-tag" style="background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #6EE7B7;">
-                        <span>💾</span> Data Source: {{ baseline.data_source_name }}
+                        <i data-lucide="hard-drive" class="w-3.5 h-3.5 text-amber-400"></i> Data Source: {{ baseline.data_source_name }}
                     </div>
                     {% if snapshot_info and snapshot_info.is_cached %}
                     <div class="badge-tag" style="background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.4); color: #C4B5FD;">
-                        <span>🗄️</span> DB Snapshot #{{ snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i> DB Snapshot #{{ snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
                     </div>
                     {% else %}
                     <div class="badge-tag" style="background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.4); color: #FCD34D;">
-                        <span>⚡</span> Live Calculation (Saved to MySQL)
+                        <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Live Calculation (Saved to MySQL)
                     </div>
                     {% endif %}
                 </div>
                 <h1 class="title">ZK-ML Fixed-Point Quantization Impact Benchmark</h1>
                 <p class="subtitle">การวิเคราะห์ผลกระทบของการแปลงค่าน้ำหนักทศนิยม (Float64) เป็นจำนวนเต็ม (Fixed-Point Quantization) ต่อความแม่นยำของโมเดลสุขภาพจิตนักเรียน</p>
                 <p style="font-size: 0.8rem; color: #9CA3AF; margin-top: 0.35rem;">
-                    📌 โหลดข้อมูลจาก: <strong>{{ baseline.data_source_detail }}</strong> (ระบบ Hybrid: MySQL Priority 1 $\rightarrow$ CSV Fallback)
+                    <i data-lucide="bookmark" class="w-3.5 h-3.5 text-amber-400 inline-block align-middle"></i> โหลดข้อมูลจาก: <strong>{{ baseline.data_source_detail }}</strong> (ระบบ Hybrid: MySQL Priority 1 $\rightarrow$ CSV Fallback)
                 </p>
             </div>
             <div class="action-btns">
                 <a href="/" class="btn btn-secondary">
-                    <span>🏠</span> Home
+                    <i data-lucide="home" class="w-3.5 h-3.5"></i> Home
                 </a>
                 <a href="/test-cryptographic-benchmark" class="btn btn-secondary">
-                    <span>🔬</span> ZK Benchmark
+                    <i data-lucide="microscope" class="w-3.5 h-3.5"></i> ZK Benchmark
                 </a>
                 <a href="/api/v1/benchmark/quantization" target="_blank" class="btn btn-secondary">
-                    <span>📄</span> JSON API
+                    <i data-lucide="file-code" class="w-3.5 h-3.5"></i> JSON API
                 </a>
                 <button onclick="window.location.href='/test-quantization-impact?force_refresh=true';" class="btn btn-primary">
-                    <span>🔄</span> Re-Run & Save to DB
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-Run & Save to DB
                 </button>
             </div>
         </header>
@@ -608,7 +608,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <span>📊</span> Classification Accuracy vs Scaling Factor ($S$)
+                        <i data-lucide="bar-chart-3" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> Classification Accuracy vs Scaling Factor ($S$)
                     </div>
                 </div>
                 <div class="chart-container">
@@ -619,7 +619,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <span>📉</span> Quantization Score Drift (MAE Error vs Scaling Factor)
+                        <i data-lucide="trending-down" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> Quantization Score Drift (MAE Error vs Scaling Factor)
                     </div>
                 </div>
                 <div class="chart-container">
@@ -632,7 +632,7 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <span>📋</span> ตารางเปรียบเทียบเชิงปริมาณ (Quantization Benchmark Table for Thesis)
+                    <i data-lucide="table" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> ตารางเปรียบเทียบเชิงปริมาณ (Quantization Benchmark Table for Thesis)
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
                     Dataset: Student Mental Health (N = {{ baseline.total_samples }})
@@ -686,7 +686,7 @@
         <!-- Academic Thesis Callout -->
         <div class="thesis-callout">
             <div class="callout-title">
-                <span>🎓</span> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Results & Discussion)
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Results & Discussion)
             </div>
             <div class="callout-text">
                 <p>จากการทดลองเพื่อศึกษาผลกระทบของการแปลงค่าตัวเลขทศนิยม (Fixed-Point Quantization) ในสเกลต่างๆ ตั้งแต่ $S = 1$ ถึง $S = 100,000$ พบว่าที่ระดับตัวคูณสเกล <strong>$S = 1,000$ (Scaling Multiplier $10^3$)</strong> ซึ่งถูกนำไปใช้งานจริงในวงจร <strong>Noir ZK Circuit</strong> สามารถรักษาระดับความแม่นยำ (Accuracy) และ F1-Score ได้ที่ <strong>100.00%</strong> โดยไม่มีการสูญเสียความแม่นยำเมื่อเทียบกับโมเดลทศนิยมดั้งเดิม ($\Delta\text{Accuracy} = 0.0\%$, Mismatch = 0)</p>
