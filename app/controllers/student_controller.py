@@ -30,6 +30,72 @@ TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__f
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 
+def _load_fallback_csv_records():
+    """โหลดข้อมูลจำลองจาก student_mental_health.csv เมื่อ Database ยังไม่พร้อมใช้งาน"""
+    csv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "student_mental_health.csv")
+    records = []
+    if os.path.exists(csv_path):
+        import pandas as pd
+        try:
+            df = pd.read_csv(csv_path)
+            for idx, row in df.iterrows():
+                try:
+                    age_val = int(float(str(row.get("Age", "20"))))
+                except Exception:
+                    age_val = 20
+                records.append({
+                    "id": int(str(idx)) + 1,
+                    "time_date": str(row.get("Timestamp", "")),
+                    "gender": str(row.get("Choose your gender", "")),
+                    "age": age_val,
+                    "education_level": "UNK",
+                    "course": str(row.get("What is your course?", "")),
+                    "year_of_study": str(row.get("Your current year of Study", "")),
+                    "cgpa": str(row.get("What is your CGPA?", "")),
+                    "marital_status": str(row.get("Marital status", "")),
+                    "depression": str(row.get("Do you have Depression?", "")),
+                    "anxiety": str(row.get("Do you have Anxiety?", "")),
+                    "panic_attack": str(row.get("Do you have Panic attack?", "")),
+                    "specialist_treatment": str(row.get("Did you seek any specialist for a treatment?", ""))
+                })
+        except Exception as e:
+            print(f"⚠️ Error reading fallback CSV: {e}")
+    return records
+
+
+def _calculate_fallback_stats(records_list):
+    """คำนวณสถิติจากรายการข้อมูลนักเรียน"""
+    total = len(records_list)
+    if total == 0:
+        return {
+            "total_count": 0,
+            "depression_count": 0,
+            "anxiety_count": 0,
+            "panic_count": 0,
+            "treatment_count": 0,
+            "high_risk_count": 0,
+            "low_risk_count": 0
+        }
+    dep_count = sum(1 for r in records_list if str(r.get("depression", "")).strip().lower() == "yes")
+    anx_count = sum(1 for r in records_list if str(r.get("anxiety", "")).strip().lower() == "yes")
+    panic_count = sum(1 for r in records_list if str(r.get("panic_attack", "")).strip().lower() == "yes")
+    treat_count = sum(1 for r in records_list if str(r.get("specialist_treatment", "")).strip().lower() == "yes")
+    high_risk_count = sum(1 for r in records_list if (
+        str(r.get("depression", "")).strip().lower() == "yes" or
+        str(r.get("anxiety", "")).strip().lower() == "yes" or
+        str(r.get("panic_attack", "")).strip().lower() == "yes"
+    ))
+    return {
+        "total_count": total,
+        "depression_count": dep_count,
+        "anxiety_count": anx_count,
+        "panic_count": panic_count,
+        "treatment_count": treat_count,
+        "high_risk_count": high_risk_count,
+        "low_risk_count": max(0, total - high_risk_count)
+    }
+
+
 # -------------------------------------------------------------------------
 # 1. HTML Web Dashboard View
 # -------------------------------------------------------------------------
@@ -37,35 +103,61 @@ templates = Jinja2Templates(directory=TEMPLATES_DIR)
 async def students_ui_page(request: Request, db: Session = Depends(get_db)):
     """
     เรนเดอร์หน้าเว็บ UI สำหรับจัดการข้อมูลสุขภาพจิตนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลด CSV และดูตารางข้อมูล
+    (รองรับ Hybrid Data Provider: แสดงผลได้ต่อเนื่องแม้ MySQL ยังไม่ได้เชื่อมต่อ)
     """
-    records = get_mental_health_records(db, skip=0, limit=1000)
-    stats = get_student_statistics(db)
     db_status = check_db_connection()
+    records_json = []
+    stats = {
+        "total_count": 0,
+        "depression_count": 0,
+        "anxiety_count": 0,
+        "panic_count": 0,
+        "treatment_count": 0,
+        "high_risk_count": 0,
+        "low_risk_count": 0
+    }
 
-    records_json = [
-        {
-            "id": r.id,
-            "time_date": r.time_date,
-            "gender": r.gender,
-            "age": r.age,
-            "education_level": r.education_level or "UNK",
-            "course": r.course,
-            "year_of_study": r.year_of_study,
-            "cgpa": r.cgpa,
-            "marital_status": r.marital_status,
-            "depression": r.depression,
-            "anxiety": r.anxiety,
-            "panic_attack": r.panic_attack,
-            "specialist_treatment": r.specialist_treatment
-        }
-        for r in records
-    ]
+    if db_status.get("status") == "connected":
+        try:
+            records = get_mental_health_records(db, skip=0, limit=1000)
+            if records and len(records) > 0:
+                stats = get_student_statistics(db)
+                records_json = [
+                    {
+                        "id": r.id,
+                        "time_date": r.time_date,
+                        "gender": r.gender,
+                        "age": r.age,
+                        "education_level": r.education_level or "UNK",
+                        "course": r.course,
+                        "year_of_study": r.year_of_study,
+                        "cgpa": r.cgpa,
+                        "marital_status": r.marital_status,
+                        "depression": r.depression,
+                        "anxiety": r.anxiety,
+                        "panic_attack": r.panic_attack,
+                        "specialist_treatment": r.specialist_treatment
+                    }
+                    for r in records
+                ]
+            else:
+                # DB ต่อได้แต่ยังไม่มีข้อมูลในตาราง ให้ดึงจาก CSV Fallback
+                records_json = _load_fallback_csv_records()
+                stats = _calculate_fallback_stats(records_json)
+        except Exception as e:
+            print(f"⚠️ Error querying students DB: {e}")
+            records_json = _load_fallback_csv_records()
+            stats = _calculate_fallback_stats(records_json)
+    else:
+        # DB ไม่ได้เชื่อมต่อ (Local dev without MySQL) ให้ใช้ CSV Fallback
+        records_json = _load_fallback_csv_records()
+        stats = _calculate_fallback_stats(records_json)
 
     return templates.TemplateResponse(
         request=request,
         name="students.html",
         context={
-            "records": records,
+            "records": records_json,
             "records_json": records_json,
             "stats": stats,
             "db_status": db_status
@@ -84,23 +176,33 @@ def read_student_stats(request: Request, db: Session = Depends(get_db)):
     """
     ดึงสรุปสถิติจำนวนนักเรียนและสัดส่วนความเสี่ยงสุขภาพจิตในฐานข้อมูล
     """
-    return get_student_statistics(db)
+    db_status = check_db_connection()
+    if db_status.get("status") == "connected":
+        try:
+            return get_student_statistics(db)
+        except Exception as e:
+            print(f"⚠️ Error getting DB statistics: {e}")
+    
+    fallback_records = _load_fallback_csv_records()
+    return _calculate_fallback_stats(fallback_records)
 
 
-@router.get("/api/v1/students/records", response_model=List[MentalHealthResponse], summary="Get List of Student Records")
+@router.get("/api/v1/students/records", summary="Get List of Student Records")
 @limiter.limit("60/minute")
 def read_records(request: Request, skip: int = 0, limit: int = 200, db: Session = Depends(get_db)):
     """
-    ดึงรายการข้อมูลสุขภาพจิตนักเรียนจาก MySQL Database
+    ดึงรายการข้อมูลสุขภาพจิตนักเรียนจาก MySQL Database (พร้อม Hybrid Fallback)
     """
-    try:
-        records = get_mental_health_records(db, skip=skip, limit=limit)
-        return records
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"เกิดข้อผิดพลาดในการดึงข้อมูลจากฐานข้อมูล: {str(e)}"
-        )
+    db_status = check_db_connection()
+    if db_status.get("status") == "connected":
+        try:
+            records = get_mental_health_records(db, skip=skip, limit=limit)
+            return records
+        except Exception as e:
+            print(f"⚠️ Error querying records: {e}")
+    
+    fallback_records = _load_fallback_csv_records()
+    return fallback_records[skip: skip + limit]
 
 
 @router.post("/api/v1/students/records", response_model=MentalHealthResponse, status_code=status.HTTP_201_CREATED, summary="Create a Single Student Record")
