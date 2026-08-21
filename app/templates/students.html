@@ -373,11 +373,16 @@
 
             <!-- Table Info Bar -->
             <div class="flex flex-wrap items-center justify-between gap-2 mb-3 text-xs text-stone-300">
-                <div>
-                    กำลังแสดง <strong id="showing-range" class="text-amber-300">0 - 0</strong> จากทั้งหมด <strong id="filtered-total" class="text-amber-300">0</strong> รายการ
-                    <span id="filter-tag" class="hidden ml-2 px-2 py-0.5 rounded text-[11px] bg-orange-500/15 border border-orange-500/30 text-amber-300">
-                        (กรองจากทั้งหมด {{ records | length }} รายการ)
-                    </span>
+                <div class="flex items-center gap-2">
+                    <div>
+                        กำลังแสดง <strong id="showing-range" class="text-amber-300">0 - 0</strong> จากทั้งหมด <strong id="filtered-total" class="text-amber-300">0</strong> รายการ
+                        <span id="filter-tag" class="hidden ml-2 px-2 py-0.5 rounded text-[11px] bg-orange-500/15 border border-orange-500/30 text-amber-300">
+                            (กรองจากทั้งหมด {{ records | length }} รายการ)
+                        </span>
+                    </div>
+                    <button onclick="openStudentClearAllModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-rose-400 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 transition-all cursor-pointer" title="ล้างข้อมูลนักเรียนทั้งหมดในฐานข้อมูล">
+                        <i data-lucide="trash" class="w-3 h-3"></i> ล้างข้อมูลทั้งหมด
+                    </button>
                 </div>
                 <div class="text-stone-400">
                     หน้า <strong id="current-page-display" class="text-amber-300">1</strong> / <span id="total-pages-display">1</span>
@@ -589,6 +594,44 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Modal 3: Delete Student Record Modal (with Security Password) -->
+    <div id="studentDeleteModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-[#161210] border border-rose-500/40 rounded-3xl w-full max-w-md p-6 shadow-2xl">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
+                    <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-bold text-white" id="studentDeleteModalTitle">ยืนยันการลบข้อมูลนักเรียน</h3>
+                    <p class="text-xs text-stone-400">การดำเนินการนี้ไม่สามารถเรียกคืนข้อมูลได้</p>
+                </div>
+            </div>
+            <div class="p-3 bg-black/40 rounded-xl border border-rose-500/20 mb-4 text-xs">
+                <span class="text-stone-400" id="studentDeleteTargetLabel">รายการที่ต้องการลบ:</span>
+                <div class="font-bold text-white mt-0.5 truncate" id="studentDeleteTargetDisplay"></div>
+            </div>
+            <form id="studentDeleteForm" onsubmit="handleStudentDeleteSubmit(event)" class="space-y-4">
+                <input type="hidden" id="studentDeleteRecordId">
+                <input type="hidden" id="studentDeleteActionType" value="single">
+                <div>
+                    <label class="block text-xs font-bold text-rose-300 mb-1.5">
+                        รหัสผ่านความปลอดภัย (Security Password) <span class="text-rose-500">*</span>
+                    </label>
+                    <input type="password" id="studentDeletePasswordInput" required placeholder="ป้อนรหัสผ่านเพื่อยืนยันการลบ..." class="w-full bg-black/60 border border-rose-500/40 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500">
+                </div>
+
+                <div class="flex items-center justify-end gap-2.5 pt-2">
+                    <button type="button" onclick="closeStudentDeleteModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 text-xs font-medium transition-colors cursor-pointer">
+                        ยกเลิก
+                    </button>
+                    <button type="submit" id="studentDeleteConfirmBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold shadow-md transition-colors flex items-center gap-1.5 cursor-pointer">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> ยืนยันการลบ
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -823,9 +866,14 @@
                         <td class="py-3 px-3 text-center whitespace-nowrap">${panicBadge}</td>
                         <td class="py-3 px-3 text-center whitespace-nowrap">${treatBadge}</td>
                         <td class="py-3 px-3 text-center whitespace-nowrap">
-                            <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/20 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" onclick="testZKInferenceRow(${r.age}, '${safeCgpa}', '${safeDep}', '${safeAnx}', '${safePanic}', '${safeTreat}', ${r.id})">
-                                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> <span>ZK Prove</span>
-                            </button>
+                            <div class="inline-flex items-center gap-1.5">
+                                <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/20 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" onclick="testZKInferenceRow(${r.age}, '${safeCgpa}', '${safeDep}', '${safeAnx}', '${safePanic}', '${safeTreat}', ${r.id})">
+                                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> <span>ZK Prove</span>
+                                </button>
+                                <button class="inline-flex items-center justify-center p-1.5 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-300 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" title="ลบข้อมูลนักเรียน ID #${r.id}" onclick="openStudentDeleteModal(${r.id})">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
@@ -1134,6 +1182,68 @@
                 }
             } catch (err) {
                 alert('Error: ' + err.message);
+            }
+        }
+        // =========================================================================
+        // 8. Student Record Deletion Logic (Single & Clear All with Password)
+        // =========================================================================
+        function openStudentDeleteModal(id) {
+            document.getElementById('studentDeleteActionType').value = 'single';
+            document.getElementById('studentDeleteRecordId').value = id;
+            document.getElementById('studentDeleteModalTitle').textContent = 'ยืนยันการลบข้อมูลนักเรียน';
+            document.getElementById('studentDeleteTargetLabel').textContent = 'รายการที่ต้องการลบ:';
+            document.getElementById('studentDeleteTargetDisplay').textContent = `ข้อมูลนักเรียน ID #${id}`;
+            document.getElementById('studentDeletePasswordInput').value = '';
+            document.getElementById('studentDeleteModal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function openStudentClearAllModal() {
+            document.getElementById('studentDeleteActionType').value = 'clear_all';
+            document.getElementById('studentDeleteRecordId').value = '';
+            document.getElementById('studentDeleteModalTitle').textContent = 'ยืนยันการล้างข้อมูลทั้งหมด';
+            document.getElementById('studentDeleteTargetLabel').textContent = 'คำเตือน:';
+            document.getElementById('studentDeleteTargetDisplay').textContent = `ล้างข้อมูลนักเรียนทั้งหมดในตาราง mental_health_records (${allRecords.length} รายการ)`;
+            document.getElementById('studentDeletePasswordInput').value = '';
+            document.getElementById('studentDeleteModal').classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeStudentDeleteModal() {
+            document.getElementById('studentDeleteModal').classList.add('hidden');
+        }
+
+        async function handleStudentDeleteSubmit(e) {
+            e.preventDefault();
+            const actionType = document.getElementById('studentDeleteActionType').value;
+            const recordId = document.getElementById('studentDeleteRecordId').value;
+            const password = document.getElementById('studentDeletePasswordInput').value;
+
+            const btn = document.getElementById('studentDeleteConfirmBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังลบ...';
+            if (window.lucide) lucide.createIcons();
+
+            const url = actionType === 'single'
+                ? `/api/v1/students/records/${recordId}?pass_for_delete=${encodeURIComponent(password)}`
+                : `/api/v1/students/records?pass_for_delete=${encodeURIComponent(password)}`;
+
+            try {
+                const res = await fetch(url, { method: 'DELETE' });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(data.message || 'ลบข้อมูลสำเร็จเรียบร้อย', true);
+                    closeStudentDeleteModal();
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    showToast('ลบไม่สำเร็จ: ' + (data.detail || 'รหัสผ่านอาจไม่ถูกต้อง'), false);
+                }
+            } catch (err) {
+                showToast('เกิดข้อผิดพลาด: ' + err.message, false);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4"></i> ยืนยันการลบ';
+                if (window.lucide) lucide.createIcons();
             }
         }
     </script>

@@ -140,6 +140,8 @@
 | `POST` | `/api/v1/students/records` | Create Single Student Mental Health Record | JSON |
 | `POST` | `/api/v1/students/upload-csv` | Upload & Ingest CSV File to MySQL Database | JSON |
 | `GET` | `/api/v1/students/statistics` | Student Risk & Mental Health Statistics | JSON |
+| `DELETE` | `/api/v1/students/records/{id}` | Delete Single Student Record | JSON |
+| `DELETE` | `/api/v1/students/records` | Clear All Student Records | JSON |
 | `GET` | `/paper` | Research Papers & PDF Repository Web Dashboard | HTML (Jinja2) |
 | `POST` | `/api/upload/pdf` | Upload PDF Research Paper to `./uploads` with Timestamp Link | JSON |
 | `POST` | `/api/v1/papers/upload` | Upload PDF Research Paper (v1 Alias) | JSON |

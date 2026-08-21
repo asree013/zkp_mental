@@ -7,7 +7,7 @@ Student Controller - Student Mental Health DB & CSV Ingestion & UI Routes
 import os
 import json
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Body, Request, status
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Body, Request, status, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -221,30 +221,71 @@ def create_record(request: Request, record: MentalHealthCreate, db: Session = De
         )
 
 
-# =====================================================================
-# DELETE Endpoints disabled for Security & Research Data Integrity
-# =====================================================================
-# @router.delete("/api/v1/students/records/{record_id}", summary="Delete Student Record by ID")
-# def delete_single_record(record_id: int, db: Session = Depends(get_db)):
-#     """
-#     ลบรายการข้อมูลนักเรียนตาม ID ที่ระบุ
-#     """
-#     success = delete_mental_health_record(db, record_id)
-#     if not success:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail=f"ไม่พบข้อมูลนักเรียน ID {record_id} ในฐานข้อมูล"
-#         )
-#     return {"status": "success", "message": f"ลบข้อมูล ID {record_id} เรียบร้อยแล้ว"}
-#
-#
-# @router.delete("/api/v1/students/records", summary="Clear All Student Records")
-# def clear_all_records(db: Session = Depends(get_db)):
-#     """
-#     ล้างข้อมูลนักเรียนทั้งหมดในตาราง mental_health_records
-#     """
-#     count = clear_all_mental_health_records(db)
-#     return {"status": "success", "message": f"ล้างข้อมูลนักเรียนทั้งหมดจำนวน {count} รายการเรียบร้อยแล้ว"}
+DELETE_AUTH_PASSWORD = os.getenv("DELETE_AUTH_PASSWORD", "P@ssw0rd")
+
+
+@router.delete("/api/v1/students/records/{record_id}", summary="Delete Student Record by ID")
+@limiter.limit("20/minute")
+def delete_single_record(
+    request: Request,
+    record_id: int,
+    pass_for_delete: str = Query(..., description="รหัสผ่านความปลอดภัยสำหรับยืนยันการลบข้อมูล"),
+    db: Session = Depends(get_db)
+):
+    """
+    ลบรายการข้อมูลนักเรียนตาม ID ที่ระบุ (ต้องระบุรหัสผ่านความปลอดภัยที่ถูกต้อง)
+    """
+    if pass_for_delete != DELETE_AUTH_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="รหัสผ่านสำหรับลบข้อมูลไม่ถูกต้อง (Invalid pass_for_delete)"
+        )
+
+    try:
+        success = delete_mental_health_record(db, record_id)
+        if not success:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"ไม่พบข้อมูลนักเรียน ID {record_id} ในฐานข้อมูล"
+            )
+        return {"status": "success", "message": f"ลบข้อมูลนักเรียน ID #{record_id} เรียบร้อยแล้ว"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"เกิดข้อผิดพลาดในการลบข้อมูลจากฐานข้อมูล: {str(e)}"
+        )
+
+
+@router.delete("/api/v1/students/records", summary="Clear All Student Records")
+@limiter.limit("5/minute")
+def clear_all_records(
+    request: Request,
+    pass_for_delete: str = Query(..., description="รหัสผ่านความปลอดภัยสำหรับยืนยันการล้างข้อมูลทั้งหมด"),
+    db: Session = Depends(get_db)
+):
+    """
+    ล้างข้อมูลนักเรียนทั้งหมดในตาราง mental_health_records (ต้องระบุรหัสผ่านความปลอดภัยที่ถูกต้อง)
+    """
+    if pass_for_delete != DELETE_AUTH_PASSWORD:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="รหัสผ่านสำหรับลบข้อมูลไม่ถูกต้อง (Invalid pass_for_delete)"
+        )
+
+    try:
+        count = clear_all_mental_health_records(db)
+        return {
+            "status": "success",
+            "message": f"ล้างข้อมูลนักเรียนทั้งหมดจำนวน {count} รายการเรียบร้อยแล้ว",
+            "deleted_count": count
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"เกิดข้อผิดพลาดในการล้างข้อมูลจากฐานข้อมูล: {str(e)}"
+        )
 
 
 @router.post("/api/v1/students/import-csv", response_model=ImportCSVResponse, summary="Import Default Server CSV to Database")
