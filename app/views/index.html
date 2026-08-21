@@ -652,6 +652,159 @@
             border: 1px solid rgba(255, 107, 0, 0.2);
         }
 
+        /* Thesis Proposal Document Styles */
+        .proposal-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .proposal-showcase {
+            background: linear-gradient(135deg, rgba(22, 18, 16, 0.95) 0%, rgba(30, 22, 18, 0.9) 100%);
+            border: 1px solid rgba(255, 107, 0, 0.35);
+            border-radius: 24px;
+            padding: 1.75rem 2rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+        }
+
+        .proposal-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.85rem;
+            border-bottom: 1px solid rgba(255, 107, 0, 0.2);
+        }
+
+        .proposal-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            letter-spacing: -0.01em;
+            margin: 0;
+        }
+
+        .proposal-subtitle {
+            font-size: 0.75rem;
+            color: #A8A29E;
+            margin-top: 0.15rem;
+        }
+
+        .proposal-meta-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            padding: 0.65rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 107, 0, 0.25);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            color: #FFFFFF;
+            font-weight: 600;
+            font-family: 'Sarabun', sans-serif;
+        }
+
+        .proposal-iframe-wrapper {
+            width: 100%;
+            height: 750px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 107, 0, 0.35);
+            background: #1C1917;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+        }
+
+        .proposal-empty-card {
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Comprehensive Light Mode CSS Overrides for Index Page */
+        html.light-mode .proposal-showcase {
+            background: #FFFFFF !important;
+            border-color: rgba(234, 56, 21, 0.25) !important;
+            box-shadow: 0 15px 35px rgba(234, 56, 21, 0.08) !important;
+        }
+
+        html.light-mode .proposal-header-bar {
+            border-bottom-color: rgba(234, 56, 21, 0.15) !important;
+        }
+
+        html.light-mode .proposal-title {
+            color: #1C1917 !important;
+        }
+
+        html.light-mode .proposal-subtitle {
+            color: #57534E !important;
+        }
+
+        html.light-mode .proposal-meta-box {
+            background: #FFF7ED !important;
+            border-color: rgba(234, 56, 21, 0.25) !important;
+            color: #1C1917 !important;
+        }
+
+        html.light-mode .proposal-iframe-wrapper {
+            background: #FAFAF9 !important;
+            border-color: rgba(234, 56, 21, 0.25) !important;
+            box-shadow: 0 12px 35px rgba(234, 56, 21, 0.08) !important;
+        }
+
+        html.light-mode .tester-card {
+            background: #FFFFFF !important;
+            border-color: rgba(234, 56, 21, 0.25) !important;
+            box-shadow: 0 15px 35px rgba(234, 56, 21, 0.08) !important;
+        }
+
+        html.light-mode .tester-card p {
+            color: #57534E !important;
+        }
+
+        html.light-mode .form-label {
+            color: #1C1917 !important;
+            font-weight: 700 !important;
+        }
+
+        html.light-mode .form-control {
+            background: #FFF7ED !important;
+            border-color: rgba(234, 56, 21, 0.3) !important;
+            color: #1C1917 !important;
+        }
+
+        html.light-mode .form-control option {
+            background: #FFFFFF !important;
+            color: #1C1917 !important;
+        }
+
+        html.light-mode .result-box {
+            background: #FFF7ED !important;
+            border-color: rgba(234, 56, 21, 0.3) !important;
+            color: #1C1917 !important;
+        }
+
+        html.light-mode #resStatusHeader {
+            color: #1C1917 !important;
+        }
+
+        html.light-mode #resMessage {
+            color: #44403C !important;
+        }
+
+        html.light-mode .code-pill {
+            background: rgba(234, 56, 21, 0.1) !important;
+            color: #9A3412 !important;
+            border-color: rgba(234, 56, 21, 0.3) !important;
+        }
+
         /* Footer */
         .footer {
             text-align: center;
@@ -733,18 +886,18 @@
         </section>
 
         <!-- Latest Thesis Proposal Document Section (Full-Width Container) -->
-        <section class="proposal-section" style="margin-bottom: 2.5rem;">
-            <div class="proposal-showcase" style="background: linear-gradient(135deg, rgba(22, 18, 16, 0.95) 0%, rgba(30, 22, 18, 0.9) 100%); border: 1px solid rgba(255, 107, 0, 0.35); border-radius: 24px; padding: 1.75rem 2rem; backdrop-filter: blur(16px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);">
+        <section class="proposal-section">
+            <div class="proposal-showcase">
                 
                 <!-- Section Header Bar -->
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; padding-bottom: 0.85rem; border-bottom: 1px solid rgba(255, 107, 0, 0.2);">
+                <div class="proposal-header-bar">
                     <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
                         <i data-lucide="file-text" class="w-6 h-6 text-amber-400"></i>
                         <div>
-                            <h2 style="font-size: 1.05rem; font-weight: 800; color: #FFFFFF; letter-spacing: -0.01em; margin: 0;">
+                            <h2 class="proposal-title">
                                 เอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal Document)
                             </h2>
-                            <p style="font-size: 0.75rem; color: #A8A29E; margin-top: 0.15rem;">
+                            <p class="proposal-subtitle">
                                 ฉบับล่าสุดสำหรับการสอบโครงร่างและพัฒนาโมเดล ZK-ML
                             </p>
                         </div>
@@ -772,8 +925,8 @@
 
                 {% if latest_proposal %}
                 <!-- Document Info Metadata -->
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; padding: 0.65rem 1rem; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 107, 0, 0.25); border-radius: 12px; margin-bottom: 1rem; font-size: 0.8rem;">
-                    <div style="display: flex; align-items: center; gap: 0.6rem; color: #FFFFFF; font-weight: 600; font-family: 'Sarabun', sans-serif;">
+                <div class="proposal-meta-box">
+                    <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-family: 'Sarabun', sans-serif;">
                         <i data-lucide="file" class="w-4 h-4 text-amber-400"></i>
                         <span>ชื่อไฟล์: <strong style="color: #FDE68A;">{{ latest_proposal.name }}</strong></span>
                     </div>
@@ -783,7 +936,7 @@
                 </div>
 
                 <!-- Direct Full-Width Embedded PDF Viewer -->
-                <div style="width: 100%; height: 750px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(255, 107, 0, 0.35); background: #1C1917; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);">
+                <div class="proposal-iframe-wrapper">
                     <iframe src="{{ latest_proposal.link }}#toolbar=1&navpanes=0&scrollbar=1" style="width: 100%; height: 100%; border: none; display: block;" title="Thesis Proposal PDF Viewer">
                         <p style="padding: 2rem; text-align: center; color: #A8A29E; font-size: 0.9rem;">
                             เบราว์เซอร์ของคุณไม่รองรับการแสดงผล iframe โดยตรง 
@@ -792,7 +945,7 @@
                     </iframe>
                 </div>
                 {% else %}
-                <div class="proposal-empty-card" style="padding: 1.5rem; text-align: center; justify-content: center; flex-direction: column; gap: 1rem;">
+                <div class="proposal-empty-card">
                     <div class="flex justify-center"><i data-lucide="inbox" class="w-10 h-10 text-stone-500"></i></div>
                     <div style="font-size: 0.92rem; font-weight: 700; color: #FFFFFF;">
                         ยังไม่มีการอัปโหลดเอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal) เข้าสู่ระบบ
@@ -946,7 +1099,7 @@
                     <h2 class="section-title flex items-center gap-2">
                         <i data-lucide="shield-check" class="w-5 h-5 text-amber-400"></i> ทดสอบรันการประมวลผล ZK-ML สด (Live Interactive ZK Prover)
                     </h2>
-                    <p style="font-size: 0.88rem; color: #D1D5DB; margin-top: 0.35rem; font-family: 'Sarabun', sans-serif;">
+                    <p style="font-size: 0.88rem; color: var(--text-secondary); margin-top: 0.35rem; font-family: 'Sarabun', sans-serif;">
                         จำลองการส่งข้อมูลสุขภาพจิตเข้าสู่วงจร Noir Circuit เพื่อสร้างและยืนยัน ZK Proof โดยข้อมูลส่วนบุคคลจะไม่รั่วไหล
                     </p>
                 </div>
@@ -1014,15 +1167,15 @@
             <!-- Result Box -->
             <div id="resultBox" class="result-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-                    <div style="font-size: 0.95rem; font-weight: 700; color: #FFFFFF;" id="resStatusHeader">
+                    <div style="font-size: 0.95rem; font-weight: 700;" id="resStatusHeader">
                         ผลการพิสูจน์ ZK Proof
                     </div>
                     <span id="resBadge" class="code-pill">Pass</span>
                 </div>
-                <div style="font-size: 0.9rem; color: #E5E7EB; font-family: 'Sarabun', sans-serif; line-height: 1.6;" id="resMessage">
+                <div style="font-size: 0.9rem; font-family: 'Sarabun', sans-serif; line-height: 1.6;" id="resMessage">
                     -
                 </div>
-                <div style="display: flex; gap: 1.5rem; margin-top: 0.85rem; font-size: 0.82rem; color: #9CA3AF; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem; flex-wrap: wrap;">
+                <div style="display: flex; gap: 1.5rem; margin-top: 0.85rem; font-size: 0.82rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem; flex-wrap: wrap;">
                     <div class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i> Proving Latency: <strong id="resLatency" style="color: #FBBF24;">- ms</strong></div>
                     <div class="inline-flex items-center gap-1"><i data-lucide="target" class="w-3.5 h-3.5 text-amber-300"></i> Risk Assessment: <strong id="resRiskLabel" style="color: #FDE68A;">-</strong></div>
                     <div class="inline-flex items-center gap-1"><i data-lucide="shield" class="w-3.5 h-3.5 text-orange-400"></i> Privacy Shield: <strong style="color: #FF6B00;">Zero Feature Leakage</strong></div>

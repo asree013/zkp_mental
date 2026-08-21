@@ -50,6 +50,10 @@ Path: app/views/components/navbar.html
     html.light-mode .hero-section,
     html.light-mode .portal-card,
     html.light-mode .tester-card,
+    html.light-mode .proposal-showcase,
+    html.light-mode .proposal-iframe-wrapper,
+    html.light-mode .proposal-meta-box,
+    html.light-mode .result-box,
     html.light-mode .bg-\[\#161210\]\/90,
     html.light-mode .bg-\[\#161210\],
     html.light-mode .bg-\[\#181310\],
@@ -60,7 +64,7 @@ Path: app/views/components/navbar.html
         box-shadow: 0 10px 30px rgba(234, 56, 21, 0.08) !important;
     }
 
-    /* Text Color Resets for Light Mode */
+    /* Text Color & Gradient Resets for Light Mode */
     html.light-mode .text-white,
     html.light-mode .brand-title,
     html.light-mode .researcher-name,
@@ -75,14 +79,13 @@ Path: app/views/components/navbar.html
     html.light-mode h2,
     html.light-mode h3,
     html.light-mode strong,
-    html.light-mode .detail-highlight {
-        color: #1C1917 !important;
-    }
-
+    html.light-mode .detail-highlight,
     html.light-mode .bg-clip-text {
+        color: #1C1917 !important;
         -webkit-text-fill-color: #1C1917 !important;
         background: none !important;
-        color: #1C1917 !important;
+        background-clip: unset !important;
+        -webkit-background-clip: unset !important;
     }
 
     html.light-mode .text-stone-100,
@@ -262,28 +265,147 @@ Path: app/views/components/navbar.html
         border-color: #F5F5F4 !important;
     }
 
-    /* Table Action Buttons in Light Mode */
-    html.light-mode button[onclick*="testZKInferenceRow"] {
+    /* ===================================================================== */
+    /* Vibrant, High-Contrast Buttons in Light Mode                          */
+    /* ===================================================================== */
+    html.light-mode .btn-primary,
+    html.light-mode .btn-run-zkp,
+    html.light-mode #btnSubmitZk,
+    html.light-mode #submitBtn,
+    html.light-mode #btn-save-student,
+    html.light-mode button[type="submit"]:not(.filter-tab) {
+        background: linear-gradient(135deg, #EA3815 0%, #FF6B00 60%, #F59E0B 100%) !important;
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 4px 15px rgba(234, 56, 21, 0.4) !important;
+    }
+
+    html.light-mode .btn-primary:hover,
+    html.light-mode .btn-run-zkp:hover,
+    html.light-mode #btnSubmitZk:hover,
+    html.light-mode #submitBtn:hover,
+    html.light-mode #btn-save-student:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 22px rgba(234, 56, 21, 0.55) !important;
+    }
+
+    html.light-mode .btn-secondary,
+    html.light-mode a.btn-secondary {
+        background-color: #FFFFFF !important;
+        color: #C2410C !important;
+        border: 1.5px solid #EA580C !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 8px rgba(234, 56, 21, 0.12) !important;
+    }
+
+    html.light-mode .btn-secondary:hover,
+    html.light-mode a.btn-secondary:hover {
+        background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%) !important;
+        color: #FFFFFF !important;
+        border-color: #EA3815 !important;
+        box-shadow: 0 4px 14px rgba(234, 56, 21, 0.3) !important;
+    }
+
+    /* Filter Tabs in Light Mode */
+    html.light-mode .filter-tab.active {
+        background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%) !important;
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        border: 1.5px solid #EA3815 !important;
+        box-shadow: 0 4px 12px rgba(234, 56, 21, 0.35) !important;
+    }
+
+    html.light-mode .filter-tab:not(.active) {
+        background-color: #FFFFFF !important;
+        color: #44403C !important;
+        border: 1.5px solid #FED7AA !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode .filter-tab:not(.active):hover {
         background-color: #FFEDD5 !important;
-        color: #9A3412 !important;
+        color: #C2410C !important;
         border-color: #FB923C !important;
+    }
+
+    /* Table Action Buttons in Light Mode */
+    html.light-mode button[onclick*="testZKInferenceRow"],
+    html.light-mode button[onclick*="openStudentDeleteModal"],
+    html.light-mode button[onclick*="openDeleteModal"],
+    html.light-mode button[onclick*="openPreviewModal"],
+    html.light-mode button[onclick*="openEditModal"] {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
+    }
+
+    html.light-mode button[onclick*="testZKInferenceRow"] {
+        background-color: #FFF7ED !important;
+        color: #C2410C !important;
+        border: 1.5px solid #FB923C !important;
         font-weight: 700 !important;
     }
 
     html.light-mode button[onclick*="testZKInferenceRow"]:hover {
-        background-color: #FF6B00 !important;
+        background-color: #EA580C !important;
         color: #FFFFFF !important;
+        border-color: #EA580C !important;
     }
 
+    html.light-mode button[onclick*="openStudentDeleteModal"],
+    html.light-mode button[onclick*="openDeleteModal"],
     html.light-mode button[onclick*="deleteRecord"] {
-        background-color: #FFE4E6 !important;
-        color: #9F1239 !important;
-        border-color: #FDA4AF !important;
+        background-color: #FFF1F2 !important;
+        color: #BE123C !important;
+        border: 1.5px solid #FDA4AF !important;
+        font-weight: 700 !important;
     }
 
+    html.light-mode button[onclick*="openStudentDeleteModal"]:hover,
+    html.light-mode button[onclick*="openDeleteModal"]:hover,
     html.light-mode button[onclick*="deleteRecord"]:hover {
         background-color: #E11D48 !important;
         color: #FFFFFF !important;
+        border-color: #E11D48 !important;
+    }
+
+    html.light-mode button[onclick*="openPreviewModal"] {
+        background-color: #EFF6FF !important;
+        color: #1D4ED8 !important;
+        border: 1.5px solid #93C5FD !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode button[onclick*="openPreviewModal"]:hover {
+        background-color: #2563EB !important;
+        color: #FFFFFF !important;
+        border-color: #2563EB !important;
+    }
+
+    html.light-mode button[onclick*="openEditModal"] {
+        background-color: #FEFCE8 !important;
+        color: #B45309 !important;
+        border: 1.5px solid #FCD34D !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode button[onclick*="openEditModal"]:hover {
+        background-color: #D97706 !important;
+        color: #FFFFFF !important;
+        border-color: #D97706 !important;
+    }
+
+    /* Pagination Controls in Light Mode */
+    html.light-mode #pagination-controls button:not(.bg-gradient-to-r) {
+        background-color: #FFFFFF !important;
+        color: #44403C !important;
+        border: 1.5px solid #FED7AA !important;
+        font-weight: 700 !important;
+    }
+
+    html.light-mode #pagination-controls button:not(.bg-gradient-to-r):hover {
+        background-color: #FFEDD5 !important;
+        color: #C2410C !important;
+        border-color: #FB923C !important;
     }
 
     /* Badges in Light Mode */

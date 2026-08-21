@@ -73,6 +73,106 @@
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 107, 0, 0.7);
         }
+
+        /* ===================================================================== */
+        /* Comprehensive Light Mode CSS Overrides for /paper                     */
+        /* ===================================================================== */
+        html.light-mode body {
+            background-color: #FAF5F0 !important;
+            color: #1C1917 !important;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.07) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.05) 0%, transparent 60%) !important;
+        }
+
+        html.light-mode .bg-\[\#161210\]\/95,
+        html.light-mode .bg-\[\#161210\]\/90,
+        html.light-mode .bg-\[\#161210\] {
+            background-color: #FFFFFF !important;
+            border-color: rgba(234, 56, 21, 0.22) !important;
+            box-shadow: 0 10px 30px rgba(234, 56, 21, 0.08) !important;
+        }
+
+        html.light-mode .text-white {
+            color: #1C1917 !important;
+        }
+
+        html.light-mode .text-stone-100,
+        html.light-mode .text-stone-200,
+        html.light-mode .text-stone-300 {
+            color: #44403C !important;
+        }
+
+        html.light-mode .text-stone-400,
+        html.light-mode .text-stone-500 {
+            color: #78716C !important;
+        }
+
+        html.light-mode input,
+        html.light-mode select,
+        html.light-mode textarea,
+        html.light-mode .bg-black\/50,
+        html.light-mode .bg-black\/30 {
+            background-color: #FFF7ED !important;
+            color: #1C1917 !important;
+            border-color: rgba(234, 56, 21, 0.25) !important;
+        }
+
+        html.light-mode select option {
+            background-color: #FFFFFF !important;
+            color: #1C1917 !important;
+        }
+
+        html.light-mode thead,
+        html.light-mode thead.bg-black\/60 {
+            background-color: #FFEDD5 !important;
+            color: #7C2D12 !important;
+            border-bottom-color: rgba(234, 56, 21, 0.2) !important;
+        }
+
+        html.light-mode thead th {
+            color: #7C2D12 !important;
+        }
+
+        html.light-mode tr.paper-row:hover {
+            background-color: rgba(255, 237, 213, 0.5) !important;
+        }
+
+        html.light-mode .filter-tab:not(.active) {
+            background-color: #FFFFFF !important;
+            border-color: rgba(234, 56, 21, 0.2) !important;
+            color: #57534E !important;
+        }
+
+        html.light-mode .filter-tab:not(.active):hover {
+            background-color: #FFEDD5 !important;
+            color: #9A3412 !important;
+            border-color: #FF6B00 !important;
+        }
+
+        html.light-mode #previewModal > div,
+        html.light-mode #editModal > div,
+        html.light-mode #deleteModal > div {
+            background-color: #FFFFFF !important;
+            border-color: rgba(234, 56, 21, 0.3) !important;
+            box-shadow: 0 25px 50px -12px rgba(234, 56, 21, 0.25) !important;
+        }
+
+        html.light-mode .bg-black\/40 {
+            background-color: #FFF7ED !important;
+            border-bottom-color: rgba(234, 56, 21, 0.2) !important;
+        }
+
+        html.light-mode #dropzone {
+            background-color: #FFF7ED !important;
+            border-color: rgba(234, 56, 21, 0.35) !important;
+        }
+
+        html.light-mode #dropzone:hover {
+            background-color: #FFEDD5 !important;
+            border-color: #FF6B00 !important;
+        }
     </style>
 </head>
 <body class="text-stone-100 font-sans min-h-screen py-8 px-4 sm:px-6 lg:px-8 antialiased">
