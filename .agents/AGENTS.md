@@ -164,7 +164,7 @@ zkp_mental/
 │   ├── models/                 # [MODEL] Schemas (schemas.py), DB Models (db_models.py), ML Quantization (ml_model.py)
 │   ├── services/               # [SERVICE] ZK Prover (zk_service.py), Benchmark Engine (benchmark_service.py), Student Service
 │   ├── controllers/            # [CONTROLLER] API Handlers (health, zkml, student, benchmark)
-│   └── templates/              # [VIEW] Jinja2 HTML Templates (quantization_impact.html)
+│   └── views/                  # [VIEW] Jinja2 HTML Templates (quantization_impact.html)
 ├── circuit/                    # ZK Circuit (Noir DSL)
 │   ├── Nargo.toml              # Noir package file
 │   ├── Prover.toml             # Circuit inputs (Private & Public)

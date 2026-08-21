@@ -26,8 +26,9 @@ from app.services.student_service import (
 
 router = APIRouter(tags=["Student Mental Health Data & Management"])
 
-TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
+# Views engine setup (MVC Architecture)
+VIEWS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "views")
+views = Jinja2Templates(directory=VIEWS_DIR)
 
 
 def _load_fallback_csv_records():
@@ -153,7 +154,7 @@ async def students_ui_page(request: Request, db: Session = Depends(get_db)):
         records_json = _load_fallback_csv_records()
         stats = _calculate_fallback_stats(records_json)
 
-    return templates.TemplateResponse(
+    return views.TemplateResponse(
         request=request,
         name="students.html",
         context={

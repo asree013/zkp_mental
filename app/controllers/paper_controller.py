@@ -28,9 +28,9 @@ from app.models.schemas import (
 
 router = APIRouter(tags=["Research Papers & PDF Uploads"])
 
-# Template engine setup
-TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
+# Views engine setup (MVC Architecture)
+VIEWS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "views")
+views = Jinja2Templates(directory=VIEWS_DIR)
 
 # Upload directory configuration
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -70,7 +70,7 @@ async def paper_management_page(
     except Exception as e:
         print(f"⚠️ Warning: Could not query research papers from database: {e}")
 
-    return templates.TemplateResponse(
+    return views.TemplateResponse(
         request=request,
         name="paper.html",
         context={

@@ -19,8 +19,8 @@ from app.models.db_models import ResearchPaper
 
 router = APIRouter(tags=["Home & Researcher Profile"])
 
-TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
+VIEWS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "views")
+views = Jinja2Templates(directory=VIEWS_DIR)
 
 
 @router.get("/", response_class=HTMLResponse, summary="Master's Thesis Research Portal Homepage")
@@ -67,7 +67,7 @@ async def home_page(
         "nargo_path": nargo_bin
     }
 
-    return templates.TemplateResponse(
+    return views.TemplateResponse(
         request=request,
         name="index.html",
         context={

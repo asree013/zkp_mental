@@ -15,9 +15,9 @@ from app.services.zk_benchmark_service import run_cryptographic_benchmark
 
 router = APIRouter(tags=["Benchmarks (Thesis Research)"])
 
-# กำหนด Path ของ Templates Folder
-TEMPLATES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "templates")
-templates = Jinja2Templates(directory=TEMPLATES_DIR)
+# กำหนด Path ของ Views Folder (MVC Architecture)
+VIEWS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "views")
+views = Jinja2Templates(directory=VIEWS_DIR)
 
 
 @router.get("/test-quantization-impact", response_class=HTMLResponse, summary="1) Quantization Impact Web Dashboard (Jinja2)")
@@ -26,7 +26,7 @@ async def view_quantization_impact(request: Request, force_refresh: bool = False
     เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงตารางเปรียบเทียบและกราฟผลกระทบของ Quantization
     """
     data = get_quantization_benchmark_data(force_refresh=force_refresh)
-    return templates.TemplateResponse(
+    return views.TemplateResponse(
         request=request,
         name="quantization_impact.html",
         context={
@@ -52,7 +52,7 @@ async def view_cryptographic_benchmark(request: Request, force_refresh: bool = F
     เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงผล Cryptographic Benchmark (ACIR Opcodes, Constraints, Prover Latency)
     """
     data = await run_cryptographic_benchmark(iterations=25, force_refresh=force_refresh)
-    return templates.TemplateResponse(
+    return views.TemplateResponse(
         request=request,
         name="cryptographic_benchmark.html",
         context={
