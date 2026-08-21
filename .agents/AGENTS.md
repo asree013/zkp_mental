@@ -146,7 +146,7 @@
 | `GET` | `/api/v1/papers/records` | List All Uploaded Research Papers from DB | JSON |
 | `GET` | `/api/v1/papers/records/{id}` | Get Specific Research Paper by ID | JSON |
 | `PUT` | `/api/v1/papers/records/{id}` | Update Research Paper Name & Type | JSON |
-| `DELETE` | `/api/v1/papers/records/{id}` | Delete Research Paper (Requires `pass_for_delete=P@ssw0rd`) | JSON |
+| `DELETE` | `/api/v1/papers/records/{id}` | Delete Research Paper | JSON |
 | `GET` | `/api/v1/benchmark/quantization` | Raw Quantization Benchmark Dataset & MAE | JSON |
 | `GET` | `/api/v1/benchmark/cryptographic` | ZK Circuit Constraints & Latency Profile | JSON |
 

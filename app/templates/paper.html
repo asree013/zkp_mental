@@ -488,7 +488,7 @@
     </div>
 
     <!-- ================================================================= -->
-    <!-- MODAL 3: DELETE CONFIRMATION MODAL WITH SECURITY PASSWORD -->
+    <!-- MODAL 3: DELETE CONFIRMATION MODAL -->
     <!-- ================================================================= -->
 
     <div id="deleteModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
@@ -508,12 +508,6 @@
             </div>
             <form id="deleteForm" onsubmit="handleDeleteSubmit(event)" class="space-y-4">
                 <input type="hidden" id="deletePaperId">
-                <div>
-                    <label class="block text-xs font-bold text-rose-300 mb-1.5">
-                        กรุณาระบุรหัสผ่านเพื่อยืนยันการลบ (Security Password) <span class="text-rose-500">*</span>
-                    </label>
-                    <input type="password" id="deletePasswordInput" required placeholder="ป้อนรหัสผ่านเพื่อยืนยันการลบ..." class="w-full bg-black/60 border border-rose-500/40 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500">
-                </div>
 
                 <div class="flex items-center justify-end gap-2.5 pt-2">
                     <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-stone-300 text-xs font-medium transition-colors">
@@ -747,7 +741,6 @@
         function openDeleteModal(id, name) {
             document.getElementById('deletePaperId').value = id;
             document.getElementById('deletePaperNameDisplay').textContent = `#${id} - ${name}`;
-            document.getElementById('deletePasswordInput').value = '';
             document.getElementById('deleteModal').classList.remove('hidden');
         }
 
@@ -758,20 +751,20 @@
         async function handleDeleteSubmit(e) {
             e.preventDefault();
             const id = document.getElementById('deletePaperId').value;
-            const password = document.getElementById('deletePasswordInput').value;
 
             const btn = document.getElementById('deleteConfirmBtn');
             btn.disabled = true;
-            btn.innerHTML = '<span>⏳</span> กำลังลบ...';
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> กำลังลบ...';
+            if (window.lucide) lucide.createIcons();
 
             try {
-                const response = await fetch(`/api/v1/papers/records/${id}?pass_for_delete=${encodeURIComponent(password)}`, {
+                const response = await fetch(`/api/v1/papers/records/${id}`, {
                     method: 'DELETE'
                 });
 
                 if (!response.ok) {
                     const err = await response.json();
-                    throw new Error(err.detail || 'ลบข้อมูลไม่สำเร็จ รหัสผ่านอาจไม่ถูกต้อง');
+                    throw new Error(err.detail || 'ลบข้อมูลไม่สำเร็จ');
                 }
 
                 showToast('ลบเอกสารสำเร็จเรียบร้อย', true);
@@ -781,6 +774,7 @@
                 showToast(err.message, false);
                 btn.disabled = false;
                 btn.innerHTML = '<i data-lucide="trash-2" class="w-4 h-4"></i> ยืนยันการลบ';
+                if (window.lucide) lucide.createIcons();
             }
         }
 

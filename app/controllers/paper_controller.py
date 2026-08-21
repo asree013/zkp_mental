@@ -37,9 +37,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Required password for deletion
-DELETE_AUTH_PASSWORD = "P@ssw0rd"
-
 
 def sanitize_filename(filename: str) -> str:
     """Sanitize filename to prevent directory traversal and illegal characters."""
@@ -63,7 +60,7 @@ async def paper_management_page(
     - แสดงรายการไฟล์ ค้นหา กรองประเภท
     - พรีวิว/เปิดอ่านเอกสาร PDF
     - แก้ไขชื่อและประเภทเอกสาร
-    - ลบเอกสาร (ต้องระบุรหัสผ่านความปลอดภัย P@ssw0rd)
+    - ลบเอกสาร
     """
     db_status = check_db_connection()
     papers = []
@@ -296,25 +293,15 @@ def update_paper_record(
     return paper
 
 
-@router.delete("/api/v1/papers/records/{paper_id}", summary="Delete Research Paper Record with Password")
+@router.delete("/api/v1/papers/records/{paper_id}", summary="Delete Research Paper Record")
 def delete_paper_record(
     paper_id: int,
-    pass_for_delete: str = Query(..., description="รหัสผ่านความปลอดภัยสำหรับยืนยันการลบไฟล์เอกสาร ต้องเป็น 'P@ssw0rd' เท่านั้น"),
     delete_file: bool = Query(True, description="ลบไฟล์ PDF จริงออกจากดิสก์ด้วยหรือไม่"),
     db: Session = Depends(get_db)
 ):
     """
-    ลบรายการเอกสารงานวิจัยและไฟล์ออกจากระบบ:
-    - **ต้องระบุพารามิเตอร์ `pass_for_delete=P@ssw0rd`** เพื่อความปลอดภัย
-    - หากรหัสผ่านไม่ถูกต้อง จะถูกปฏิเสธด้วย HTTP 403 Forbidden
+    ลบรายการเอกสารงานวิจัยและไฟล์ออกจากระบบ
     """
-    # ตรวจสอบรหัสผ่านความปลอดภัย
-    if pass_for_delete != DELETE_AUTH_PASSWORD:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="รหัสผ่านสำหรับลบข้อมูลไม่ถูกต้อง (Invalid pass_for_delete)"
-        )
-
     paper = db.query(ResearchPaper).filter(ResearchPaper.id == paper_id).first()
     if not paper:
         raise HTTPException(
