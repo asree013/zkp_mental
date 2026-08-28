@@ -1055,6 +1055,23 @@
                     </div>
                 </a>
 
+                <!-- Portal 2.5: Compare Plain ZKP vs ZK-ML -->
+                <a href="/compare-zkp-zkml" class="portal-card" style="border-color: rgba(59, 130, 246, 0.35);">
+                    <div>
+                        <div class="portal-icon flex items-center justify-center" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #60A5FA;">
+                            <i data-lucide="git-compare" class="w-6 h-6"></i>
+                        </div>
+                        <div class="portal-name">Compare Plain ZKP vs ZK-ML</div>
+                        <div class="portal-desc">
+                            ทดสอบเปรียบเทียบ Side-by-Side ระหว่างระบบกฎเกณฑ์ธรรมดากับ ZK-ML เพื่อพิสูจน์คุณค่างานวิจัยบทที่ 4
+                        </div>
+                    </div>
+                    <div class="portal-action" style="color: #93C5FD;">
+                        <span>เข้าสู่หน้าเปรียบเทียบ</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </div>
+                </a>
+
                 <!-- Portal 3: Swagger Docs -->
                 <a href="/docs" class="portal-card">
                     <div>
@@ -1177,7 +1194,7 @@
                 </div>
                 <div style="display: flex; gap: 1.5rem; margin-top: 0.85rem; font-size: 0.82rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem; flex-wrap: wrap;">
                     <div class="inline-flex items-center gap-1"><i data-lucide="clock" class="w-3.5 h-3.5 text-amber-400"></i> Proving Latency: <strong id="resLatency" style="color: #FBBF24;">- ms</strong></div>
-                    <div class="inline-flex items-center gap-1"><i data-lucide="target" class="w-3.5 h-3.5 text-amber-300"></i> Risk Assessment: <strong id="resRiskLabel" style="color: #FDE68A;">-</strong></div>
+                    <div class="inline-flex items-center gap-1"><i data-lucide="target" id="resRiskIcon" class="w-3.5 h-3.5 text-amber-300"></i> Risk Assessment: <strong id="resRiskLabel" style="color: #FDE68A; transition: color 0.3s ease;">-</strong></div>
                     <div class="inline-flex items-center gap-1"><i data-lucide="shield" class="w-3.5 h-3.5 text-orange-400"></i> Privacy Shield: <strong style="color: #FF6B00;">Zero Feature Leakage</strong></div>
                 </div>
             </div>
@@ -1234,7 +1251,25 @@
 
                 document.getElementById('resMessage').textContent = data.message || 'ประมวลผลสำเร็จ';
                 document.getElementById('resLatency').textContent = (data.proving_time_ms || 0) + ' ms';
-                document.getElementById('resRiskLabel').textContent = data.risk_label || 'Normal';
+
+                // Update Risk Assessment Color: Red for High Risk, Green for Low Risk / Normal
+                const resRiskLabel = document.getElementById('resRiskLabel');
+                const resRiskIcon = document.getElementById('resRiskIcon');
+                const isHighRisk = (data.risk_class === 1) || (data.risk_label && data.risk_label.toLowerCase().includes('high risk'));
+
+                resRiskLabel.textContent = data.risk_label || (isHighRisk ? 'High Risk / Support Recommended' : 'Low Risk / Normal');
+                
+                if (isHighRisk) {
+                    resRiskLabel.style.color = '#EF4444'; // สีแดง สำหรับกลุ่มเสี่ยงสูง
+                    if (resRiskIcon) {
+                        resRiskIcon.style.color = '#EF4444';
+                    }
+                } else {
+                    resRiskLabel.style.color = '#10B981'; // สีเขียว สำหรับกลุ่มเสี่ยงต่ำ/ปกติ
+                    if (resRiskIcon) {
+                        resRiskIcon.style.color = '#10B981';
+                    }
+                }
 
             } catch (err) {
                 resultBox.style.display = 'block';

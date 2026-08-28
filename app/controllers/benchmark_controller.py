@@ -73,3 +73,26 @@ async def get_cryptographic_json(force_refresh: bool = False):
     ส่งคืนข้อมูลผลการทดลอง Cryptographic Benchmark ในรูปแบบ JSON API
     """
     return await run_cryptographic_benchmark(iterations=25, force_refresh=force_refresh)
+
+
+@router.get("/compare-zkp-zkml", response_class=HTMLResponse, summary="3) Compare Plain ZKP vs ZK-ML Research Value Dashboard (Jinja2)")
+@router.get("/test-compare-zkp-zkml", response_class=HTMLResponse, include_in_schema=False)
+async def view_compare_zkp_zkml(request: Request):
+    """
+    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงผลเปรียบเทียบคุณค่างานวิจัยระหว่าง Plain ZKP vs ZK-ML
+    """
+    from app.models.ml_model import load_model_weights
+    from app.services.zk_service import get_nargo_bin
+
+    model_info = load_model_weights()
+    nargo_bin = get_nargo_bin()
+
+    return views.TemplateResponse(
+        request=request,
+        name="compare_zkp_zkml.html",
+        context={
+            "model_info": model_info,
+            "nargo_bin": nargo_bin
+        }
+    )
+

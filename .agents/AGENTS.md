@@ -133,9 +133,12 @@
 | `GET` | `/students` | Student Mental Health Data & CSV Ingestion Dashboard | HTML (Jinja2) |
 | `GET` | `/test-quantization-impact` | Interactive Quantization Benchmark Dashboard | HTML (Jinja2) |
 | `GET` | `/test-cryptographic-benchmark` | ZK Cryptographic & Circuit Performance Dashboard | HTML (Jinja2) |
+| `GET` | `/compare-zkp-zkml` | Interactive Side-by-Side Plain ZKP vs ZK-ML Comparison Dashboard | HTML (Jinja2) |
 | `GET` | `/health` | Health check, DB connection & Nargo CLI status | JSON |
 | `GET` | `/api/v1/zkml/model-info` | Public Quantized Weights & Model Metadata | JSON |
 | `POST` | `/api/v1/zkml/inference` | ZK-ML Private Inference & Proof Verification | JSON |
+| `POST` | `/api/v1/zk/rule-based/inference` | Plain ZKP (Rule-Based Heuristic without ML) Baseline Inference | JSON |
+| `POST` | `/api/v1/zk/comparison` | Side-by-Side Benchmark & Scientific Comparison (Plain ZK vs ZK-ML) | JSON |
 | `GET` | `/api/v1/students/records` | List of Student Mental Health DB Records | JSON |
 | `POST` | `/api/v1/students/records` | Create Single Student Mental Health Record | JSON |
 | `POST` | `/api/v1/students/upload-csv` | Upload & Ingest CSV File to MySQL Database | JSON |

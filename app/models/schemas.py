@@ -23,6 +23,35 @@ class ZKMLResult(BaseModel):
     message: str = Field(..., description="Status summary message")
 
 
+class RuleBasedZKResult(BaseModel):
+    """Response payload for Plain / Rule-Based (Non-ML) ZK Proof execution."""
+    decision_method: str = Field("Rule-Based Heuristics (Non-ML)", description="Decision mechanism name")
+    rule_description: str = Field("Unweighted Symptom Threshold: (Depression + Anxiety + Panic >= 2)", description="Static heuristic rule evaluated")
+    verification_status: str = Field(..., description="'Pass' if proof verified, otherwise 'Not Pass'")
+    risk_class: int = Field(..., description="0 = Low Risk, 1 = High Risk / Welfare Support Recommended")
+    risk_label: str = Field(..., description="Human-readable risk label")
+    proving_time_ms: float = Field(..., description="Latency of ZK Proof execution in milliseconds")
+    message: str = Field(..., description="Summary status message")
+    limitations: list[str] = Field(
+        default_factory=lambda: [
+            "ละเลยค่าน้ำหนักความสำคัญทางสถิติ (Ignores Empirical Weights: Age, CGPA)",
+            "ไม่สามารถเรียนรู้สหสัมพันธ์ระหว่างปัจจัยต่างๆ ได้ (Cannot learn multivariate correlations)",
+            "ต้องรื้อตรรกะระบบใหม่เมื่อกลุ่มตัวอย่างเปลี่ยน (Inflexible: cannot retrain with new data)"
+        ],
+        description="Scientific limitations of non-ML rule-based approach"
+    )
+
+
+class ZKComparisonResult(BaseModel):
+    """Side-by-side comparison payload between Plain ZKP (Rule-Based) and ZK-ML."""
+    plain_zk: RuleBasedZKResult = Field(..., description="Plain Rule-Based ZKP result")
+    zk_ml: ZKMLResult = Field(..., description="Machine Learning ZK-ML result")
+    scientific_discussion: Dict[str, Any] = Field(
+        ...,
+        description="Comparative research insights justifying why ZK-ML provides superior research value"
+    )
+
+
 class HealthCheckResponse(BaseModel):
     """System health check payload."""
     status: str
