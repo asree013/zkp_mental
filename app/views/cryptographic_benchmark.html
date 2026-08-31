@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cryptographic Benchmark & ZK Performance | ZK-ML Research Dashboard</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="alternate icon" href="/static/favicon.svg">
@@ -43,7 +44,9 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -79,7 +82,7 @@
             background-color: var(--bg-main);
             color: var(--text-primary);
             min-height: 100vh;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.15) 0%, transparent 45%),
                 radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.12) 0%, transparent 50%),
                 radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
@@ -513,7 +516,7 @@
         html.light-mode body {
             background-color: #FAF5F0 !important;
             color: #1C1917 !important;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 15% 15%, rgba(234, 56, 21, 0.08) 0%, transparent 45%),
                 radial-gradient(circle at 85% 85%, rgba(255, 107, 0, 0.07) 0%, transparent 50%),
                 radial-gradient(circle at 50% 50%, rgba(251, 191, 36, 0.05) 0%, transparent 60%) !important;
@@ -587,10 +590,11 @@
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
-        
+
         <!-- Top Navbar Component -->
         {% set active_page = 'cryptographic' %}
         {% include 'components/navbar.html' %}
@@ -600,32 +604,32 @@
             <div>
                 <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                     <div class="badge-tag">
-                        <i data-lucide="microscope" class="w-3.5 h-3.5 text-amber-400"></i> Cryptographic & ZK-SNARKs Benchmark (M.Sc. Data Science)
+                        <i data-lucide="microscope" class="w-3.5 h-3.5 text-amber-400"></i> Cryptographic & ZK-SNARKs
+                        Benchmark (M.Sc. Data Science)
                     </div>
                     {% if snapshot_info and snapshot_info.is_cached %}
-                    <div class="badge-tag" style="background: rgba(255, 107, 0, 0.15); border-color: rgba(255, 107, 0, 0.4); color: #FDE68A;">
-                        <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i> DB Snapshot #{{ snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
+                    <div class="badge-tag"
+                        style="background: rgba(255, 107, 0, 0.15); border-color: rgba(255, 107, 0, 0.4); color: #FDE68A;">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-400"></i> DB Snapshot #{{
+                        snapshot_info.snapshot_id }} ({{ snapshot_info.created_at }})
                     </div>
                     {% else %}
-                    <div class="badge-tag" style="background: rgba(234, 56, 21, 0.15); border-color: rgba(234, 56, 21, 0.4); color: #FCA5A5;">
+                    <div class="badge-tag"
+                        style="background: rgba(234, 56, 21, 0.15); border-color: rgba(234, 56, 21, 0.4); color: #FCA5A5;">
                         <i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Live Prover Run (Saved to MySQL)
                     </div>
                     {% endif %}
                 </div>
                 <h1 class="title">ZK Circuit Complexity & Prover Performance Profiling</h1>
-                <p class="subtitle">การวิเคราะห์ขนาดวงจร ACIR Opcodes, ความซับซ้อนเชิงการคำนวณ (Computational Constraints), และการกระจายตัวของเวลาการสร้างพยานหลักฐาน (Proving Latency Distribution)</p>
+                <p class="subtitle">การวิเคราะห์ขนาดวงจร ACIR Opcodes, ความซับซ้อนเชิงการคำนวณ (Computational
+                    Constraints), และการกระจายตัวของเวลาการสร้างพยานหลักฐาน (Proving Latency Distribution)</p>
             </div>
             <div class="action-btns">
-                <a href="/" class="btn btn-secondary">
-                    <i data-lucide="home" class="w-3.5 h-3.5"></i> Home Portal
-                </a>
-                <a href="/test-quantization-impact" class="btn btn-secondary">
-                    <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> Quantization Benchmark
-                </a>
                 <a href="/api/v1/benchmark/cryptographic" target="_blank" class="btn btn-secondary">
                     <i data-lucide="file-code" class="w-3.5 h-3.5"></i> JSON API
                 </a>
-                <button onclick="window.location.href='/test-cryptographic-benchmark?force_refresh=true';" class="btn btn-primary">
+                <button onclick="window.location.href='/test-cryptographic-benchmark?force_refresh=true';"
+                    class="btn btn-primary">
                     <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Re-Run & Save to DB
                 </button>
             </div>
@@ -636,24 +640,28 @@
             <div class="metric-card sunset">
                 <div class="metric-label">ACIR Circuit Constraints</div>
                 <div class="metric-value">{{ summary.acir_opcodes }} <span class="metric-unit">Opcodes</span></div>
-                <div class="metric-desc">ขนาดวงจร Noir Circuit (<code class="code-pill">src/main.nr</code>) ระดับ Ultra-Lightweight เหมาะกับ REST API</div>
+                <div class="metric-desc">ขนาดวงจร Noir Circuit (<code class="code-pill">src/main.nr</code>) ระดับ
+                    Ultra-Lightweight เหมาะกับ REST API</div>
             </div>
 
             <div class="metric-card success">
                 <div class="metric-label">Mean Proving Latency</div>
                 <div class="metric-value">{{ summary.mean_latency_ms }} <span class="metric-unit">ms</span></div>
-                <div class="metric-desc">เวลาเฉลี่ยในการคำนวณ ZK Witness & Proof (ทดสอบ {{ summary.iterations }} รอบ)</div>
+                <div class="metric-desc">เวลาเฉลี่ยในการคำนวณ ZK Witness & Proof (ทดสอบ {{ summary.iterations }} รอบ)
+                </div>
             </div>
 
             <div class="metric-card info">
                 <div class="metric-label">95th Percentile (P95) Latency</div>
                 <div class="metric-value">{{ summary.p95_latency_ms }} <span class="metric-unit">ms</span></div>
-                <div class="metric-desc">ความเสถียรของระบบภายใต้โหลด (Jitter/StdDev: <strong>±{{ summary.std_jitter_ms }} ms</strong>)</div>
+                <div class="metric-desc">ความเสถียรของระบบภายใต้โหลด (Jitter/StdDev: <strong>±{{ summary.std_jitter_ms
+                        }} ms</strong>)</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-label">Theoretical Throughput</div>
-                <div class="metric-value">{{ summary.theoretical_throughput_rps }} <span class="metric-unit">Req/s</span></div>
+                <div class="metric-value">{{ summary.theoretical_throughput_rps }} <span
+                        class="metric-unit">Req/s</span></div>
                 <div class="metric-desc">อัตราการประมวลผลต่อวินาทีบน Single Worker (ขยายได้ด้วย Multi-process)</div>
             </div>
         </div>
@@ -676,7 +684,8 @@
             <div class="card">
                 <div class="card-header">
                     <div class="card-title">
-                        <i data-lucide="trending-up" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> Circuit Opcodes Scaling vs Feature Dimension ($O(N)$)
+                        <i data-lucide="trending-up" class="w-4 h-4 text-orange-400 inline-block align-middle"></i>
+                        Circuit Opcodes Scaling vs Feature Dimension ($O(N)$)
                     </div>
                 </div>
                 <div class="chart-container">
@@ -689,7 +698,8 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <i data-lucide="cpu" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> การจัดสรรขนาดเกตและโครงสร้างวงจร (Circuit Constraint Allocation Breakdown)
+                    <i data-lucide="cpu" class="w-4 h-4 text-orange-400 inline-block align-middle"></i>
+                    การจัดสรรขนาดเกตและโครงสร้างวงจร (Circuit Constraint Allocation Breakdown)
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
                     Compiler: Nargo ACIR (Abstract Circuit Intermediate Representation)
@@ -726,7 +736,8 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <i data-lucide="ruler" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> ตารางวิเคราะห์ความสามารถในการขยายขนาด (Feature Scaling Complexity Analysis)
+                    <i data-lucide="ruler" class="w-4 h-4 text-orange-400 inline-block align-middle"></i>
+                    ตารางวิเคราะห์ความสามารถในการขยายขนาด (Feature Scaling Complexity Analysis)
                 </div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">
                     Asymptotic Complexity: $O(N)$ Linear Scaling
@@ -749,7 +760,8 @@
                         {% for row in scaling_data %}
                         <tr class="{% if row.is_current %}active-row{% endif %}">
                             <td>
-                                <strong>{% if row.is_current %}⭐ Student Mental Health Model{% else %}ML Baseline Model{% endif %}</strong>
+                                <strong>{% if row.is_current %}⭐ Student Mental Health Model{% else %}ML Baseline
+                                    Model{% endif %}</strong>
                             </td>
                             <td><span class="code-pill">{{ row.features_count }} Features</span></td>
                             <td><strong>{{ row.acir_opcodes }} Opcodes</strong></td>
@@ -757,7 +769,8 @@
                             <td><span class="code-pill">{{ row.complexity_order }}</span></td>
                             <td>
                                 <span class="status-badge {% if row.is_current %}sunset{% else %}success{% endif %}">
-                                    {% if row.is_current %}Active Circuit in Production{% else %}Theoretical Benchmark{% endif %}
+                                    {% if row.is_current %}Active Circuit in Production{% else %}Theoretical Benchmark{%
+                                    endif %}
                                 </span>
                             </td>
                         </tr>
@@ -771,7 +784,8 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-title">
-                    <i data-lucide="shield-check" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> การวิเคราะห์คุณสมบัติความปลอดภัยทางรหัสวิทยา (Cryptographic Properties)
+                    <i data-lucide="shield-check" class="w-4 h-4 text-orange-400 inline-block align-middle"></i>
+                    การวิเคราะห์คุณสมบัติความปลอดภัยทางรหัสวิทยา (Cryptographic Properties)
                 </div>
             </div>
 
@@ -794,14 +808,17 @@
                         </tr>
                         <tr>
                             <td><strong>2. Soundness</strong></td>
-                            <td>ไม่มีผู้ใดสามารถปลอมแปลงผลคะแนนความเสี่ยงหรือหลอกวงจรได้ หากข้อมูลไม่ตรงตามพารามิเตอร์โมเดล</td>
+                            <td>ไม่มีผู้ใดสามารถปลอมแปลงผลคะแนนความเสี่ยงหรือหลอกวงจรได้
+                                หากข้อมูลไม่ตรงตามพารามิเตอร์โมเดล</td>
                             <td><code class="code-pill">assert(computed_risk == expected_risk_class)</code></td>
                             <td><span class="status-badge success">Enforced by Field Constraint</span></td>
                         </tr>
                         <tr>
                             <td><strong>3. Zero-Knowledge</strong></td>
-                            <td>บุคคลภายนอกและ Verifier จะทราบเฉพาะสถานะ Pass/Fail และ Risk Label โดยไม่สามารถล่วงรู้คะแนนดิบหรือข้อมูลสุขภาพจิต</td>
-                            <td>ข้อมูลสุขภาพจิตทั้งหมดถูกนิยามเป็น <strong>Private Inputs</strong> (ไม่มีคีย์เวิร์ด <code class="code-pill">pub</code>)</td>
+                            <td>บุคคลภายนอกและ Verifier จะทราบเฉพาะสถานะ Pass/Fail และ Risk Label
+                                โดยไม่สามารถล่วงรู้คะแนนดิบหรือข้อมูลสุขภาพจิต</td>
+                            <td>ข้อมูลสุขภาพจิตทั้งหมดถูกนิยามเป็น <strong>Private Inputs</strong> (ไม่มีคีย์เวิร์ด
+                                <code class="code-pill">pub</code>)</td>
                             <td><span class="status-badge sunset">Strict Privacy Preserved</span></td>
                         </tr>
                     </tbody>
@@ -812,20 +829,27 @@
         <!-- Academic Thesis Callout Box -->
         <div class="thesis-callout">
             <div class="callout-title">
-                <i data-lucide="graduation-cap" class="w-4 h-4 text-orange-400 inline-block align-middle"></i> ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Cryptographic Results & Discussion)
+                <i data-lucide="graduation-cap" class="w-4 h-4 text-orange-400 inline-block align-middle"></i>
+                ข้อสรุปเชิงวิชาการสำหรับเขียนในวิทยานิพนธ์ (Chapter 4: Cryptographic Results & Discussion)
             </div>
             <div class="callout-text">
-                <p>จากการประเมินประสิทธิภาพเชิงรหัสวิทยาของวงจร <strong>Noir ZK-ML Circuit</strong> พบว่าโมเดลการจำแนกความเสี่ยงสุขภาพจิตนักเรียนขนาด 6 คุณลักษณะ ใช้จำนวน <strong>ACIR Opcodes รวมเพียง 312 คำสั่ง</strong> ซึ่งมีอัตราการเติบโตเชิงเส้น <strong>$O(N)$</strong> ตามจำนวน Features โดยใช้เวลาในการสร้างและแก้พยานหลักฐาน (Witness & Proving Time) เฉลี่ยเพียง <strong>{{ summary.mean_latency_ms }} มิลลิวินาที</strong> (P95 = {{ summary.p95_latency_ms }} ms) ทำให้ระบบมีความเร็วเพียงพอสำหรับการให้บริการผ่าน RESTful Web API ในสถานการณ์จริงแบบ Real-time โดยไม่สูญเสียความปลอดภัยและความเป็นส่วนตัวของข้อมูลสุขภาพจิตนักเรียน</p>
+                <p>จากการประเมินประสิทธิภาพเชิงรหัสวิทยาของวงจร <strong>Noir ZK-ML Circuit</strong>
+                    พบว่าโมเดลการจำแนกความเสี่ยงสุขภาพจิตนักเรียนขนาด 6 คุณลักษณะ ใช้จำนวน <strong>ACIR Opcodes รวมเพียง
+                        312 คำสั่ง</strong> ซึ่งมีอัตราการเติบโตเชิงเส้น <strong>$O(N)$</strong> ตามจำนวน Features
+                    โดยใช้เวลาในการสร้างและแก้พยานหลักฐาน (Witness & Proving Time) เฉลี่ยเพียง <strong>{{
+                        summary.mean_latency_ms }} มิลลิวินาที</strong> (P95 = {{ summary.p95_latency_ms }} ms)
+                    ทำให้ระบบมีความเร็วเพียงพอสำหรับการให้บริการผ่าน RESTful Web API ในสถานการณ์จริงแบบ Real-time
+                    โดยไม่สูญเสียความปลอดภัยและความเป็นส่วนตัวของข้อมูลสุขภาพจิตนักเรียน</p>
                 <div class="callout-quote">
-                    "วงจร ZK-ML ที่พัฒนาขึ้นให้ความสมดุลระหว่าง Computational Feasibility (Latency < 250 ms) และความรัดกุมในการตรวจสอบข้อมูล (Strict Completeness & Soundness Enforcement)"
+                    "วงจร ZK-ML ที่พัฒนาขึ้นให้ความสมดุลระหว่าง Computational Feasibility (Latency < 250 ms)
+                        และความรัดกุมในการตรวจสอบข้อมูล (Strict Completeness & Soundness Enforcement)" </div>
                 </div>
             </div>
+
         </div>
 
-    </div>
-
-    <!-- Data Injection -->
-    <script id="benchmark-data" type="application/json">
+        <!-- Data Injection -->
+        <script id="benchmark-data" type="application/json">
         {
             "iteration_labels": {{ iteration_labels | tojson }},
             "iteration_series": {{ iteration_series | tojson }},
@@ -835,101 +859,102 @@
         }
     </script>
 
-    <!-- Chart Initialization -->
-    <script>
-        const rawData = JSON.parse(document.getElementById('benchmark-data').textContent);
+        <!-- Chart Initialization -->
+        <script>
+            const rawData = JSON.parse(document.getElementById('benchmark-data').textContent);
 
-        // 1. Latency Jitter Chart
-        const ctxLat = document.getElementById('latencyChart').getContext('2d');
-        new Chart(ctxLat, {
-            type: 'line',
-            data: {
-                labels: rawData.iteration_labels,
-                datasets: [{
-                    label: 'Proving Latency (ms)',
-                    data: rawData.iteration_series,
-                    borderColor: '#FF6B00',
-                    backgroundColor: 'rgba(255, 107, 0, 0.15)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.2,
-                    pointBackgroundColor: '#FBBF24',
-                    pointRadius: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        grid: { color: 'rgba(255, 107, 0, 0.12)' },
-                        ticks: { color: '#78716C', font: { weight: '600' } }
-                    },
-                    x: {
-                        grid: { color: 'rgba(255, 107, 0, 0.12)' },
-                        ticks: { color: '#78716C', maxTicksLimit: 10, font: { weight: '600' } }
-                    }
-                }
-            }
-        });
-
-        // 2. Scaling Constraints Chart
-        const ctxScale = document.getElementById('scalingChart').getContext('2d');
-        new Chart(ctxScale, {
-            type: 'bar',
-            data: {
-                labels: rawData.scaling_labels,
-                datasets: [
-                    {
-                        type: 'bar',
-                        label: 'ACIR Opcodes',
-                        data: rawData.scaling_opcodes,
-                        backgroundColor: 'rgba(255, 107, 0, 0.5)',
+            // 1. Latency Jitter Chart
+            const ctxLat = document.getElementById('latencyChart').getContext('2d');
+            new Chart(ctxLat, {
+                type: 'line',
+                data: {
+                    labels: rawData.iteration_labels,
+                    datasets: [{
+                        label: 'Proving Latency (ms)',
+                        data: rawData.iteration_series,
                         borderColor: '#FF6B00',
-                        borderWidth: 1,
-                        yAxisID: 'y'
-                    },
-                    {
-                        type: 'line',
-                        label: 'Est. Latency (ms)',
-                        data: rawData.scaling_latencies,
-                        borderColor: '#FBBF24',
-                        backgroundColor: '#FBBF24',
+                        backgroundColor: 'rgba(255, 107, 0, 0.15)',
                         borderWidth: 2,
-                        pointRadius: 4,
-                        yAxisID: 'y1'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        grid: { color: 'rgba(255, 107, 0, 0.12)' },
-                        ticks: { color: '#78716C', font: { weight: '600' } }
+                        fill: true,
+                        tension: 0.2,
+                        pointBackgroundColor: '#FBBF24',
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
                     },
-                    y1: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        grid: { drawOnChartArea: false },
-                        ticks: { color: '#6EE7B7' },
-                        title: { display: true, text: 'Latency (ms)', color: '#6EE7B7' }
-                    },
-                    x: {
-                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                        ticks: { color: '#9CA3AF' }
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255, 107, 0, 0.12)' },
+                            ticks: { color: '#78716C', font: { weight: '600' } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 107, 0, 0.12)' },
+                            ticks: { color: '#78716C', maxTicksLimit: 10, font: { weight: '600' } }
+                        }
                     }
                 }
-            }
-        });
-    </script>
+            });
+
+            // 2. Scaling Constraints Chart
+            const ctxScale = document.getElementById('scalingChart').getContext('2d');
+            new Chart(ctxScale, {
+                type: 'bar',
+                data: {
+                    labels: rawData.scaling_labels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'ACIR Opcodes',
+                            data: rawData.scaling_opcodes,
+                            backgroundColor: 'rgba(255, 107, 0, 0.5)',
+                            borderColor: '#FF6B00',
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            type: 'line',
+                            label: 'Est. Latency (ms)',
+                            data: rawData.scaling_latencies,
+                            borderColor: '#FBBF24',
+                            backgroundColor: '#FBBF24',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255, 107, 0, 0.12)' },
+                            ticks: { color: '#78716C', font: { weight: '600' } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#6EE7B7' },
+                            title: { display: true, text: 'Latency (ms)', color: '#6EE7B7' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#9CA3AF' }
+                        }
+                    }
+                }
+            });
+        </script>
 </body>
+
 </html>
