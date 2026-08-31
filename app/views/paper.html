@@ -252,13 +252,13 @@
 
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
-                    <span>เล่มสมบูรณ์ / ข้อเสนอแนะ</span>
+                    <span>เล่มสมบูรณ์ / IEEE / โครงงาน</span>
                     <i data-lucide="graduation-cap" class="w-5 h-5 text-rose-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-emerald-400" id="statAllPapersCount">
-                    {{ papers|selectattr('type_paper', 'in', ['all_paper', 'recommend'])|list|length }}
+                    {{ papers|selectattr('type_paper', 'in', ['all_paper', 'recommend', 'ieee', 'project_paper'])|list|length }}
                 </div>
-                <div class="text-[11px] text-stone-400 mt-1">Full Thesis & Reviews</div>
+                <div class="text-[11px] text-stone-400 mt-1">Full Thesis, IEEE & Projects</div>
             </div>
         </div>
 
@@ -293,6 +293,8 @@
                                 <option value="proposal" selected>โครงร่างงานวิจัย (Thesis Proposal)</option>
                                 <option value="all_paper">เล่มงานวิจัยฉบับสมบูรณ์ (Full Thesis)</option>
                                 <option value="recommend">ข้อเสนอแนะและข้อคิดเห็น (Recommendations)</option>
+                                <option value="ieee">IEEE Paper / เอกสารมาตรฐาน IEEE</option>
+                                <option value="project_paper">รายงานโครงงาน / Project Paper</option>
                             </select>
                         </div>
 
@@ -399,6 +401,12 @@
                         <button onclick="setFilter('recommend', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
                             ข้อเสนอแนะ
                         </button>
+                        <button onclick="setFilter('ieee', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            IEEE Paper
+                        </button>
+                        <button onclick="setFilter('project_paper', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                            Project Paper
+                        </button>
                     </div>
 
                     <!-- Papers Table -->
@@ -453,6 +461,14 @@
                                             {% elif p.type_paper == 'recommend' %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 border border-rose-500/40 text-rose-300">
                                                 <i data-lucide="message-square" class="w-3.5 h-3.5 inline-block"></i> ข้อเสนอแนะ
+                                            </span>
+                                            {% elif p.type_paper == 'ieee' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-cyan-500/20 border border-cyan-500/40 text-cyan-300">
+                                                <i data-lucide="file-code" class="w-3.5 h-3.5 inline-block"></i> IEEE Paper
+                                            </span>
+                                            {% elif p.type_paper == 'project_paper' %}
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-violet-500/20 border border-violet-500/40 text-violet-300">
+                                                <i data-lucide="folder-git" class="w-3.5 h-3.5 inline-block"></i> Project Paper
                                             </span>
                                             {% else %}
                                             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-stone-500/20 border border-stone-500/40 text-stone-300">
@@ -573,6 +589,8 @@
                         <option value="proposal">โครงร่างงานวิจัย (Thesis Proposal)</option>
                         <option value="all_paper">เล่มงานวิจัยฉบับสมบูรณ์ (Full Thesis)</option>
                         <option value="recommend">ข้อเสนอแนะและข้อคิดเห็น (Recommendations)</option>
+                        <option value="ieee">IEEE Paper / เอกสารมาตรฐาน IEEE</option>
+                        <option value="project_paper">รายงานโครงงาน / Project Paper</option>
                     </select>
                 </div>
                 <div class="flex items-center justify-end gap-2.5 pt-2">

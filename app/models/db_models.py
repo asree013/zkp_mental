@@ -61,7 +61,7 @@ class ResearchPaper(Base):
     __tablename__ = "research_papers"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    type_paper = Column(String(50), nullable=False, default="proposal", comment="ประเภทงานวิจัย (chapter_1..chapter_5, all_paper, proposal, recommend)")
+    type_paper = Column(String(50), nullable=False, default="proposal", comment="ประเภทงานวิจัย (chapter_1..chapter_5, all_paper, proposal, recommend, ieee, project_paper)")
     name = Column(String(255), nullable=False, comment="ชื่อไฟล์เอกสารเดิม")
     link = Column(String(500), nullable=False, comment="Path/URL สำหรับเข้าถึงไฟล์ PDF")
     file_type = Column(String(20), default="pdf", nullable=False, comment="ประเภทไฟล์ (pdf)")

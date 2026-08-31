@@ -111,7 +111,7 @@ def get_request_base_url(request: Request) -> str:
 async def upload_pdf_file(
     request: Request,
     file: UploadFile = File(..., description="ไฟล์ PDF งานวิจัย/วิทยานิพนธ์"),
-    type_paper: Optional[PaperType] = Form(None, description="ประเภทเอกสาร (chapter_1..chapter_5, all_paper, proposal, recommend)"),
+    type_paper: Optional[PaperType] = Form(None, description="ประเภทเอกสาร (chapter_1..chapter_5, all_paper, proposal, recommend, ieee, project_paper)"),
     custom_name: Optional[str] = Form(None, description="กำหนดชื่อไฟล์เอกสารเอง (ถ้าไม่ระบุจะใช้ชื่อไฟล์เดิม)"),
     save_to_db: bool = Form(True, description="บันทึกลงตาราง research_papers อัตโนมัติหรือไม่"),
     db: Session = Depends(get_db)

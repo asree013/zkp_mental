@@ -176,6 +176,8 @@ class PaperType(str, Enum):
     - proposol: เอกสารโครงร่างงานวิจัย (Alias)
     - recommend: ข้อเสนอแนะและข้อคิดเห็น (Recommendations & Review Comments)
     - recomment: ข้อเสนอแนะและข้อคิดเห็น (Alias)
+    - ieee: เอกสาร IEEE Paper / งานวิจัยมาตรฐาน IEEE
+    - project_paper: เอกสารรายงานโครงงาน / Project Paper / Technical Report
     """
     CHAPTER_1 = "chapter_1"
     CHAPTER_2 = "chapter_2"
@@ -187,6 +189,8 @@ class PaperType(str, Enum):
     PROPOSOL = "proposol"
     RECOMMEND = "recommend"
     RECOMMENT = "recomment"
+    IEEE = "ieee"
+    PROJECT_PAPER = "project_paper"
 
 
 class PDFUploadResponse(BaseModel):
@@ -200,7 +204,7 @@ class PDFUploadResponse(BaseModel):
 
 class ResearchPaperCreate(BaseModel):
     """Schema สำหรับสร้าง/บันทึกข้อมูลเอกสารงานวิจัยลงฐานข้อมูล"""
-    type_paper: PaperType = Field(default=PaperType.PROPOSAL, description="ประเภทเอกสาร (chapter_1..chapter_5, all_paper, proposal, recommend)")
+    type_paper: PaperType = Field(default=PaperType.PROPOSAL, description="ประเภทเอกสาร (chapter_1..chapter_5, all_paper, proposal, recommend, ieee, project_paper)")
     name: str = Field(..., description="ชื่อไฟล์เอกสาร")
     link: str = Field(..., description="Link หรือ Path ไฟล์ที่ได้จาก API Upload PDF")
     file_type: Optional[str] = Field("pdf", description="ประเภทไฟล์ (pdf)")
