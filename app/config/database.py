@@ -31,7 +31,7 @@ engine = create_engine(
     max_overflow=10,      # ขยายเพิ่มได้ชั่วคราวตอนยิงเข้ามาพร้อมกันหนักๆ (รวมได้ 20)
     pool_timeout=30, 
     pool_pre_ping=True,
-    pool_recycle=3600
+    pool_recycle=1800
 )
 
 # SessionFactory สำหรับจัดการ Database Session ในแอปพลิเคชัน
