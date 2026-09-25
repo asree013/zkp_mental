@@ -27,8 +27,9 @@ DATABASE_URL = os.getenv(
 # สร้าง SQLAlchemy Connection Engine
 engine = create_engine(
     DATABASE_URL,
-    pool_size=20,
-    max_overflow=10,
+    pool_size=10,         # Connection หลักที่เปิดแช่ไว้พร้อมใช้ทันที
+    max_overflow=10,      # ขยายเพิ่มได้ชั่วคราวตอนยิงเข้ามาพร้อมกันหนักๆ (รวมได้ 20)
+    pool_timeout=30, 
     pool_pre_ping=True,
     pool_recycle=3600
 )
