@@ -11,7 +11,7 @@ import re
 from datetime import datetime, timezone
 from typing import List, Optional
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException, status, Request, Query, Response
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -46,22 +46,33 @@ def sanitize_filename(filename: str) -> str:
 
 
 # =========================================================================
-# WEB UI ROUTE (/paper)
+# WEB UI ROUTE (/paper & /{lang}/paper)
 # =========================================================================
 
-@router.get("/paper", response_class=HTMLResponse, summary="Research Papers Management Web UI")
+@router.get("/paper", summary="Legacy redirect to /en/paper default")
+async def paper_redirect():
+    """Redirect unlocalized /paper to /en/paper (Default English)"""
+    return RedirectResponse(url="/en/paper", status_code=307)
+
+
+@router.get("/{lang}/paper", response_class=HTMLResponse, summary="Research Papers Management Web UI")
+@router.get("/{lang}/paper/", response_class=HTMLResponse, include_in_schema=False)
 async def paper_management_page(
     request: Request,
+    lang: str = "en",
     db: Session = Depends(get_db)
 ):
     """
-    หน้าเว็บ UI สำหรับจัดการไฟล์เอกสารงานวิจัย/วิทยานิพนธ์:
-    - อัปโหลดไฟล์ PDF (บทที่ 1-5, เล่มเต็ม, โครงร่าง, ข้อเสนอแนะ)
+    หน้าเว็บ UI สำหรับจัดการไฟล์เอกสารงานวิจัย/วิทยานิพนธ์ (รองรับ /th/paper และ /en/paper):
+    - อัปโหลดไฟล์ PDF (บทที่ 1-5, เล่มเต็ม, โครงร่าง, ข้อเสนอแนะ, IEEE Paper)
     - แสดงรายการไฟล์ ค้นหา กรองประเภท
     - พรีวิว/เปิดอ่านเอกสาร PDF
     - แก้ไขชื่อและประเภทเอกสาร
     - ลบเอกสาร
     """
+    if lang not in ["th", "en"]:
+        return RedirectResponse(url="/en/paper", status_code=307)
+
     db_status = check_db_connection()
     papers = []
     try:
@@ -76,7 +87,9 @@ async def paper_management_page(
         context={
             "db_status": db_status,
             "papers": papers,
-            "active_page": "paper"
+            "active_page": "paper",
+            "current_lang": lang,
+            "lang": lang
         }
     )
 

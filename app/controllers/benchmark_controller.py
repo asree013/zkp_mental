@@ -7,7 +7,7 @@ Benchmark Controller - Quantization Impact HTML View & REST API
 
 import os
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.services.benchmark_service import get_quantization_benchmark_data
@@ -20,11 +20,25 @@ VIEWS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 views = Jinja2Templates(directory=VIEWS_DIR)
 
 
-@router.get("/test-quantization-impact", response_class=HTMLResponse, summary="1) Quantization Impact Web Dashboard (Jinja2)")
-async def view_quantization_impact(request: Request, force_refresh: bool = False):
+# =========================================================================
+# 1. Quantization Impact Benchmark
+# =========================================================================
+
+@router.get("/test-quantization-impact", summary="Legacy redirect to /en/test-quantization-impact default")
+async def redirect_quantization_impact():
+    """Redirect unlocalized path to /en/... (Default English)"""
+    return RedirectResponse(url="/en/test-quantization-impact", status_code=307)
+
+
+@router.get("/{lang}/test-quantization-impact", response_class=HTMLResponse, summary="1) Quantization Impact Web Dashboard (Jinja2)")
+@router.get("/{lang}/test-quantization-impact/", response_class=HTMLResponse, include_in_schema=False)
+async def view_quantization_impact(request: Request, lang: str = "en", force_refresh: bool = False):
     """
-    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงตารางเปรียบเทียบและกราฟผลกระทบของ Quantization
+    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงตารางเปรียบเทียบและกราฟผลกระทบของ Quantization (รองรับ /th/ และ /en/)
     """
+    if lang not in ["th", "en"]:
+        return RedirectResponse(url="/en/test-quantization-impact", status_code=307)
+
     data = get_quantization_benchmark_data(force_refresh=force_refresh)
     return views.TemplateResponse(
         request=request,
@@ -33,7 +47,10 @@ async def view_quantization_impact(request: Request, force_refresh: bool = False
             "baseline": data["baseline"],
             "rows": data["rows"],
             "chart_data": data["chart_data"],
-            "snapshot_info": data.get("snapshot_info", {})
+            "snapshot_info": data.get("snapshot_info", {}),
+            "active_page": "quantization",
+            "current_lang": lang,
+            "lang": lang
         }
     )
 
@@ -46,11 +63,25 @@ async def get_quantization_json(force_refresh: bool = False):
     return get_quantization_benchmark_data(force_refresh=force_refresh)
 
 
-@router.get("/test-cryptographic-benchmark", response_class=HTMLResponse, summary="2) Cryptographic & ZK Performance Dashboard (Jinja2)")
-async def view_cryptographic_benchmark(request: Request, force_refresh: bool = False):
+# =========================================================================
+# 2. Cryptographic Benchmark
+# =========================================================================
+
+@router.get("/test-cryptographic-benchmark", summary="Legacy redirect to /en/test-cryptographic-benchmark default")
+async def redirect_cryptographic_benchmark():
+    """Redirect unlocalized path to /en/... (Default English)"""
+    return RedirectResponse(url="/en/test-cryptographic-benchmark", status_code=307)
+
+
+@router.get("/{lang}/test-cryptographic-benchmark", response_class=HTMLResponse, summary="2) Cryptographic & ZK Performance Dashboard (Jinja2)")
+@router.get("/{lang}/test-cryptographic-benchmark/", response_class=HTMLResponse, include_in_schema=False)
+async def view_cryptographic_benchmark(request: Request, lang: str = "en", force_refresh: bool = False):
     """
-    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงผล Cryptographic Benchmark (ACIR Opcodes, Constraints, Prover Latency)
+    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงผล Cryptographic Benchmark (ACIR Opcodes, Constraints, Prover Latency) (รองรับ /th/ และ /en/)
     """
+    if lang not in ["th", "en"]:
+        return RedirectResponse(url="/en/test-cryptographic-benchmark", status_code=307)
+
     data = await run_cryptographic_benchmark(iterations=25, force_refresh=force_refresh)
     return views.TemplateResponse(
         request=request,
@@ -62,7 +93,10 @@ async def view_cryptographic_benchmark(request: Request, force_refresh: bool = F
             "iteration_series": data["iteration_series"],
             "iteration_labels": data["iteration_labels"],
             "scaling_chart": data["scaling_chart"],
-            "snapshot_info": data.get("snapshot_info", {})
+            "snapshot_info": data.get("snapshot_info", {}),
+            "active_page": "cryptographic",
+            "current_lang": lang,
+            "lang": lang
         }
     )
 
@@ -75,12 +109,28 @@ async def get_cryptographic_json(force_refresh: bool = False):
     return await run_cryptographic_benchmark(iterations=25, force_refresh=force_refresh)
 
 
-@router.get("/compare-zkp-zkml", response_class=HTMLResponse, summary="3) Compare Plain ZKP vs ZK-ML Research Value Dashboard (Jinja2)")
-@router.get("/test-compare-zkp-zkml", response_class=HTMLResponse, include_in_schema=False)
-async def view_compare_zkp_zkml(request: Request):
+# =========================================================================
+# 3. Compare ZKP vs ZK-ML
+# =========================================================================
+
+@router.get("/compare-zkp-zkml", summary="Legacy redirect to /en/compare-zkp-zkml default")
+@router.get("/test-compare-zkp-zkml", include_in_schema=False)
+async def redirect_compare_zkp_zkml():
+    """Redirect unlocalized path to /en/... (Default English)"""
+    return RedirectResponse(url="/en/compare-zkp-zkml", status_code=307)
+
+
+@router.get("/{lang}/compare-zkp-zkml", response_class=HTMLResponse, summary="3) Compare Plain ZKP vs ZK-ML Research Value Dashboard (Jinja2)")
+@router.get("/{lang}/compare-zkp-zkml/", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/{lang}/test-compare-zkp-zkml", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/{lang}/test-compare-zkp-zkml/", response_class=HTMLResponse, include_in_schema=False)
+async def view_compare_zkp_zkml(request: Request, lang: str = "en"):
     """
-    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงผลเปรียบเทียบคุณค่างานวิจัยระหว่าง Plain ZKP vs ZK-ML
+    เรนเดอร์หน้าเว็บ HTML (Jinja2) สำหรับแสดงผลเปรียบเทียบคุณค่างานวิจัยระหว่าง Plain ZKP vs ZK-ML (รองรับ /th/ และ /en/)
     """
+    if lang not in ["th", "en"]:
+        return RedirectResponse(url="/en/compare-zkp-zkml", status_code=307)
+
     from app.models.ml_model import load_model_weights
     from app.services.zk_service import get_nargo_bin
 
@@ -92,7 +142,10 @@ async def view_compare_zkp_zkml(request: Request):
         name="compare_zkp_zkml.html",
         context={
             "model_info": model_info,
-            "nargo_bin": nargo_bin
+            "nargo_bin": nargo_bin,
+            "active_page": "compare",
+            "current_lang": lang,
+            "lang": lang
         }
     )
 

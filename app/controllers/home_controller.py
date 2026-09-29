@@ -8,7 +8,7 @@ Home Controller - Master's Thesis Portal & Researcher Dashboard
 import os
 from typing import Optional
 from fastapi import APIRouter, Request, Depends
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -23,14 +23,25 @@ VIEWS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 views = Jinja2Templates(directory=VIEWS_DIR)
 
 
-@router.get("/", response_class=HTMLResponse, summary="Master's Thesis Research Portal Homepage")
+@router.get("/", summary="Root redirect to default /en")
+async def root_redirect():
+    """Redirect root path to /en (Default English)"""
+    return RedirectResponse(url="/en", status_code=307)
+
+
+@router.get("/en", response_class=HTMLResponse, summary="Master's Thesis Research Portal Homepage (EN)")
+@router.get("/en/", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/th", response_class=HTMLResponse, summary="Master's Thesis Research Portal Homepage (TH)")
+@router.get("/th/", response_class=HTMLResponse, include_in_schema=False)
 async def home_page(
     request: Request,
     db: Session = Depends(get_db)
 ):
     """
-    เรนเดอร์หน้าแรก แสดงข้อมูลงานวิจัยวิทยานิพนธ์ โปรไฟล์ผู้วิจัย เอกสาร Proposal ล่าสุด และระบบทดสอบ ZK-ML
+    เรนเดอร์หน้าแรก รองรับ /th และ /en แสดงข้อมูลงานวิจัยวิทยานิพนธ์ โปรไฟล์ผู้วิจัย เอกสาร IEEE Paper ล่าสุด และระบบทดสอบ ZK-ML
     """
+    lang = "th" if request.url.path.startswith("/th") else "en"
+
     model_data = load_model_weights()
     db_status = check_db_connection()
     nargo_bin = get_nargo_bin()
@@ -84,6 +95,9 @@ async def home_page(
             "thesis": thesis_info,
             "latest_paper": latest_paper,
             "latest_proposal": latest_paper,
-            "db_status": db_status
+            "db_status": db_status,
+            "active_page": "home",
+            "current_lang": lang,
+            "lang": lang
         }
     )

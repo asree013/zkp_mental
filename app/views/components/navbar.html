@@ -16,8 +16,15 @@ Path: app/views/components/navbar.html
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light-mode');
         }
-        const savedLang = localStorage.getItem('app_lang') || 'th';
-        document.documentElement.setAttribute('lang', savedLang);
+        let initialLang = 'en';
+        if (window.location.pathname.startsWith('/th/') || window.location.pathname === '/th') {
+            initialLang = 'th';
+        } else if (window.location.pathname.startsWith('/en/') || window.location.pathname === '/en') {
+            initialLang = 'en';
+        } else {
+            initialLang = localStorage.getItem('app_lang') || 'en';
+        }
+        document.documentElement.setAttribute('lang', initialLang);
     })();
 </script>
 
@@ -492,7 +499,7 @@ Path: app/views/components/navbar.html
 
 <nav class="flex flex-wrap items-center justify-between gap-4 py-4 mb-8 border-b border-orange-500/20">
     <!-- Brand Logo & Title -->
-    <a href="/" class="flex items-center gap-3 no-underline transition-transform duration-200 hover:-translate-y-0.5 group">
+    <a href="/{{ current_lang or 'en' }}" class="flex items-center gap-3 no-underline transition-transform duration-200 hover:-translate-y-0.5 group">
         <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#EA3815] via-[#FF6B00] to-[#FBBF24] flex items-center justify-center text-white shadow-lg shadow-orange-500/30 group-hover:shadow-orange-500/60 transition-all duration-300">
             <i data-lucide="shield-check" class="w-6 h-6 stroke-[2.2]"></i>
         </div>
@@ -508,23 +515,23 @@ Path: app/views/components/navbar.html
 
     <!-- Navigation Buttons & Theme / Language Switches -->
     <div class="flex flex-wrap items-center gap-2.5">
-        <a href="/" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'home' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+        <a href="/{{ current_lang or 'en' }}" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'home' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
             <i data-lucide="home" class="w-3.5 h-3.5"></i> <span data-i18n="nav_home">Home</span>
         </a>
-        <a href="/students" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'student' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+        <a href="/{{ current_lang or 'en' }}/students" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'student' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
             <i data-lucide="users" class="w-3.5 h-3.5"></i> <span data-i18n="nav_students">Student Data & CSV</span>
         </a>
-        <a href="/paper" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'paper' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+        <a href="/{{ current_lang or 'en' }}/paper" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'paper' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
             <i data-lucide="file-text" class="w-3.5 h-3.5"></i> <span data-i18n="nav_papers">Research Papers</span>
         </a>
 
-        <a href="/test-quantization-impact" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'quantization' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+        <a href="/{{ current_lang or 'en' }}/test-quantization-impact" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'quantization' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
             <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> <span data-i18n="nav_quant">Quantization Benchmark</span>
         </a>
-        <a href="/test-cryptographic-benchmark" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'cryptographic' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+        <a href="/{{ current_lang or 'en' }}/test-cryptographic-benchmark" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'cryptographic' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
             <i data-lucide="microscope" class="w-3.5 h-3.5"></i> <span data-i18n="nav_crypto">Cryptographic Benchmark</span>
         </a>
-        <a href="/compare-zkp-zkml" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'compare' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
+        <a href="/{{ current_lang or 'en' }}/compare-zkp-zkml" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'compare' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
             <i data-lucide="git-compare" class="w-3.5 h-3.5"></i> <span data-i18n="nav_compare">Compare ZKP vs ZK-ML</span>
         </a>
         <a href="/api/v1/zkml/model-info" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5">
@@ -565,14 +572,14 @@ Path: app/views/components/navbar.html
                 <button type="button" 
                         id="langBtn-th" 
                         onclick="setAppLanguage('th')" 
-                        class="px-2 py-0.5 text-xs font-bold rounded-lg transition-all duration-200 bg-gradient-to-r from-[#EA3815] to-[#FF6B00] text-white shadow-md font-black"
+                        class="px-2 py-0.5 text-xs rounded-lg transition-all duration-200 {% if current_lang == 'th' %}bg-gradient-to-r from-[#EA3815] to-[#FF6B00] text-white shadow-md font-black{% else %}text-stone-300 hover:text-amber-300 font-medium{% endif %}"
                         title="ภาษาไทย (Thai)">
                     TH
                 </button>
                 <button type="button" 
                         id="langBtn-en" 
                         onclick="setAppLanguage('en')" 
-                        class="px-2 py-0.5 text-xs font-medium rounded-lg transition-all duration-200 text-stone-300 hover:text-amber-300"
+                        class="px-2 py-0.5 text-xs rounded-lg transition-all duration-200 {% if current_lang == 'th' %}text-stone-300 hover:text-amber-300 font-medium{% else %}bg-gradient-to-r from-[#EA3815] to-[#FF6B00] text-white shadow-md font-black{% endif %}"
                         title="English">
                     EN
                 </button>

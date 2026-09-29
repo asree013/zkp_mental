@@ -309,16 +309,26 @@ function t(key, defaultText = "") {
 
 /**
  * Get current selected language ('th' or 'en')
+ * Priority: URL path prefix (/th or /en) > localStorage > default ('en')
  */
 function getCurrentLanguage() {
-    return localStorage.getItem('app_lang') || 'th';
+    if (typeof window !== 'undefined' && window.location) {
+        const path = window.location.pathname;
+        if (path.startsWith('/th/') || path === '/th') {
+            return 'th';
+        }
+        if (path.startsWith('/en/') || path === '/en') {
+            return 'en';
+        }
+    }
+    return localStorage.getItem('app_lang') || 'en';
 }
 
 /**
  * Apply translations to DOM elements
  */
 function applyTranslations(lang) {
-    const dict = I18N_DICTIONARIES[lang] || I18N_DICTIONARIES['th'];
+    const dict = I18N_DICTIONARIES[lang] || I18N_DICTIONARIES['en'] || I18N_DICTIONARIES['th'];
     
     // Update document HTML lang attribute
     document.documentElement.setAttribute('lang', lang);
@@ -390,12 +400,36 @@ function updateLanguageButtonsUI(lang) {
 }
 
 /**
- * Change App Language and persist in localStorage
+ * Change App Language, update URL path (/th <-> /en), and persist in localStorage
  */
-function setAppLanguage(lang) {
-    if (lang !== 'th' && lang !== 'en') lang = 'th';
-    localStorage.setItem('app_lang', lang);
-    applyTranslations(lang);
+function setAppLanguage(targetLang) {
+    if (targetLang !== 'th' && targetLang !== 'en') targetLang = 'en';
+    localStorage.setItem('app_lang', targetLang);
+
+    if (typeof window !== 'undefined' && window.location) {
+        const currentPath = window.location.pathname;
+        let newPath = currentPath;
+
+        if (currentPath.startsWith('/th/') || currentPath === '/th') {
+            newPath = targetLang === 'en' ? currentPath.replace(/^\/th(\/|$)/, '/en$1') : currentPath;
+        } else if (currentPath.startsWith('/en/') || currentPath === '/en') {
+            newPath = targetLang === 'th' ? currentPath.replace(/^\/en(\/|$)/, '/th$1') : currentPath;
+        } else {
+            // Path didn't have /th or /en prefix (e.g. /paper or /)
+            if (currentPath === '/') {
+                newPath = `/${targetLang}`;
+            } else {
+                newPath = `/${targetLang}${currentPath}`;
+            }
+        }
+
+        if (newPath !== currentPath) {
+            window.location.href = newPath + window.location.search + window.location.hash;
+            return;
+        }
+    }
+
+    applyTranslations(targetLang);
 }
 
 // Initialize on DOM ready

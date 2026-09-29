@@ -8,7 +8,7 @@ import os
 import json
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, Body, Request, status, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
@@ -100,12 +100,21 @@ def _calculate_fallback_stats(records_list):
 # -------------------------------------------------------------------------
 # 1. HTML Web Dashboard View
 # -------------------------------------------------------------------------
-@router.get("/students", response_class=HTMLResponse, summary="Student Data Management & CSV Ingestion Dashboard")
-async def students_ui_page(request: Request, db: Session = Depends(get_db)):
+@router.get("/students", summary="Legacy redirect to /en/students default")
+async def students_redirect():
+    """Redirect unlocalized /students to /en/students (Default English)"""
+    return RedirectResponse(url="/en/students", status_code=307)
+
+
+@router.get("/{lang}/students", response_class=HTMLResponse, summary="Student Data Management & CSV Ingestion Dashboard")
+@router.get("/{lang}/students/", response_class=HTMLResponse, include_in_schema=False)
+async def students_ui_page(request: Request, lang: str = "en", db: Session = Depends(get_db)):
     """
-    เรนเดอร์หน้าเว็บ UI สำหรับจัดการข้อมูลสุขภาพจิตนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลด CSV และดูตารางข้อมูล
+    เรนเดอร์หน้าเว็บ UI สำหรับจัดการข้อมูลสุขภาพจิตนักเรียน (รองรับ /th/students และ /en/students): เพิ่มข้อมูลรายคน, อัปโหลด CSV และดูตารางข้อมูล
     (รองรับ Hybrid Data Provider: แสดงผลได้ต่อเนื่องแม้ MySQL ยังไม่ได้เชื่อมต่อ)
     """
+    if lang not in ["th", "en"]:
+        return RedirectResponse(url="/en/students", status_code=307)
     db_status = check_db_connection()
     records_json = []
     stats = {
@@ -161,7 +170,10 @@ async def students_ui_page(request: Request, db: Session = Depends(get_db)):
             "records": records_json,
             "records_json": records_json,
             "stats": stats,
-            "db_status": db_status
+            "db_status": db_status,
+            "active_page": "student",
+            "current_lang": lang,
+            "lang": lang
         }
     )
 

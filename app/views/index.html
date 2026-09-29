@@ -918,7 +918,7 @@
                             <i data-lucide="download" class="w-3.5 h-3.5"></i> <span data-i18n="download_pdf">ดาวน์โหลด PDF</span>
                         </a>
                         {% endif %}
-                        <a href="/paper" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 700; color: #FF6B00; text-decoration: none; padding: 0.45rem 0.85rem; border-radius: 10px; background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.25); transition: all 0.2s;" onmouseover="this.style.color='#FBBF24'; this.style.borderColor='rgba(255, 107, 0, 0.5)'" onmouseout="this.style.color='#FF6B00'; this.style.borderColor='rgba(255, 107, 0, 0.25)'">
+                        <a href="/{{ current_lang or 'en' }}/paper" style="display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; font-weight: 700; color: #FF6B00; text-decoration: none; padding: 0.45rem 0.85rem; border-radius: 10px; background: rgba(255, 107, 0, 0.1); border: 1px solid rgba(255, 107, 0, 0.25); transition: all 0.2s;" onmouseover="this.style.color='#FBBF24'; this.style.borderColor='rgba(255, 107, 0, 0.5)'" onmouseout="this.style.color='#FF6B00'; this.style.borderColor='rgba(255, 107, 0, 0.25)'">
                             <i data-lucide="folder-open" class="w-3.5 h-3.5"></i> <span data-i18n="manage_all_docs">จัดการเอกสารทั้งหมด</span> <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
                         </a>
                     </div>
@@ -955,7 +955,7 @@
                     <p style="font-size: 0.8rem; color: #A8A29E; max-width: 460px; margin: 0 auto;" data-i18n="empty_ieee_desc">
                         คุณสามารถอัปโหลดไฟล์ PDF งานวิจัยประเภท IEEE Paper ได้ที่หน้าจัดการเอกสารงานวิจัย
                     </p>
-                    <a href="/paper" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 12px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); color: #FFFFFF; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 4px 15px rgba(234, 56, 21, 0.4); margin: 0.5rem auto 0;">
+                    <a href="/{{ current_lang or 'en' }}/paper" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 12px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); color: #FFFFFF; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 4px 15px rgba(234, 56, 21, 0.4); margin: 0.5rem auto 0;">
                         <i data-lucide="upload" class="w-4 h-4"></i> <span data-i18n="btn_upload_ieee">อัปโหลด IEEE Paper ตอนนี้</span>
                     </a>
                 </div>
@@ -1007,7 +1007,7 @@
             <div class="portals-grid">
                 
                 <!-- Portal 0: Student Data Management -->
-                <a href="/students" class="portal-card" style="border-color: rgba(255, 107, 0, 0.35);">
+                <a href="/{{ current_lang or 'en' }}/students" class="portal-card" style="border-color: rgba(255, 107, 0, 0.35);">
                     <div>
                         <div class="portal-icon flex items-center justify-center" style="background: rgba(255, 107, 0, 0.2); color: #FBBF24;">
                             <i data-lucide="users" class="w-6 h-6"></i>
@@ -1024,7 +1024,7 @@
                 </a>
 
                 <!-- Portal 1: Quantization Benchmark -->
-                <a href="/test-quantization-impact" class="portal-card">
+                <a href="/{{ current_lang or 'en' }}/test-quantization-impact" class="portal-card">
                     <div>
                         <div class="portal-icon flex items-center justify-center">
                             <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
@@ -1041,7 +1041,7 @@
                 </a>
 
                 <!-- Portal 2: Cryptographic Benchmark -->
-                <a href="/test-cryptographic-benchmark" class="portal-card">
+                <a href="/{{ current_lang or 'en' }}/test-cryptographic-benchmark" class="portal-card">
                     <div>
                         <div class="portal-icon flex items-center justify-center">
                             <i data-lucide="microscope" class="w-6 h-6"></i>
@@ -1058,7 +1058,7 @@
                 </a>
 
                 <!-- Portal 2.5: Compare Plain ZKP vs ZK-ML -->
-                <a href="/compare-zkp-zkml" class="portal-card" style="border-color: rgba(59, 130, 246, 0.35);">
+                <a href="/{{ current_lang or 'en' }}/compare-zkp-zkml" class="portal-card" style="border-color: rgba(59, 130, 246, 0.35);">
                     <div>
                         <div class="portal-icon flex items-center justify-center" style="background: rgba(59, 130, 246, 0.15); border-color: rgba(59, 130, 246, 0.35); color: #60A5FA;">
                             <i data-lucide="git-compare" class="w-6 h-6"></i>

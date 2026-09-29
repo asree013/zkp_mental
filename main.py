@@ -101,12 +101,12 @@ async def favicon():
     return Response(status_code=204)
 
 # Register MVC Controller Routers
-app.include_router(home_router)
 app.include_router(health_router)
 app.include_router(zkml_router)
 app.include_router(student_router)
 app.include_router(benchmark_router)
 app.include_router(paper_router)
+app.include_router(home_router)
 
 
 
