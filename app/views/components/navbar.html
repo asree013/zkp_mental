@@ -5,7 +5,7 @@ Path: app/views/components/navbar.html
 ===================================================================
 #}
 
-<!-- Theme Initialization Script (Runs immediately to prevent FOUC) -->
+<!-- Theme & Language Initialization Script (Runs immediately to prevent FOUC) -->
 <script>
     (function() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -16,6 +16,8 @@ Path: app/views/components/navbar.html
             document.documentElement.classList.add('dark');
             document.documentElement.classList.remove('light-mode');
         }
+        const savedLang = localStorage.getItem('app_lang') || 'th';
+        document.documentElement.setAttribute('lang', savedLang);
     })();
 </script>
 
@@ -465,8 +467,27 @@ Path: app/views/components/navbar.html
         background-color: #FFEDD5 !important;
         border-color: #FF6B00 !important;
     }
+
+    /* Multi-Language (i18n) Styling */
+    html[lang="en"] .i18n-th { display: none !important; }
+    html[lang="th"] .i18n-en { display: none !important; }
+
+    html.light-mode #langBtnContainer {
+        background-color: #FFFFFF !important;
+        border-color: #FED7AA !important;
+    }
+    html.light-mode #langBtn-th:not(.bg-gradient-to-r),
+    html.light-mode #langBtn-en:not(.bg-gradient-to-r) {
+        color: #57534E !important;
+    }
+    html.light-mode #langBtn-th:not(.bg-gradient-to-r):hover,
+    html.light-mode #langBtn-en:not(.bg-gradient-to-r):hover {
+        color: #EA580C !important;
+    }
 </style>
 
+<!-- Translation Engine & Dictionaries -->
+<script src="/static/js/translations.js"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <nav class="flex flex-wrap items-center justify-between gap-4 py-4 mb-8 border-b border-orange-500/20">
@@ -476,41 +497,41 @@ Path: app/views/components/navbar.html
             <i data-lucide="shield-check" class="w-6 h-6 stroke-[2.2]"></i>
         </div>
         <div>
-            <div class="text-base font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors duration-200 brand-title">
+            <div class="text-base font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors duration-200 brand-title" data-i18n="brand_title">
                 ZK-ML Research Platform
             </div>
-            <div class="text-xs text-orange-200/70 font-medium brand-sub">
+            <div class="text-xs text-orange-200/70 font-medium brand-sub" data-i18n="brand_sub">
                 Privacy-Preserving Inference for Student Mental Health
             </div>
         </div>
     </a>
 
-    <!-- Navigation Buttons & Theme Toggle Switch -->
+    <!-- Navigation Buttons & Theme / Language Switches -->
     <div class="flex flex-wrap items-center gap-2.5">
         <a href="/" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'home' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <i data-lucide="home" class="w-3.5 h-3.5"></i> Home
+            <i data-lucide="home" class="w-3.5 h-3.5"></i> <span data-i18n="nav_home">Home</span>
         </a>
         <a href="/students" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'student' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <i data-lucide="users" class="w-3.5 h-3.5"></i> Student Data & CSV
+            <i data-lucide="users" class="w-3.5 h-3.5"></i> <span data-i18n="nav_students">Student Data & CSV</span>
         </a>
         <a href="/paper" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'paper' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Research Papers
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i> <span data-i18n="nav_papers">Research Papers</span>
         </a>
 
         <a href="/test-quantization-impact" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'quantization' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> Quantization Benchmark
+            <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i> <span data-i18n="nav_quant">Quantization Benchmark</span>
         </a>
         <a href="/test-cryptographic-benchmark" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'cryptographic' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <i data-lucide="microscope" class="w-3.5 h-3.5"></i> Cryptographic Benchmark
+            <i data-lucide="microscope" class="w-3.5 h-3.5"></i> <span data-i18n="nav_crypto">Cryptographic Benchmark</span>
         </a>
         <a href="/compare-zkp-zkml" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border {% if active_page == 'compare' %}bg-orange-500/25 border-orange-500 text-amber-300 shadow-md shadow-orange-500/25 font-bold{% else %}bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5{% endif %}">
-            <i data-lucide="git-compare" class="w-3.5 h-3.5"></i> Compare ZKP vs ZK-ML
+            <i data-lucide="git-compare" class="w-3.5 h-3.5"></i> <span data-i18n="nav_compare">Compare ZKP vs ZK-ML</span>
         </a>
         <a href="/api/v1/zkml/model-info" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold no-underline transition-all duration-200 border bg-white/5 border-orange-500/10 text-stone-200 hover:bg-orange-500/15 hover:border-orange-500/30 hover:text-amber-300 hover:-translate-y-0.5">
-            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Model Weights
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> <span data-i18n="nav_weights">Model Weights</span>
         </a>
         <a href="/docs" target="_blank" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold no-underline transition-all duration-200 bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white shadow-md shadow-orange-500/30 hover:shadow-orange-500/50 hover:-translate-y-0.5">
-            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> Swagger Docs
+            <i data-lucide="book-open" class="w-3.5 h-3.5"></i> <span data-i18n="nav_docs">Swagger Docs</span>
         </a>
 
         <!-- Modern Toggle Switch UI (Dark / Light) -->
@@ -533,6 +554,29 @@ Path: app/views/components/navbar.html
                 </span>
             </button>
             <span class="text-xs font-bold text-amber-300" id="switch-mode-label">Dark</span>
+        </div>
+
+        <!-- Modern Language Switcher UI (TH / EN) -->
+        <div class="flex items-center gap-1.5 pl-2 border-l border-orange-500/20">
+            <span class="text-xs font-bold text-amber-400 inline-flex items-center" title="Switch Language">
+                <i data-lucide="globe" class="w-3.5 h-3.5"></i>
+            </span>
+            <div id="langBtnContainer" class="inline-flex items-center p-0.5 rounded-xl bg-black/60 border border-orange-500/40 shadow-inner">
+                <button type="button" 
+                        id="langBtn-th" 
+                        onclick="setAppLanguage('th')" 
+                        class="px-2 py-0.5 text-xs font-bold rounded-lg transition-all duration-200 bg-gradient-to-r from-[#EA3815] to-[#FF6B00] text-white shadow-md font-black"
+                        title="ภาษาไทย (Thai)">
+                    TH
+                </button>
+                <button type="button" 
+                        id="langBtn-en" 
+                        onclick="setAppLanguage('en')" 
+                        class="px-2 py-0.5 text-xs font-medium rounded-lg transition-all duration-200 text-stone-300 hover:text-amber-300"
+                        title="English">
+                    EN
+                </button>
+            </div>
         </div>
     </div>
 </nav>
