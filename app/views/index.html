@@ -885,35 +885,36 @@
             </div>
         </section>
 
-        <!-- Latest Thesis Proposal Document Section (Full-Width Container) -->
+        <!-- Latest IEEE Research Paper Document Section (Full-Width Container) -->
         <section class="proposal-section">
             <div class="proposal-showcase">
                 
                 <!-- Section Header Bar -->
                 <div class="proposal-header-bar">
                     <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
-                        <i data-lucide="file-text" class="w-6 h-6 text-amber-400"></i>
+                        <i data-lucide="award" class="w-6 h-6 text-amber-400"></i>
                         <div>
-                            <h2 class="proposal-title" data-i18n="proposal_section_title">
-                                เอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal Document)
+                            <h2 class="proposal-title" data-i18n="ieee_section_title">
+                                เอกสารงานวิจัยมาตรฐาน IEEE (IEEE Research Paper)
                             </h2>
-                            <p class="proposal-subtitle" data-i18n="proposal_section_sub">
-                                ฉบับล่าสุดสำหรับการสอบโครงร่างและพัฒนาโมเดล ZK-ML
+                            <p class="proposal-subtitle" data-i18n="ieee_section_sub">
+                                งานวิจัยการอนุมานโมเดลแบบรักษาความเป็นส่วนตัวด้วย ZK-ML ตามรูปแบบมาตรฐาน IEEE
                             </p>
                         </div>
-                        {% if latest_proposal %}
-                        <span class="inline-flex items-center gap-1" style="font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px; background: rgba(234, 56, 21, 0.2); border: 1px solid rgba(234, 56, 21, 0.45); color: #FDE68A; margin-left: 0.25rem;">
-                            <i data-lucide="sparkles" class="w-3 h-3"></i> <span data-i18n="latest_badge">ฉบับล่าสุด (Latest)</span>
+                        {% if latest_paper or latest_proposal %}
+                        <span class="inline-flex items-center gap-1" style="font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px; background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.45); color: #93C5FD; margin-left: 0.25rem;">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i> <span>IEEE Paper</span>
                         </span>
                         {% endif %}
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
-                        {% if latest_proposal %}
-                        <a href="{{ latest_proposal.link }}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #FDE68A; text-decoration: none; padding: 0.45rem 0.85rem; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 107, 0, 0.3); transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 107, 0, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.08)'">
+                        {% set current_paper = latest_paper or latest_proposal %}
+                        {% if current_paper %}
+                        <a href="{{ current_paper.link }}" target="_blank" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #FDE68A; text-decoration: none; padding: 0.45rem 0.85rem; border-radius: 10px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 107, 0, 0.3); transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 107, 0, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.08)'">
                             <i data-lucide="external-link" class="w-3.5 h-3.5"></i> <span data-i18n="open_new_tab">เปิดแท็บใหม่</span>
                         </a>
-                        <a href="{{ latest_proposal.link }}" download="{{ latest_proposal.name }}" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #FFFFFF; text-decoration: none; padding: 0.45rem 0.95rem; border-radius: 10px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); box-shadow: 0 4px 12px rgba(234, 56, 21, 0.3); transition: all 0.2s;">
+                        <a href="{{ current_paper.link }}" download="{{ current_paper.name }}" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; color: #FFFFFF; text-decoration: none; padding: 0.45rem 0.95rem; border-radius: 10px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); box-shadow: 0 4px 12px rgba(234, 56, 21, 0.3); transition: all 0.2s;">
                             <i data-lucide="download" class="w-3.5 h-3.5"></i> <span data-i18n="download_pdf">ดาวน์โหลด PDF</span>
                         </a>
                         {% endif %}
@@ -923,38 +924,39 @@
                     </div>
                 </div>
 
-                {% if latest_proposal %}
+                {% set current_paper = latest_paper or latest_proposal %}
+                {% if current_paper %}
                 <!-- Document Info Metadata -->
                 <div class="proposal-meta-box">
                     <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 600; font-family: 'Sarabun', sans-serif;">
                         <i data-lucide="file" class="w-4 h-4 text-amber-400"></i>
-                        <span><span data-i18n="filename_label">ชื่อไฟล์:</span> <strong style="color: #FDE68A;">{{ latest_proposal.name }}</strong></span>
+                        <span><span data-i18n="filename_label">ชื่อไฟล์:</span> <strong style="color: #FDE68A;">{{ current_paper.name }}</strong></span>
                     </div>
                     <div style="color: #A8A29E; font-size: 0.75rem;">
-                        <span data-i18n="uploaded_at_label">อัปโหลดเมื่อ:</span> <strong style="color: #FBBF24;">{{ latest_proposal.create_date.strftime('%d/%m/%Y เวลา %H:%M น.') if latest_proposal.create_date else '-' }}</strong>
+                        <span data-i18n="uploaded_at_label">อัปโหลดเมื่อ:</span> <strong style="color: #FBBF24;">{{ current_paper.create_date.strftime('%d/%m/%Y เวลา %H:%M น.') if current_paper.create_date else '-' }}</strong>
                     </div>
                 </div>
 
                 <!-- Direct Full-Width Embedded PDF Viewer -->
                 <div class="proposal-iframe-wrapper">
-                    <iframe src="{{ latest_proposal.link }}#toolbar=1&navpanes=0&scrollbar=1" style="width: 100%; height: 100%; border: none; display: block;" title="Thesis Proposal PDF Viewer">
+                    <iframe src="{{ current_paper.link }}#toolbar=1&navpanes=0&scrollbar=1" style="width: 100%; height: 100%; border: none; display: block;" title="IEEE Research Paper PDF Viewer">
                         <p style="padding: 2rem; text-align: center; color: #A8A29E; font-size: 0.9rem;">
                             เบราว์เซอร์ของคุณไม่รองรับการแสดงผล iframe โดยตรง 
-                            <a href="{{ latest_proposal.link }}" target="_blank" style="color: #FF6B00; font-weight: 700;">คลิกที่นี่เพื่อเปิดอ่านเอกสาร PDF</a>
+                            <a href="{{ current_paper.link }}" target="_blank" style="color: #FF6B00; font-weight: 700;">คลิกที่นี่เพื่อเปิดอ่านเอกสาร PDF</a>
                         </p>
                     </iframe>
                 </div>
                 {% else %}
                 <div class="proposal-empty-card">
                     <div class="flex justify-center"><i data-lucide="inbox" class="w-10 h-10 text-stone-500"></i></div>
-                    <div style="font-size: 0.92rem; font-weight: 700; color: #FFFFFF;">
-                        ยังไม่มีการอัปโหลดเอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal) เข้าสู่ระบบ
+                    <div style="font-size: 0.92rem; font-weight: 700; color: #FFFFFF;" data-i18n="empty_ieee_title">
+                        ยังไม่มีการอัปโหลดเอกสาร IEEE Paper เข้าสู่ระบบ
                     </div>
-                    <p style="font-size: 0.8rem; color: #A8A29E; max-width: 460px; margin: 0 auto;">
-                        คุณสามารถอัปโหลดไฟล์ PDF โครงร่างงานวิจัย บทที่ 1-5 หรือเอกสารวิทยานิพนธ์ฉบับสมบูรณ์ได้ที่หน้าจัดการเอกสาร
+                    <p style="font-size: 0.8rem; color: #A8A29E; max-width: 460px; margin: 0 auto;" data-i18n="empty_ieee_desc">
+                        คุณสามารถอัปโหลดไฟล์ PDF งานวิจัยประเภท IEEE Paper ได้ที่หน้าจัดการเอกสารงานวิจัย
                     </p>
                     <a href="/paper" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 12px; background: linear-gradient(135deg, #EA3815 0%, #FF6B00 100%); color: #FFFFFF; text-decoration: none; font-size: 0.82rem; font-weight: 700; box-shadow: 0 4px 15px rgba(234, 56, 21, 0.4); margin: 0.5rem auto 0;">
-                        <i data-lucide="upload" class="w-4 h-4"></i> <span>อัปโหลด Proposal ตอนนี้</span>
+                        <i data-lucide="upload" class="w-4 h-4"></i> <span data-i18n="btn_upload_ieee">อัปโหลด IEEE Paper ตอนนี้</span>
                     </a>
                 </div>
                 {% endif %}

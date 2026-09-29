@@ -35,18 +35,27 @@ async def home_page(
     db_status = check_db_connection()
     nargo_bin = get_nargo_bin()
 
-    # ดึงเอกสารโครงร่างงานวิจัย (Thesis Proposal) ตัวล่าสุดเพียง 1 ฉบับ
-    latest_proposal = None
+    # ดึงเอกสารงานวิจัยประเภท IEEE Paper ตัวล่าสุดจากฐานข้อมูล (หรือ fallback ไปที่ proposal/เอกสารล่าสุด)
+    latest_paper = None
     try:
         if db_status.get("status") == "connected":
-            latest_proposal = (
+            # 1. ค้นหาเอกสารประเภท IEEE Paper ก่อนเป็นอันดับแรก
+            latest_paper = (
                 db.query(ResearchPaper)
-                .filter(ResearchPaper.type_paper.in_(["proposal", "proposol"]))
+                .filter(ResearchPaper.type_paper.in_(["ieee", "IEEE", "ieee_paper"]))
                 .order_by(ResearchPaper.id.desc())
                 .first()
             )
+            # 2. หากยังไม่มี ieee paper ให้ fallback ไปดึง proposal หรือเอกสารล่าสุด
+            if not latest_paper:
+                latest_paper = (
+                    db.query(ResearchPaper)
+                    .filter(ResearchPaper.type_paper.in_(["proposal", "proposol"]))
+                    .order_by(ResearchPaper.id.desc())
+                    .first()
+                )
     except Exception as e:
-        print(f"⚠️ Warning: Could not query latest proposal from database: {e}")
+        print(f"⚠️ Warning: Could not query latest IEEE paper from database: {e}")
 
     researcher_info = {
         "name_th": "นายอัสรี หะยีมะ",
@@ -73,7 +82,8 @@ async def home_page(
         context={
             "researcher": researcher_info,
             "thesis": thesis_info,
-            "latest_proposal": latest_proposal,
+            "latest_paper": latest_paper,
+            "latest_proposal": latest_paper,
             "db_status": db_status
         }
     )

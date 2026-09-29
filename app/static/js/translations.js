@@ -32,7 +32,12 @@ const I18N_DICTIONARIES = {
         "faculty_label": "สังกัด:",
         "thesis_title_label": "ชื่อหัวข้อวิทยานิพนธ์ (Official Research Title)",
 
-        // Proposal Section
+        // IEEE Paper & Proposal Showcase
+        "ieee_section_title": "เอกสารงานวิจัยมาตรฐาน IEEE (IEEE Research Paper)",
+        "ieee_section_sub": "งานวิจัยการอนุมานโมเดลแบบรักษาความเป็นส่วนตัวด้วย ZK-ML ตามรูปแบบมาตรฐาน IEEE",
+        "empty_ieee_title": "ยังไม่มีการอัปโหลดเอกสาร IEEE Paper เข้าสู่ระบบ",
+        "empty_ieee_desc": "คุณสามารถอัปโหลดไฟล์ PDF งานวิจัยประเภท IEEE Paper ได้ที่หน้าจัดการเอกสารงานวิจัย",
+        "btn_upload_ieee": "อัปโหลด IEEE Paper ตอนนี้",
         "proposal_section_title": "เอกสารโครงร่างวิทยานิพนธ์ (Thesis Proposal Document)",
         "proposal_section_sub": "ฉบับล่าสุดสำหรับการสอบโครงร่างและพัฒนาโมเดล ZK-ML",
         "latest_badge": "ฉบับล่าสุด (Latest)",
@@ -170,7 +175,12 @@ const I18N_DICTIONARIES = {
         "faculty_label": "Affiliation:",
         "thesis_title_label": "Official Research Title",
 
-        // Proposal Section
+        // IEEE Paper & Proposal Showcase
+        "ieee_section_title": "IEEE Standard Research Paper",
+        "ieee_section_sub": "Privacy-Preserving Machine Learning Inference using ZK-Proofs (IEEE Standard Format)",
+        "empty_ieee_title": "No IEEE Paper uploaded yet",
+        "empty_ieee_desc": "You can upload an IEEE Paper PDF in the research papers management section.",
+        "btn_upload_ieee": "Upload IEEE Paper Now",
         "proposal_section_title": "Thesis Proposal Document",
         "proposal_section_sub": "Latest version for thesis proposal defense & ZK-ML model evaluation",
         "latest_badge": "Latest Edition",
