@@ -104,9 +104,12 @@ const I18N_DICTIONARIES = {
         "students_page_title": "ระบบจัดการข้อมูลสุขภาพจิตนักเรียน (Student Mental Health Database)",
         "students_page_desc": "จัดการข้อมูลนักเรียนในฐานข้อมูล MySQL, อัปโหลดชุดข้อมูล Batch CSV, และทดสอบการอนุมาน ZK-ML รายคน",
         "btn_add_student": "เพิ่มข้อมูลนักเรียน",
+        "btn_add_student_title": "เพิ่มข้อมูลนักเรียนรายคน (Manual Entry)",
         "btn_upload_csv": "อัปโหลดไฟล์ CSV",
+        "btn_import_csv_title": "อัปโหลดชุดข้อมูล CSV (Batch Ingestion)",
         "btn_clear_all": "ล้างข้อมูลทั้งหมด",
-        "search_student_placeholder": "ค้นหานักเรียน (รหัส, คณะ, เพศ, ระดับการศึกษา)...",
+        "btn_clear_all_title": "ล้างข้อมูลทั้งหมดในฐานข้อมูล",
+        "search_student_placeholder": "ค้นหาตาม ID, อายุ, ระดับการศึกษา, สาขาวิชา, CGPA...",
         "filter_all": "ทั้งหมด",
         "filter_risk_high": "กลุ่มเสี่ยงสูง",
         "filter_risk_low": "กลุ่มปกติ",
@@ -120,8 +123,8 @@ const I18N_DICTIONARIES = {
         "table_col_anxiety": "วิตกกังวล",
         "table_col_panic": "ตื่นตระหนก",
         "table_col_treatment": "การรักษา",
-        "table_col_edu_level": "ระดับการศึกษา",
-        "table_col_action": "การกระทำ",
+        "table_col_edu_level": "ระดับการศึกษา (Education Level)",
+        "table_col_action": "การกระทำ (Actions)",
         "btn_test_row_zk": "ทดสอบ ZK",
         "btn_edit": "แก้ไข",
         "btn_delete": "ลบ",
@@ -129,18 +132,70 @@ const I18N_DICTIONARIES = {
         "stats_high_risk": "กลุ่มเสี่ยงสูง (High Risk)",
         "stats_low_risk": "กลุ่มปกติ (Low Risk)",
         "stats_db_source": "แหล่งข้อมูล: MySQL Database",
+        "stat_total_label": "ข้อมูลนักเรียนทั้งหมดในตาราง",
+        "stat_high_risk_label": "High Risk Cases (มีภาวะเสี่ยง)",
+        "stat_high_risk_desc": "นักเรียนที่มีภาวะ Depression / Anxiety หรือ Panic Attack",
+        "stat_low_risk_label": "Low Risk Cases (ปกติ)",
+        "stat_low_risk_desc": "นักเรียนที่ไม่มีภาวะเสี่ยงสุขภาพจิต",
+        "stat_seek_treatment_label": "Specialist Treatment (เคยพบแพทย์)",
+        "stat_seek_treatment_desc": "นักเรียนที่เคยปรึกษาผู้เชี่ยวชาญด้านสุขภาพจิต",
+        "student_table_header": "ตารางข้อมูลสุขภาพจิตนักเรียน (Mental Health Records)",
+        "student_table_desc": "ระบบค้นหาแบบละเอียด, คัดกรองระดับการศึกษา/ภาวะเสี่ยง พร้อมระบบแบ่งหน้า (Pagination)",
+        "th_student_id": "ID",
+        "th_student_age": "อายุ / เพศ (Age / Gender)",
+        "th_student_gender": "เพศ (Gender)",
+        "th_student_course": "คณะ & ชั้นปี (Course & Year)",
+        "th_student_year": "ชั้นปี (Year)",
+        "th_student_cgpa": "CGPA",
+        "th_student_depression": "ซึมเศร้า (Depression)",
+        "th_student_anxiety": "วิตกกังวล (Anxiety)",
+        "th_student_panic": "แพนิค (Panic)",
+        "th_student_treatment": "การรักษา (Treatment)",
+        "th_student_edu": "ระดับการศึกษา (Education Level)",
+        "th_student_action": "การกระทำ (Actions)",
+        "students_unit_persons": "คน",
 
         // Paper Page
-        "paper_page_title": "คลังเอกสารวิจัยและโครงร่างวิทยานิพนธ์",
-        "paper_page_desc": "จัดเก็บ รวบรวม และจัดการเอกสารโครงร่างวิทยานิพนธ์ รายงานวิจัย และสไลด์นำเสนอ (PDF Files)",
-        "btn_upload_paper": "อัปโหลดเอกสารวิจัย (PDF)",
+        "paper_page_title": "ระบบจัดการเอกสารงานวิจัยและวิทยานิพนธ์ (Research Papers)",
+        "paper_page_desc": "อัปโหลด จัดหมวดหมู่บทที่ 1-5 โครงร่างวิทยานิพนธ์ และพรีวิวเอกสาร PDF พร้อมระบบรักษาความปลอดภัยในการลบข้อมูล",
+        "btn_upload_paper": "อัปโหลดเอกสารใหม่",
+        "btn_upload_new_paper": "อัปโหลดเอกสารใหม่",
+        "upload_box_title": "อัปโหลดไฟล์ PDF งานวิจัย",
+        "upload_type_label": "หมวดหมู่งานวิจัย / ประเภทเอกสาร",
+        "paper_table_title": "รายการเอกสารงานวิจัยในระบบ",
+        "paper_table_desc": "คลิกดูตัวอย่างไฟล์ (Preview), แก้ไขข้อมูล หรือคัดลอก Link เข้าถึงเอกสาร",
+        "paper_search_placeholder": "ค้นหาชื่อเอกสาร หรือบท...",
+        "filter_tab_all": "ทั้งหมด",
+        "filter_tab_chap1": "บทที่ 1",
+        "filter_tab_chap2": "บทที่ 2",
+        "filter_tab_chap3": "บทที่ 3",
+        "filter_tab_chap4": "บทที่ 4",
+        "filter_tab_chap5": "บทที่ 5",
+        "filter_tab_proposal": "Proposal",
+        "filter_tab_full": "เล่มเต็ม",
+        "filter_tab_recommend": "ข้อเสนอแนะ",
+        "filter_tab_ieee": "IEEE Paper",
+        "filter_tab_project": "Project Paper",
+        "th_col_category": "หมวดหมู่ / บท",
+        "th_col_title": "ชื่อเอกสาร",
+        "th_col_link": "URL Link เข้าถึงไฟล์",
+        "th_col_date": "วันที่อัปโหลด",
+        "th_col_actions": "การจัดการ",
         "paper_col_title": "ชื่อเอกสาร",
         "paper_col_type": "ประเภท",
         "paper_col_uploaded": "วันที่อัปโหลด",
         "paper_col_size": "ขนาดไฟล์",
         "paper_col_actions": "การกระทำ",
+        "paper_stat_total": "เอกสารทั้งหมด",
+        "paper_stat_chapters": "บทที่ 1 - 5",
+        "paper_stat_proposals": "โครงร่าง / Proposal",
+        "paper_stat_all": "เล่มสมบูรณ์ / IEEE / โครงงาน",
 
-        // Benchmark Pages
+        // Metrics & Benchmarks
+        "metric_acc_desc": "ความแม่นยำหลัง Quantize ใน ZK Circuit โดยไม่มีการสูญเสียความแม่นยำ (Delta = 0.0%)",
+        "metric_priv_desc": "ข้อมูลสุขภาพจิตนักเรียนทุกตัวแปรถูกเก็บเป็นความลับใน Noir Circuit ไม่ถูกเปิดเผยภายนอก",
+        "metric_scale_desc": "สเกลที่ให้ความแม่นยำสูงสุดและลด Score Drift MAE เหลือ 0.08 ปลอดภัยจาก Integer Overflow",
+        "metric_engine_desc": "Nargo CLI พร้อมประมวลผล Asynchronous ZK Proof ร่วมกับ Hybrid Database Provider",
         "quant_title": "Integer Quantization Impact Benchmark",
         "quant_desc": "วิเคราะห์ผลกระทบของ Scaling Factor ต่อความแม่นยำ (Accuracy, F1-Score, MAE) ในวงจร ZK-ML",
         "crypto_title": "Cryptographic & Circuit Performance Benchmark",
@@ -247,9 +302,12 @@ const I18N_DICTIONARIES = {
         "students_page_title": "Student Mental Health Database Management",
         "students_page_desc": "Manage student records in MySQL, ingest batch CSV datasets, and execute individual ZK-ML inference",
         "btn_add_student": "Add Student Record",
+        "btn_add_student_title": "Add Student Record (Manual Entry)",
         "btn_upload_csv": "Upload CSV File",
+        "btn_import_csv_title": "Upload CSV Dataset (Batch Ingestion)",
         "btn_clear_all": "Clear All Records",
-        "search_student_placeholder": "Search students (ID, Course, Gender, Education Level)...",
+        "btn_clear_all_title": "Clear All Records in Database",
+        "search_student_placeholder": "Search by ID, Age, Education Level, Course, CGPA...",
         "filter_all": "All",
         "filter_risk_high": "High Risk",
         "filter_risk_low": "Low Risk",
@@ -261,7 +319,7 @@ const I18N_DICTIONARIES = {
         "table_col_cgpa": "CGPA",
         "table_col_depression": "Depression",
         "table_col_anxiety": "Anxiety",
-        "table_col_panic": "Panic",
+        "table_col_panic": "Panic Attack",
         "table_col_treatment": "Treatment",
         "table_col_edu_level": "Education Level",
         "table_col_action": "Actions",
@@ -272,18 +330,70 @@ const I18N_DICTIONARIES = {
         "stats_high_risk": "High Risk Group",
         "stats_low_risk": "Low Risk Group",
         "stats_db_source": "Source: MySQL Database",
+        "stat_total_label": "Total Student Records in Table",
+        "stat_high_risk_label": "High Risk Cases",
+        "stat_high_risk_desc": "Students with Depression, Anxiety, or Panic Attacks",
+        "stat_low_risk_label": "Low Risk Cases (Normal)",
+        "stat_low_risk_desc": "Students with no mental health risk history",
+        "stat_seek_treatment_label": "Specialist Treatment",
+        "stat_seek_treatment_desc": "Students who consulted a mental health specialist",
+        "student_table_header": "Student Mental Health Records Table",
+        "student_table_desc": "Detailed search, education level & risk filtering with pagination",
+        "th_student_id": "ID",
+        "th_student_age": "Age / Gender",
+        "th_student_gender": "Gender",
+        "th_student_course": "Course & Year",
+        "th_student_year": "Year",
+        "th_student_cgpa": "CGPA",
+        "th_student_depression": "Depression",
+        "th_student_anxiety": "Anxiety",
+        "th_student_panic": "Panic",
+        "th_student_treatment": "Treatment",
+        "th_student_edu": "Education Level",
+        "th_student_action": "Actions",
+        "students_unit_persons": "students",
 
         // Paper Page
         "paper_page_title": "Research Papers & Proposal Repository",
         "paper_page_desc": "Store, organize, and manage thesis proposals, research papers, and defense slide decks (PDF Files)",
-        "btn_upload_paper": "Upload Research Paper (PDF)",
+        "btn_upload_paper": "Upload New Paper",
+        "btn_upload_new_paper": "Upload New Paper",
+        "upload_box_title": "Upload Research Paper PDF",
+        "upload_type_label": "Paper Category / Document Type",
+        "paper_table_title": "Research Papers in Repository",
+        "paper_table_desc": "Click Preview to view document, edit metadata, or copy file access link",
+        "paper_search_placeholder": "Search paper title or chapter...",
+        "filter_tab_all": "All",
+        "filter_tab_chap1": "Chapter 1",
+        "filter_tab_chap2": "Chapter 2",
+        "filter_tab_chap3": "Chapter 3",
+        "filter_tab_chap4": "Chapter 4",
+        "filter_tab_chap5": "Chapter 5",
+        "filter_tab_proposal": "Proposal",
+        "filter_tab_full": "Full Thesis",
+        "filter_tab_recommend": "Recommendations",
+        "filter_tab_ieee": "IEEE Paper",
+        "filter_tab_project": "Project Paper",
+        "th_col_category": "Category / Chapter",
+        "th_col_title": "Document Title",
+        "th_col_link": "Access URL Link",
+        "th_col_date": "Upload Date",
+        "th_col_actions": "Actions",
         "paper_col_title": "Document Title",
         "paper_col_type": "Type",
         "paper_col_uploaded": "Upload Date",
         "paper_col_size": "File Size",
         "paper_col_actions": "Actions",
+        "paper_stat_total": "Total Documents",
+        "paper_stat_chapters": "Chapters 1 - 5",
+        "paper_stat_proposals": "Proposals",
+        "paper_stat_all": "Full Theses / IEEE",
 
-        // Benchmark Pages
+        // Metrics & Benchmarks
+        "metric_acc_desc": "Post-quantization accuracy in ZK circuit with zero precision loss (Delta = 0.0%)",
+        "metric_priv_desc": "All sensitive mental health inputs are private variables in Noir circuit, protected from leakage",
+        "metric_scale_desc": "Optimal scale maximizing accuracy and reducing Score Drift MAE to 0.08 without overflow",
+        "metric_engine_desc": "Nargo CLI asynchronous ZK prover engine with hybrid database provider fallback",
         "quant_title": "Integer Quantization Impact Benchmark",
         "quant_desc": "Analyze scaling factor impact on accuracy, F1-score, and MAE drift for Noir ZK-ML circuit",
         "crypto_title": "Cryptographic & Circuit Performance Benchmark",
@@ -301,6 +411,10 @@ function t(key, defaultText = "") {
     if (I18N_DICTIONARIES[lang] && I18N_DICTIONARIES[lang][key]) {
         return I18N_DICTIONARIES[lang][key];
     }
+    // If language is 'en', DO NOT fall back to 'th'!! Return defaultText or key
+    if (lang === 'en') {
+        return defaultText || (I18N_DICTIONARIES['en'] && I18N_DICTIONARIES['en'][key]) || key;
+    }
     if (I18N_DICTIONARIES['th'] && I18N_DICTIONARIES['th'][key]) {
         return I18N_DICTIONARIES['th'][key];
     }
@@ -309,29 +423,46 @@ function t(key, defaultText = "") {
 
 /**
  * Get current selected language ('th' or 'en')
- * Priority: URL path prefix (/th or /en) > localStorage > default ('en')
+ * Priority: URL path prefix (/th or /en) > HTML lang attribute > localStorage > default ('en')
  */
 function getCurrentLanguage() {
+    let lang = 'en';
     if (typeof window !== 'undefined' && window.location) {
         const path = window.location.pathname;
         if (path.startsWith('/th/') || path === '/th') {
+            lang = 'th';
+            try { localStorage.setItem('app_lang', 'th'); } catch(e) {}
             return 'th';
-        }
-        if (path.startsWith('/en/') || path === '/en') {
+        } else if (path.startsWith('/en/') || path === '/en') {
+            lang = 'en';
+            try { localStorage.setItem('app_lang', 'en'); } catch(e) {}
             return 'en';
         }
     }
-    return localStorage.getItem('app_lang') || 'en';
+    if (typeof document !== 'undefined' && document.documentElement) {
+        const docLang = document.documentElement.getAttribute('lang');
+        if (docLang === 'th' || docLang === 'en') {
+            return docLang;
+        }
+    }
+    try {
+        const saved = localStorage.getItem('app_lang');
+        if (saved === 'th' || saved === 'en') return saved;
+    } catch(e) {}
+    return 'en';
 }
 
 /**
  * Apply translations to DOM elements
  */
 function applyTranslations(lang) {
+    if (!lang) lang = getCurrentLanguage();
     const dict = I18N_DICTIONARIES[lang] || I18N_DICTIONARIES['en'] || I18N_DICTIONARIES['th'];
     
     // Update document HTML lang attribute
-    document.documentElement.setAttribute('lang', lang);
+    if (typeof document !== 'undefined' && document.documentElement) {
+        document.documentElement.setAttribute('lang', lang);
+    }
     
     // 1. Text elements: [data-i18n]
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -432,14 +563,22 @@ function setAppLanguage(targetLang) {
     applyTranslations(targetLang);
 }
 
-// Initialize on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
-    const savedLang = getCurrentLanguage();
-    applyTranslations(savedLang);
-});
-
 // Expose globally
 window.t = t;
 window.getCurrentLanguage = getCurrentLanguage;
 window.setAppLanguage = setAppLanguage;
 window.applyTranslations = applyTranslations;
+
+// Apply immediately if document exists
+if (typeof document !== 'undefined' && document.documentElement) {
+    const curLang = getCurrentLanguage();
+    applyTranslations(curLang);
+}
+
+// And re-apply on DOM ready
+if (typeof document !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedLang = getCurrentLanguage();
+        applyTranslations(savedLang);
+    });
+}

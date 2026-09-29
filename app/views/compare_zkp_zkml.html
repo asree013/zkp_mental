@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="th" class="dark">
+<html lang="{{ current_lang or 'en' }}" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เปรียบเทียบ Plain ZKP vs ZK-ML | Master's Thesis Research Portal</title>
+    <title>Compare Plain ZKP vs ZK-ML | Master's Thesis Research Portal</title>
     
+    <!-- Pre-render setup for Language and Theme -->
+    <script>
+        (function() {
+            var p = window.location.pathname;
+            var l = (p.startsWith('/th/') || p === '/th') ? 'th' : 'en';
+            document.documentElement.lang = l;
+            var s = localStorage.getItem('theme_mode');
+            if (s === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
+
     <!-- Google Fonts: Inter & Sarabun -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,10 +1,31 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ current_lang or 'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy-Preserving ZK-ML Research Portal | นายอัสรี หะยีมะ (M.Sc. Data Science)</title>
+    <title>{% if current_lang == 'en' %}Privacy-Preserving ZK-ML Research Portal | Asree Hayeema (M.Sc. Data Science){% else %}Privacy-Preserving ZK-ML Research Portal | นายอัสรี หะยีมะ (M.Sc. Data Science){% endif %}</title>
     
+    <!-- Language & Theme Pre-render Script -->
+    <script>
+        (function() {
+            const p = window.location.pathname;
+            let l = 'en';
+            if (p.startsWith('/th/') || p === '/th') l = 'th';
+            else if (p.startsWith('/en/') || p === '/en') l = 'en';
+            else l = '{{ current_lang or "en" }}';
+            document.documentElement.setAttribute('lang', l);
+            try { localStorage.setItem('app_lang', l); } catch(e){}
+            const theme = localStorage.getItem('theme') || 'dark';
+            if (theme === 'light') {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light-mode');
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light-mode');
+            }
+        })();
+    </script>
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="alternate icon" href="/static/favicon.svg">
@@ -874,10 +895,12 @@
                             <i data-lucide="bookmark" class="w-3.5 h-3.5"></i> <span data-i18n="thesis_title_label">ชื่อหัวข้อวิทยานิพนธ์ (Official Research Title)</span>
                         </div>
                         <div class="thesis-th">
-                            "{{ thesis.title_th }}"
+                            <span class="i18n-th">"{{ thesis.title_th }}"</span>
+                            <span class="i18n-en">"{{ thesis.title_en }}"</span>
                         </div>
                         <div class="thesis-en">
-                            "{{ thesis.title_en }}"
+                            <span class="i18n-th">"{{ thesis.title_en }}"</span>
+                            <span class="i18n-en">"{{ thesis.title_th }}"</span>
                         </div>
                     </div>
                 </div>
@@ -969,25 +992,25 @@
             <div class="metric-card success">
                 <div class="metric-title">Model Accuracy (S=1,000)</div>
                 <div class="metric-val">{{ thesis.model_accuracy }} <span class="metric-unit">%</span></div>
-                <div class="metric-desc">ความแม่นยำหลัง Quantize ใน ZK Circuit โดยไม่มีการสูญเสียความแม่นยำ (Delta = 0.0%)</div>
+                <div class="metric-desc" data-i18n="metric_acc_desc">ความแม่นยำหลัง Quantize ใน ZK Circuit โดยไม่มีการสูญเสียความแม่นยำ (Delta = 0.0%)</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-title">Privacy Guarantee</div>
                 <div class="metric-val">100 <span class="metric-unit">% Private</span></div>
-                <div class="metric-desc">ข้อมูลสุขภาพจิตนักเรียนทุกตัวแปรถูกเก็บเป็นความลับใน Noir Circuit ไม่ถูกเปิดเผยภายนอก</div>
+                <div class="metric-desc" data-i18n="metric_priv_desc">ข้อมูลสุขภาพจิตนักเรียนทุกตัวแปรถูกเก็บเป็นความลับใน Noir Circuit ไม่ถูกเปิดเผยภายนอก</div>
             </div>
 
             <div class="metric-card info">
                 <div class="metric-title">Scaling Factor (Fixed-Point)</div>
                 <div class="metric-val">10<sup>3</sup> <span class="metric-unit">(S=1,000)</span></div>
-                <div class="metric-desc">สเกลที่ให้ความแม่นยำสูงสุดและลด Score Drift MAE เหลือ 0.08 ปลอดภัยจาก Integer Overflow</div>
+                <div class="metric-desc" data-i18n="metric_scale_desc">สเกลที่ให้ความแม่นยำสูงสุดและลด Score Drift MAE เหลือ 0.08 ปลอดภัยจาก Integer Overflow</div>
             </div>
 
             <div class="metric-card">
                 <div class="metric-title">Prover Engine & DB Status</div>
                 <div class="metric-val">Ready <span class="metric-unit">Active</span></div>
-                <div class="metric-desc">Nargo CLI พร้อมประมวลผล Asynchronous ZK Proof ร่วมกับ Hybrid Database Provider</div>
+                <div class="metric-desc" data-i18n="metric_engine_desc">Nargo CLI พร้อมประมวลผล Asynchronous ZK Proof ร่วมกับ Hybrid Database Provider</div>
             </div>
         </section>
 
@@ -1204,8 +1227,8 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p><strong>งานวิจัยวิทยานิพนธ์ระดับปริญญาโท</strong> | สาขาวิชาวิทยาการข้อมูล โครงการจัดตั้งวิทยาลัยวิทยาศาสตร์ดิจิทัล สังกัดบัณฑิตวิทยาลัย</p>
-            <p style="margin-top: 0.35rem; color: #6B7280;">ผู้วิจัย: นายอัสรี หะยีมะ (รหัสนักศึกษา 6910025030) • พัฒนาด้วย Noir DSL, Integer Quantization & FastAPI</p>
+            <p><span class="i18n-th"><strong>งานวิจัยวิทยานิพนธ์ระดับปริญญาโท</strong> | สาขาวิชาวิทยาการข้อมูล โครงการจัดตั้งวิทยาลัยวิทยาศาสตร์ดิจิทัล สังกัดบัณฑิตวิทยาลัย</span><span class="i18n-en"><strong>Master's Thesis Research</strong> | Data Science Program, Establishment Project of Digital Science College, Graduate School</span></p>
+            <p style="margin-top: 0.35rem; color: #6B7280;"><span class="i18n-th">ผู้วิจัย: นายอัสรี หะยีมะ (รหัสนักศึกษา 6910025030) • พัฒนาด้วย Noir DSL, Integer Quantization & FastAPI</span><span class="i18n-en">Researcher: Asree Hayeema (Student ID: 6910025030) • Built with Noir DSL, Integer Quantization & FastAPI</span></p>
         </footer>
 
     </div>

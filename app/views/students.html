@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ current_lang or 'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Data & CSV Ingestion | ZK-ML Research Platform</title>
+    
+    <!-- Pre-render setup for Language and Theme -->
+    <script>
+        (function() {
+            var p = window.location.pathname;
+            var l = (p.startsWith('/th/') || p === '/th') ? 'th' : 'en';
+            document.documentElement.lang = l;
+            var s = localStorage.getItem('theme_mode');
+            if (s === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
@@ -78,10 +89,10 @@
                     </span>
                     {% endif %}
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-amber-100 to-orange-400 bg-clip-text text-transparent">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white bg-gradient-to-r from-white via-amber-100 to-orange-400 bg-clip-text text-transparent" data-i18n="students_page_title">
                     Student Mental Health Records & Data Ingestion
                 </h1>
-                <p class="text-sm text-stone-300 mt-1 max-w-3xl">
+                <p class="text-sm text-stone-300 mt-1 max-w-3xl" data-i18n="students_page_desc">
                     ระบบจัดการฐานข้อมูลนักเรียน: เพิ่มข้อมูลรายคน, อัปโหลดไฟล์ CSV และเชื่อมโยงสู่ Zero-Knowledge Machine Learning Inference
                 </p>
             </div>
@@ -93,23 +104,23 @@
             <!-- Metric 1: Total -->
             <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-orange-500/50 hover:-translate-y-0.5 transition-all duration-200">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#EA3815] to-[#FF6B00]"></div>
-                <div class="text-xs font-bold uppercase tracking-wider text-orange-200/70 mb-1">Total Student Records</div>
+                <div class="text-xs font-bold uppercase tracking-wider text-orange-200/70 mb-1" data-i18n="stats_total_students">Total Student Records</div>
                 <div class="text-3xl font-extrabold text-white flex items-baseline gap-1" id="stat-total">
-                    {{ stats.total_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                    {{ stats.total_count }} <span class="text-sm font-semibold text-stone-400" data-i18n="students_unit_persons">คน</span>
                 </div>
                 <div class="text-xs text-stone-300 mt-2">
-                    ข้อมูลนักเรียนทั้งหมดในตาราง <code class="font-mono text-xs bg-black/50 text-amber-300 px-1.5 py-0.5 rounded border border-orange-500/20">mental_health_records</code>
+                    <span data-i18n="stat_total_label">ข้อมูลนักเรียนทั้งหมดในตาราง</span> <code class="font-mono text-xs bg-black/50 text-amber-300 px-1.5 py-0.5 rounded border border-orange-500/20">mental_health_records</code>
                 </div>
             </div>
 
             <!-- Metric 2: High Risk -->
             <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-rose-500/50 hover:-translate-y-0.5 transition-all duration-200">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#EA3815] to-rose-600"></div>
-                <div class="text-xs font-bold uppercase tracking-wider text-rose-300/80 mb-1">High Risk Cases (มีภาวะเสี่ยง)</div>
+                <div class="text-xs font-bold uppercase tracking-wider text-rose-300/80 mb-1" data-i18n="stat_high_risk_label">High Risk Cases (มีภาวะเสี่ยง)</div>
                 <div class="text-3xl font-extrabold text-rose-400 flex items-baseline gap-1" id="stat-high">
-                    {{ stats.high_risk_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                    {{ stats.high_risk_count }} <span class="text-sm font-semibold text-stone-400" data-i18n="students_unit_persons">คน</span>
                 </div>
-                <div class="text-xs text-stone-300 mt-2">
+                <div class="text-xs text-stone-300 mt-2" data-i18n="stat_high_risk_desc">
                     นักเรียนที่มีภาวะ Depression / Anxiety หรือ Panic Attack
                 </div>
             </div>
@@ -117,11 +128,11 @@
             <!-- Metric 3: Low Risk -->
             <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-emerald-500/50 hover:-translate-y-0.5 transition-all duration-200">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-[#FBBF24]"></div>
-                <div class="text-xs font-bold uppercase tracking-wider text-emerald-300/80 mb-1">Low Risk Cases (ปกติ)</div>
+                <div class="text-xs font-bold uppercase tracking-wider text-emerald-300/80 mb-1" data-i18n="stat_low_risk_label">Low Risk Cases (ปกติ)</div>
                 <div class="text-3xl font-extrabold text-emerald-400 flex items-baseline gap-1" id="stat-low">
-                    {{ stats.low_risk_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                    {{ stats.low_risk_count }} <span class="text-sm font-semibold text-stone-400" data-i18n="students_unit_persons">คน</span>
                 </div>
-                <div class="text-xs text-stone-300 mt-2">
+                <div class="text-xs text-stone-300 mt-2" data-i18n="stat_low_risk_desc">
                     นักเรียนที่ไม่มีประวัติภาวะเสี่ยงสุขภาพจิตในระบบ
                 </div>
             </div>
@@ -129,11 +140,11 @@
             <!-- Metric 4: Treatment -->
             <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-5 relative overflow-hidden shadow-xl hover:border-amber-500/50 hover:-translate-y-0.5 transition-all duration-200">
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FF6B00] to-[#FBBF24]"></div>
-                <div class="text-xs font-bold uppercase tracking-wider text-amber-300/80 mb-1">Specialist Treatment</div>
+                <div class="text-xs font-bold uppercase tracking-wider text-amber-300/80 mb-1" data-i18n="stat_seek_treatment_label">Specialist Treatment</div>
                 <div class="text-3xl font-extrabold text-amber-400 flex items-baseline gap-1" id="stat-treat">
-                    {{ stats.treatment_count }} <span class="text-sm font-semibold text-stone-400">คน</span>
+                    {{ stats.treatment_count }} <span class="text-sm font-semibold text-stone-400" data-i18n="students_unit_persons">คน</span>
                 </div>
-                <div class="text-xs text-stone-300 mt-2">
+                <div class="text-xs text-stone-300 mt-2" data-i18n="stat_seek_treatment_desc">
                     เคยเข้ารับคำปรึกษาจากแพทย์หรือผู้เชี่ยวชาญ
                 </div>
             </div>
@@ -311,10 +322,10 @@
         <div class="bg-[#161210]/90 backdrop-blur-xl border border-orange-500/20 rounded-2xl p-6 shadow-2xl">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 mb-5 border-b border-orange-500/15">
                 <div>
-                    <div class="flex items-center gap-2.5 text-base font-bold text-white">
+                    <div class="flex items-center gap-2.5 text-base font-bold text-white" data-i18n="student_table_header">
                         <i data-lucide="table" class="w-5 h-5 text-orange-400"></i> รายการข้อมูลสุขภาพจิตนักเรียนในฐานข้อมูล (Mental Health Records)
                     </div>
-                    <p class="text-xs text-stone-300 mt-0.5">
+                    <p class="text-xs text-stone-300 mt-0.5" data-i18n="student_table_desc">
                         ระบบค้นหาแบบละเอียด, คัดกรองระดับการศึกษา/ภาวะเสี่ยง พร้อมระบบแบ่งหน้า (Pagination)
                     </p>
                 </div>
@@ -337,7 +348,7 @@
                     <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400 text-sm">
                         <i data-lucide="search" class="w-4 h-4 text-stone-400"></i>
                     </div>
-                    <input type="text" id="tableSearch" class="w-full bg-black/50 border border-orange-500/20 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder-stone-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" placeholder="ค้นหาตาม ID, อายุ, ระดับการศึกษา, สาขาวิชา, CGPA..." oninput="handleSearchChange()">
+                    <input type="text" id="tableSearch" class="w-full bg-black/50 border border-orange-500/20 rounded-xl pl-9 pr-8 py-2.5 text-xs text-white placeholder-stone-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 transition-all duration-200" placeholder="ค้นหาตาม ID, อายุ, ระดับการศึกษา, สาขาวิชา, CGPA..." data-i18n-placeholder="search_student_placeholder" oninput="handleSearchChange()">
                     <button type="button" id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-stone-400 hover:text-white text-sm cursor-pointer">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
@@ -380,8 +391,8 @@
                             (กรองจากทั้งหมด {{ records | length }} รายการ)
                         </span>
                     </div>
-                    <button onclick="openStudentClearAllModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-rose-400 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 transition-all cursor-pointer" title="ล้างข้อมูลนักเรียนทั้งหมดในฐานข้อมูล">
-                        <i data-lucide="trash" class="w-3 h-3"></i> ล้างข้อมูลทั้งหมด
+                    <button onclick="openStudentClearAllModal()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium text-rose-400 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 transition-all cursor-pointer" title="ล้างข้อมูลนักเรียนทั้งหมดในฐานข้อมูล" data-i18n-title="btn_clear_all_title">
+                        <i data-lucide="trash" class="w-3 h-3"></i> <span data-i18n="btn_clear_all">ล้างข้อมูลทั้งหมด</span>
                     </button>
                 </div>
                 <div class="text-stone-400">
@@ -394,16 +405,16 @@
                 <table id="studentsTable" class="w-full text-left text-xs border-collapse">
                     <thead>
                         <tr class="bg-white/5 text-orange-200/90 uppercase tracking-wider font-semibold backdrop-blur-md border-b border-orange-500/20">
-                            <th class="py-3 px-3 text-center w-14">ID</th>
-                            <th class="py-3 px-3">Age / Gender</th>
-                            <th class="py-3 px-3 min-w-[200px]">ระดับการศึกษา (Education Level)</th>
-                            <th class="py-3 px-3">Course & Year</th>
-                            <th class="py-3 px-3 text-center">CGPA</th>
-                            <th class="py-3 px-3 text-center">Depression</th>
-                            <th class="py-3 px-3 text-center">Anxiety</th>
-                            <th class="py-3 px-3 text-center">Panic</th>
-                            <th class="py-3 px-3 text-center">Treatment</th>
-                            <th class="py-3 px-3 text-center">Actions</th>
+                            <th class="py-3 px-3 text-center w-14" data-i18n="th_student_id">ID</th>
+                            <th class="py-3 px-3" data-i18n="th_student_age">Age / Gender</th>
+                            <th class="py-3 px-3 min-w-[200px]" data-i18n="th_student_edu">ระดับการศึกษา (Education Level)</th>
+                            <th class="py-3 px-3" data-i18n="th_student_course">Course & Year</th>
+                            <th class="py-3 px-3 text-center" data-i18n="th_student_cgpa">CGPA</th>
+                            <th class="py-3 px-3 text-center" data-i18n="th_student_depression">Depression</th>
+                            <th class="py-3 px-3 text-center" data-i18n="th_student_anxiety">Anxiety</th>
+                            <th class="py-3 px-3 text-center" data-i18n="th_student_panic">Panic</th>
+                            <th class="py-3 px-3 text-center" data-i18n="th_student_treatment">Treatment</th>
+                            <th class="py-3 px-3 text-center" data-i18n="th_student_action">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-orange-500/10">
@@ -796,17 +807,20 @@
             // Update Counter Text
             document.getElementById('filtered-total').textContent = totalCount;
             document.getElementById('showing-range').textContent = totalCount === 0 ? '0 - 0' : `${startIndex + 1} - ${endIndex}`;
+            const isEn = (typeof getCurrentLanguage === 'function' && getCurrentLanguage() === 'en');
             document.getElementById('current-page-display').textContent = currentPage;
             document.getElementById('total-pages-display').textContent = totalPages;
-            document.getElementById('pagination-page-info').textContent = `${currentPage} จาก ${totalPages}`;
+            document.getElementById('pagination-page-info').textContent = isEn ? `${currentPage} of ${totalPages}` : `${currentPage} จาก ${totalPages}`;
 
             if (currentSlice.length === 0) {
+                const emptyTitle = isEn ? 'No student records match search criteria' : 'ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา';
+                const emptySub = isEn ? 'Try clearing search terms or changing education level filter' : 'ลองล้างคำค้นหาหรือเปลี่ยนตัวกรองระดับการศึกษา';
                 tbody.innerHTML = `
                     <tr id="empty-row">
                         <td colspan="10" class="text-center py-12 text-stone-400">
                             <div class="flex justify-center mb-2"><i data-lucide="search-x" class="w-8 h-8 text-stone-500"></i></div>
-                            <div class="font-semibold text-stone-200">ไม่พบข้อมูลที่ตรงกับเงื่อนไขการค้นหา</div>
-                            <div class="text-xs text-stone-400 mt-1">ลองล้างคำค้นหาหรือเปลี่ยนตัวกรองระดับการศึกษา</div>
+                            <div class="font-semibold text-stone-200">${emptyTitle}</div>
+                            <div class="text-xs text-stone-400 mt-1">${emptySub}</div>
                         </td>
                     </tr>
                 `;
@@ -815,6 +829,7 @@
             }
 
             let html = '';
+            const ageUnit = isEn ? 'yrs' : 'ปี';
             currentSlice.forEach(r => {
                 const eduMeta = getEducationLevelMeta(r.education_level);
                 const depBadge = (r.depression && r.depression.toLowerCase() === 'yes')
@@ -846,7 +861,7 @@
                             <span class="font-mono text-xs bg-black/50 text-amber-300 px-2 py-0.5 rounded border border-orange-500/20">#${r.id}</span>
                         </td>
                         <td class="py-3 px-3 whitespace-nowrap">
-                            <strong class="text-white">${r.age}</strong> <span class="text-stone-400">ปี</span> / <span class="text-stone-300">${r.gender}</span>
+                            <strong class="text-white">${r.age}</strong> <span class="text-stone-400">${ageUnit}</span> / <span class="text-stone-300">${r.gender}</span>
                         </td>
                         <td class="py-3 px-3">
                             <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${eduMeta.badge}">
@@ -870,7 +885,7 @@
                                 <button class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-orange-500/20 text-amber-300 border border-orange-500/40 hover:bg-orange-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" onclick="testZKInferenceRow(${r.age}, '${safeCgpa}', '${safeDep}', '${safeAnx}', '${safePanic}', '${safeTreat}', ${r.id})">
                                     <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> <span>ZK Prove</span>
                                 </button>
-                                <button class="inline-flex items-center justify-center p-1.5 rounded-lg text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" title="ลบข้อมูลนักเรียน ID #${r.id}" onclick="openStudentDeleteModal(${r.id})">
+                                <button class="inline-flex items-center justify-center p-1.5 rounded-lg text-xs font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all duration-200 cursor-pointer shadow-sm" title="Delete record #${r.id}" onclick="openStudentDeleteModal(${r.id})">
                                     <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                                 </button>
                             </div>
@@ -895,6 +910,10 @@
                 return;
             }
 
+            const isEn = (typeof getCurrentLanguage === 'function' && getCurrentLanguage() === 'en');
+            const prevText = isEn ? '‹ Prev' : '‹ ก่อนหน้า';
+            const nextText = isEn ? 'Next ›' : 'ถัดไป ›';
+
             let buttons = '';
 
             // First & Prev Buttons
@@ -904,7 +923,7 @@
                     «
                 </button>
                 <button onclick="goToPage(${currentPage - 1})" ${isFirstDisabled ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
-                    ‹ ก่อนหน้า
+                    ${prevText}
                 </button>
             `;
 
@@ -949,7 +968,7 @@
             const isLastDisabled = currentPage === totalPages;
             buttons += `
                 <button onclick="goToPage(${currentPage + 1})" ${isLastDisabled ? 'disabled' : ''} class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
-                    ถัดไป ›
+                    ${nextText}
                 </button>
                 <button onclick="goToPage(${totalPages})" ${isLastDisabled ? 'disabled' : ''} class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-white/5 border border-orange-500/20 text-stone-300 hover:bg-orange-500/20 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150">
                     »

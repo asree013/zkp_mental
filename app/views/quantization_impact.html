@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ current_lang or 'en' }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quantization Impact Benchmark | ZK-ML Research Dashboard</title>
+
+    <!-- Pre-render setup for Language and Theme -->
+    <script>
+        (function() {
+            var p = window.location.pathname;
+            var l = (p.startsWith('/th/') || p === '/th') ? 'th' : 'en';
+            document.documentElement.lang = l;
+            var s = localStorage.getItem('theme_mode');
+            if (s === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">

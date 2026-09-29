@@ -1,9 +1,20 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="{{ current_lang or 'en' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Research Papers & PDF Repository | ZK-ML Thesis Platform</title>
+    
+    <!-- Pre-render setup for Language and Theme -->
+    <script>
+        (function() {
+            var p = window.location.pathname;
+            var l = (p.startsWith('/th/') || p === '/th') ? 'th' : 'en';
+            document.documentElement.lang = l;
+            var s = localStorage.getItem('theme_mode');
+            if (s === 'light') document.documentElement.classList.add('light-mode');
+        })();
+    </script>
     
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
@@ -202,17 +213,17 @@
                     </span>
                     {% endif %}
                 </div>
-                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-white" data-i18n="paper_page_title">
                     ระบบจัดการเอกสารงานวิจัยและวิทยานิพนธ์ (Research Papers)
                 </h1>
-                <p class="text-sm text-stone-300 mt-1">
+                <p class="text-sm text-stone-300 mt-1" data-i18n="paper_page_desc">
                     อัปโหลด จัดหมวดหมู่บทที่ 1-5 โครงร่างวิทยานิพนธ์ และพรีวิวเอกสาร PDF พร้อมระบบรักษาความปลอดภัยในการลบข้อมูล
                 </p>
             </div>
 
             <div class="flex items-center gap-3">
                 <button onclick="scrollToUpload()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#EA3815] to-[#FF6B00] hover:from-[#FF6B00] hover:to-[#FBBF24] text-white font-bold text-xs sm:text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 transition-all duration-200 hover:-translate-y-0.5">
-                    <i data-lucide="upload" class="w-4 h-4"></i> อัปโหลดเอกสารใหม่
+                    <i data-lucide="upload" class="w-4 h-4"></i> <span data-i18n="btn_upload_new_paper">อัปโหลดเอกสารใหม่</span>
                 </button>
             </div>
         </header>
@@ -221,7 +232,7 @@
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
-                    <span>เอกสารทั้งหมด</span>
+                    <span data-i18n="paper_stat_total">เอกสารทั้งหมด</span>
                     <i data-lucide="book-open" class="w-5 h-5 text-amber-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-white" id="statTotalPapers">{{ papers|length }}</div>
@@ -230,7 +241,7 @@
 
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
-                    <span>บทที่ 1 - 5</span>
+                    <span data-i18n="paper_stat_chapters">บทที่ 1 - 5</span>
                     <i data-lucide="file-check" class="w-5 h-5 text-emerald-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-amber-400" id="statChaptersCount">
@@ -241,7 +252,7 @@
 
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
-                    <span>โครงร่าง / Proposal</span>
+                    <span data-i18n="paper_stat_proposals">โครงร่าง / Proposal</span>
                     <i data-lucide="file-text" class="w-5 h-5 text-orange-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-orange-400" id="statProposalsCount">
@@ -252,7 +263,7 @@
 
             <div class="p-4 rounded-2xl bg-[#161210]/90 border border-orange-500/20 backdrop-blur-md">
                 <div class="flex items-center justify-between text-stone-400 text-xs font-medium mb-1">
-                    <span>เล่มสมบูรณ์ / IEEE / โครงงาน</span>
+                    <span data-i18n="paper_stat_all">เล่มสมบูรณ์ / IEEE / โครงงาน</span>
                     <i data-lucide="graduation-cap" class="w-5 h-5 text-rose-400"></i>
                 </div>
                 <div class="text-2xl font-extrabold text-emerald-400" id="statAllPapersCount">
@@ -271,7 +282,7 @@
                     <div class="flex items-center justify-between mb-4 pb-3 border-b border-orange-500/20">
                         <div class="flex items-center gap-2">
                             <i data-lucide="upload-cloud" class="w-5 h-5 text-orange-400"></i>
-                            <h2 class="text-base font-bold text-white">อัปโหลดไฟล์ PDF งานวิจัย</h2>
+                            <h2 class="text-base font-bold text-white" data-i18n="upload_box_title">อัปโหลดไฟล์ PDF งานวิจัย</h2>
                         </div>
                         <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-orange-500/20 text-amber-300 border border-orange-500/30">
                             PDF ONLY
@@ -281,7 +292,7 @@
                     <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
                         <!-- Paper Type Selector -->
                         <div>
-                            <label class="block text-xs font-bold text-stone-200 mb-1.5">
+                            <label class="block text-xs font-bold text-stone-200 mb-1.5" data-i18n="upload_type_label">
                                 หมวดหมู่งานวิจัย / ประเภทเอกสาร <span class="text-rose-400">*</span>
                             </label>
                             <select id="type_paper" name="type_paper" required class="w-full bg-black/50 border border-orange-500/30 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 font-medium focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-colors">
@@ -355,10 +366,10 @@
                     <!-- Table Toolbar (Search & Filter Tabs) -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-orange-500/20">
                         <div>
-                            <h2 class="text-base font-bold text-white flex items-center gap-2">
+                            <h2 class="text-base font-bold text-white flex items-center gap-2" data-i18n="paper_table_title">
                                 <i data-lucide="files" class="w-5 h-5 text-orange-400"></i> รายการเอกสารงานวิจัยในระบบ
                             </h2>
-                            <p class="text-xs text-stone-400 mt-0.5">
+                            <p class="text-xs text-stone-400 mt-0.5" data-i18n="paper_table_desc">
                                 คลิกดูตัวอย่างไฟล์ (Preview), แก้ไขข้อมูล หรือคัดลอก Link เข้าถึงเอกสาร
                             </p>
                         </div>
@@ -368,43 +379,43 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-stone-400 text-xs">
                                 <i data-lucide="search" class="w-3.5 h-3.5"></i>
                             </span>
-                            <input type="text" id="searchInput" onkeyup="filterPapers()" placeholder="ค้นหาชื่อเอกสาร หรือบท..." class="w-full bg-black/50 border border-orange-500/30 rounded-xl pl-9 pr-3.5 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-orange-500 transition-colors">
+                            <input type="text" id="searchInput" onkeyup="filterPapers()" placeholder="ค้นหาชื่อเอกสาร หรือบท..." data-i18n-placeholder="paper_search_placeholder" class="w-full bg-black/50 border border-orange-500/30 rounded-xl pl-9 pr-3.5 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-orange-500 transition-colors">
                         </div>
                     </div>
 
                     <!-- Category Filter Tabs -->
                     <div class="flex flex-wrap items-center gap-1.5 mb-5" id="filterTabs">
                         <button onclick="setFilter('all', this)" class="filter-tab active px-3 py-1.5 rounded-xl text-xs font-bold transition-all bg-orange-500/25 border border-orange-500 text-amber-300 shadow-sm">
-                            ทั้งหมด (<span id="countAll">{{ papers|length }}</span>)
+                            <span data-i18n="filter_tab_all">ทั้งหมด</span> (<span id="countAll">{{ papers|length }}</span>)
                         </button>
-                        <button onclick="setFilter('chapter_1', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('chapter_1', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_chap1">
                             บทที่ 1
                         </button>
-                        <button onclick="setFilter('chapter_2', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('chapter_2', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_chap2">
                             บทที่ 2
                         </button>
-                        <button onclick="setFilter('chapter_3', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('chapter_3', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_chap3">
                             บทที่ 3
                         </button>
-                        <button onclick="setFilter('chapter_4', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('chapter_4', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_chap4">
                             บทที่ 4
                         </button>
-                        <button onclick="setFilter('chapter_5', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('chapter_5', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_chap5">
                             บทที่ 5
                         </button>
-                        <button onclick="setFilter('proposal', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('proposal', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_proposal">
                             Proposal
                         </button>
-                        <button onclick="setFilter('all_paper', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('all_paper', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_full">
                             เล่มเต็ม
                         </button>
-                        <button onclick="setFilter('recommend', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('recommend', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_recommend">
                             ข้อเสนอแนะ
                         </button>
-                        <button onclick="setFilter('ieee', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('ieee', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_ieee">
                             IEEE Paper
                         </button>
-                        <button onclick="setFilter('project_paper', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300">
+                        <button onclick="setFilter('project_paper', this)" class="filter-tab px-3 py-1.5 rounded-xl text-xs font-medium transition-all bg-white/5 border border-orange-500/10 text-stone-300 hover:bg-orange-500/15 hover:text-amber-300" data-i18n="filter_tab_project">
                             Project Paper
                         </button>
                     </div>
@@ -415,11 +426,11 @@
                             <thead class="bg-black/60 text-stone-300 font-bold uppercase tracking-wider border-b border-orange-500/20">
                                 <tr>
                                     <th class="py-3 px-3.5 text-center w-12">#</th>
-                                    <th class="py-3 px-3.5">หมวดหมู่ / บท</th>
-                                    <th class="py-3 px-3.5">ชื่อเอกสาร</th>
-                                    <th class="py-3 px-3.5">URL Link เข้าถึงไฟล์</th>
-                                    <th class="py-3 px-3.5 text-center">วันที่อัปโหลด</th>
-                                    <th class="py-3 px-3.5 text-center w-36">การจัดการ</th>
+                                    <th class="py-3 px-3.5" data-i18n="th_col_category">หมวดหมู่ / บท</th>
+                                    <th class="py-3 px-3.5" data-i18n="th_col_title">ชื่อเอกสาร</th>
+                                    <th class="py-3 px-3.5" data-i18n="th_col_link">URL Link เข้าถึงไฟล์</th>
+                                    <th class="py-3 px-3.5 text-center" data-i18n="th_col_date">วันที่อัปโหลด</th>
+                                    <th class="py-3 px-3.5 text-center w-36" data-i18n="th_col_actions">การจัดการ</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-orange-500/10" id="papersTableBody">
